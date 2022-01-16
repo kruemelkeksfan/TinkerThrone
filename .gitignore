@@ -61,3 +61,7 @@ crashlytics-build.properties
 TinkerThroneGame/Library/
 TinkerThroneGame/Logs/
 TinkerThroneGame/Temp/
+TinkerThroneGame/obj/
+TinkerThroneGame/UserSettings/
+TinkerThroneGame/ProjectSettings/EditorBuildSettings.asset
+
