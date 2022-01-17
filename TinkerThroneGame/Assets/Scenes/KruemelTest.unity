@@ -7994,25 +7994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3b4b679371e094098b202b5f99d283, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goods:
-  - goodName: Wood
-    decription: Raw Wood from se Woods.
-    mass: 200
-    volume: 4
-    flammability: 1
-    price: 5
-  - goodName: Lumber
-    decription: Lumber, Jack Lumber.
-    mass: 100
-    volume: 2
-    flammability: 0.8
-    price: 20
-  - goodName: Stone
-    decription: The Stone of infinite Heavyness.
-    mass: 9000
-    volume: 1
-    flammability: 0
-    price: 1
+  goodDataFile: {fileID: 4900000, guid: b0f188e35e23b4447b723e1344d76904, type: 3}
 --- !u!4 &2067211460
 Transform:
   m_ObjectHideFlags: 0
