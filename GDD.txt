@@ -1,0 +1,26 @@
+King or Storekeeper?
+	Automatically buys or sells Goods to keep a certain Stock
+Trade
+	Players can trade Goods between Towns
+	Trading requires Vehicles
+		Land Trade requires Carts or Wagons
+		Sea Trade requires Boats or Ships
+		Vehicles have a Travel Time
+		Only Towns which have either a Sea or Land (not mixed) Connection to the Players Town can be traded with
+Map
+	Players can choose their Town Location on an Overview Map
+	Map consists of square Tiles
+	Players can only found Towns on free Tiles
+	Map consists of Islands with multiple Biomes
+		Forest
+			Abundant Trees
+			Fast Movement Speed
+		Beach
+			Water Access for fishing and Sea Trade
+			All Forest Tiles with adjacent Water are converted to Beach at Map Generation
+			Fast Movement Speed
+		Mountain
+			Mineral and Metal Deposits
+			Slow Movement Speed
+	Players can build Roads for faster Trade Connections
+		

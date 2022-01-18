@@ -1,0 +1,28 @@
+{
+    "goods": [
+        {
+            "goodName": "Wood",
+            "decription": "Raw Wood from se Woods.",
+            "mass": 200.0,
+            "volume": 4,
+            "flammability": 1.0,
+            "price": 5
+        },
+        {
+            "goodName": "Lumber",
+            "decription": "Lumber, Jack Lumber.",
+            "mass": 100.0,
+            "volume": 2,
+            "flammability": 0.800000011920929,
+            "price": 20
+        },
+        {
+            "goodName": "Stone",
+            "decription": "The Stone of infinite Heavyness.",
+            "mass": 9000.0,
+            "volume": 1,
+            "flammability": 0.0,
+            "price": 1
+        }
+    ]
+}
