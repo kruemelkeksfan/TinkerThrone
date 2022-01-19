@@ -1,12 +1,33 @@
-King or Storekeeper?
+Politics
+	Players can unite to form Kingdoms
+	Kingdoms can have different Governments
+		Monarchy
+		Council
+		Democracy
+	Governments can set Taxes and set Rules (Embargos, Max Prices, etc.)
+King or Storekeeper
 	Automatically buys or sells Goods to keep a certain Stock
+Game Start
+	Tier 1 Level 1 Buildings are Tents for fast and cheap Construction
+	Start with basic Resources to accelerate Game Start
+Woodcutting
+	Trees are felled off-map
+	Off-Map Forests have a current Wood Amount
+		Wood Amount is reduced with each felled Tree
+		Below a certain Min Wood Amount no more Trees can be felled
+		There is a Max Wood Amount, based on the accessible Forest Area (Area can increase with better Vehicles)
+		Wood Amount increases each Day with a Rate determined by the current Wood Count (exponential Increase)
+	A Felling Trip for one Tree takes a random Time, determined by Lumberjack Vehicle and accessible Area
 Trade
-	Players can trade Goods between Towns
-	Trading requires Vehicles
-		Land Trade requires Carts or Wagons
-		Sea Trade requires Boats or Ships
-		Vehicles have a Travel Time
-		Only Towns which have either a Sea or Land (not mixed) Connection to the Players Town can be traded with
+	Players can trade Goods between Towns by making Offers
+	AI Traders
+		Try to satisfy Player offers buy connecting selling and buying Towns
+		Have Travel Time
+		Need to rest in Taverns each Night
+			Taverns are built by Players
+			Resting costs Money
+				Costs are added to Good Sale Price
+				Profit is given to Tavern owning Player
 Map
 	Players can choose their Town Location on an Overview Map
 	Map consists of square Tiles
@@ -20,7 +41,17 @@ Map
 			All Forest Tiles with adjacent Water are converted to Beach at Map Generation
 			Fast Movement Speed
 		Mountain
-			Mineral and Metal Deposits
+			Abundant Mineral and Metal Deposits
 			Slow Movement Speed
-	Players can build Roads for faster Trade Connections
-		
+	Players can build Roads for faster Trade Connections and to route more Traders into their Taverns
+Skill System
+	Pawn XP
+		Gained by performing Actions
+		Increases Action Speed or Action Efficiency
+		Can be used to boost Research Projects
+	Production XP
+		Gained by producing Goods
+		Accelerates Production or reduces Resource Costs or increases Product Quality
+Time Scale
+	Default Time Scale 48x (1h RL == 2 Days in Game)
+	Nights are skipped very fast in a short Animation
