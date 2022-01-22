@@ -1,0 +1,46 @@
+{
+  "moduleInfos": [
+    {
+      "moduleName": "Beam",
+      "materialId": 2,
+      "amountNeeded": 1,
+      "buildingSteps": 1
+    },
+    {
+      "moduleName": "Wall",
+      "materialId": 1,
+      "amountNeeded": 10,
+      "buildingSteps": 10
+    },
+    {
+      "moduleName": "Plank",
+      "materialId": 3,
+      "amountNeeded": 1,
+      "buildingSteps": 1
+    },
+    {
+      "moduleName": "PlankFloor",
+      "materialId": 3,
+      "amountNeeded": 8,
+      "buildingSteps": 8
+    },
+    {
+      "moduleName": "GablePlank",
+      "materialId": 3,
+      "amountNeeded": 3,
+      "buildingSteps": 5
+    },
+    {
+      "moduleName": "ThatchRoof",
+      "materialId": 4,
+      "amountNeeded": 20,
+      "buildingSteps": 3
+    },
+    {
+      "moduleName": "Log",
+      "materialId": 0,
+      "amountNeeded": 1,
+      "buildingSteps": 1
+    }
+  ]
+}
