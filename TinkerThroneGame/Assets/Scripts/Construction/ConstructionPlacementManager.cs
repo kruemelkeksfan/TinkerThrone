@@ -7,10 +7,9 @@ using UnityEngine.EventSystems;
 public class ConstructionPlacementManager : MonoBehaviour
 {
     [SerializeField] GameObject buildingUi;
-    [SerializeField] GameObject preBuildingModule;
-    [SerializeField] MeshRenderer buildableDisplay;
     ConstructionInfo prefab;
-    [SerializeField] Transform building;
+    ConstructionSpace constructionSpace;
+    [SerializeField] ConstructionInfo building;
     public bool isBuilding = false;
     Vector3 modulePos = Vector3.zero;
 
@@ -51,7 +50,7 @@ public class ConstructionPlacementManager : MonoBehaviour
 
             if (newModulePos == modulePos)
             {
-                if (Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+                if (!constructionSpace.isBlocked && Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
                 {
                     PlaceBuilding();
                 }
@@ -60,32 +59,15 @@ public class ConstructionPlacementManager : MonoBehaviour
 
             modulePos = newModulePos;
 
-            if (IsFreePosition(modulePos))
-            {
-                //Debug.Log("ok : " + modulePos.ToString());
-                buildableDisplay.material.SetColor("_EmissionColor", Color.green);
-            }
-            else
-            {
-                //Debug.Log("nok : " + modulePos.ToString());
-                buildableDisplay.material.SetColor("_EmissionColor", Color.red);
-            }
-
             building.transform.position = gridPos;
             building.transform.rotation = Quaternion.identity;
 
-            if (Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+            if (!constructionSpace.isBlocked && Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
             {
                 PlaceBuilding();
             }
         }
         
-    }
-
-    private bool IsFreePosition(Vector3 modulePos)
-    {
-        return true;
-        //add pos check
     }
 
     public void ToggleBuildingMode(bool destroy = true)
@@ -108,19 +90,17 @@ public class ConstructionPlacementManager : MonoBehaviour
         }
         if (prefab == null)
         {
-            preBuildingModule.transform.parent = this.transform;
-            preBuildingModule.SetActive(false);
+            constructionSpace = null;
             return;
         }
-        building = Instantiate<ConstructionInfo>(prefab).GetComponent<Transform>();
-        preBuildingModule.SetActive(true);
-        preBuildingModule.transform.parent = building.transform;
-        preBuildingModule.transform.localPosition = Vector3.zero;
-        preBuildingModule.transform.localRotation = Quaternion.identity;
+        building = Instantiate<ConstructionInfo>(prefab);
+        constructionSpace = building.GetConstructionSpace();
     }
 
     public void PlaceBuilding()
     {
+        Destroy(constructionSpace.gameObject.GetComponent<Rigidbody>());
+        Destroy(building.GetUpgradeSpace().gameObject.GetComponent<Rigidbody>());
         building = null;
         SelectBuildingType(null); //releases Building
     }
