@@ -24,6 +24,14 @@ public class ConstructionPlacementManager : MonoBehaviour
         {
             SelectBuildingType(null);
         }
+        if(Input.GetButtonUp("Rotate Building Clockwise"))
+        {
+            Rotate(1);
+        }
+        else if (Input.GetButtonUp("Rotate Building Counterclockwise"))
+        {
+            Rotate(-1);
+        }
         if (isBuilding && prefab != null)
         {
             
@@ -117,10 +125,10 @@ public class ConstructionPlacementManager : MonoBehaviour
         SelectBuildingType(null);
     }
 
-    /*public void Rotate(int direction)
+
+
+    public void Rotate(int direction)
     {
-        if (!moduleSelected) return;
-        meshType.Rotate(direction);
-        preBuildingModule.ChangeModule(meshType);
-    }*/
+        currentBuilding.transform.rotation = Quaternion.Euler(currentBuilding.transform.rotation.eulerAngles + WorldConsts.STANDARD_ROTATION * direction);
+    }
 }
