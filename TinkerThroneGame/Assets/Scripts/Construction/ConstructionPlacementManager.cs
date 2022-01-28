@@ -7,9 +7,10 @@ using UnityEngine.EventSystems;
 public class ConstructionPlacementManager : MonoBehaviour
 {
     [SerializeField] GameObject buildingUi;
-    ConstructionInfo prefab;
+    [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
+    Building prefab;
     ConstructionSpace constructionSpace;
-    [SerializeField] ConstructionInfo building;
+    [SerializeField] Building currentBuilding;
     public bool isBuilding = false;
     Vector3 modulePos = Vector3.zero;
 
@@ -42,15 +43,13 @@ public class ConstructionPlacementManager : MonoBehaviour
                 return;
             }
 
-            //Vector3 gridPos = hitPoint - building.transform.position;
-
             Vector3 gridPos = new Vector3(Mathf.RoundToInt(hitPoint.x * WorldConsts.GRID_SIZE_RECIPROCAL) * WorldConsts.GRID_SIZE, WorldConsts.BUILDING_HIGHT, Mathf.RoundToInt(hitPoint.z * WorldConsts.GRID_SIZE_RECIPROCAL)* WorldConsts.GRID_SIZE);
 
             Vector3 newModulePos = gridPos;
 
             if (newModulePos == modulePos)
             {
-                if (!constructionSpace.isBlocked && Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+                if (!constructionSpace.isBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
                 {
                     PlaceBuilding();
                 }
@@ -59,10 +58,9 @@ public class ConstructionPlacementManager : MonoBehaviour
 
             modulePos = newModulePos;
 
-            building.transform.position = gridPos;
-            building.transform.rotation = Quaternion.identity;
+            currentBuilding.transform.position = gridPos;
 
-            if (!constructionSpace.isBlocked && Input.GetButtonUp("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+            if (!constructionSpace.isBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
             {
                 PlaceBuilding();
             }
@@ -74,6 +72,7 @@ public class ConstructionPlacementManager : MonoBehaviour
     {
         isBuilding = !isBuilding;
         buildingUi.SetActive(isBuilding);
+        buildingSpaceHolder.ToggleBuildingSpaces();
 
         if (!isBuilding)
         {
@@ -81,28 +80,41 @@ public class ConstructionPlacementManager : MonoBehaviour
         }
     }
 
-    public void SelectBuildingType(ConstructionInfo constructionInfo)
+    public void SelectBuildingType(Building constructionInfo)
     {
         prefab = constructionInfo;
-        if(building != null) 
+        if(currentBuilding != null) 
         {
-            GameObject.Destroy(building.gameObject);
+            GameObject.Destroy(currentBuilding.gameObject);
         }
         if (prefab == null)
         {
             constructionSpace = null;
             return;
         }
-        building = Instantiate<ConstructionInfo>(prefab);
-        constructionSpace = building.GetConstructionSpace();
+        currentBuilding = Instantiate<Building>(prefab);
+        constructionSpace = currentBuilding.GetConstructionSpace();
     }
 
     public void PlaceBuilding()
     {
+        currentBuilding.transform.position -= new Vector3(0,0.01f,0);//prevents clipping with new buildings
+        //destroy ridgidbodys to avoid collision triggers and move to buildingSpaceHolder
+        UpgradeSpace upgradeSpace = currentBuilding.GetUpgradeSpace();
         Destroy(constructionSpace.gameObject.GetComponent<Rigidbody>());
-        Destroy(building.GetUpgradeSpace().gameObject.GetComponent<Rigidbody>());
-        building = null;
-        SelectBuildingType(null); //releases Building
+        Destroy(upgradeSpace.gameObject.GetComponent<Rigidbody>());
+        buildingSpaceHolder.AddBuildingSpaces(new BuildingSpace[2] { constructionSpace, upgradeSpace });
+        //get and scale Raycast Target
+        BoxCollider raycastTarget = currentBuilding.GetComponent<BoxCollider>();
+        Debug.Log(constructionSpace.transform.localScale);
+        int buildingHight = 5;//TODO remove hardecoded number
+        raycastTarget.center = new Vector3(0, buildingHight*0.5f, 0);
+        raycastTarget.size = new Vector3(constructionSpace.transform.localScale.x,buildingHight,constructionSpace.transform.localScale.z);
+        //!!TODO start building
+        //reset current building..
+        currentBuilding = null;
+        //..and building selection
+        SelectBuildingType(null);
     }
 
     /*public void Rotate(int direction)

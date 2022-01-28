@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 690441199407318919}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7630331515059418136
 MeshFilter:
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7efed6d6bb6b6947a8fcb34409f96a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  constructionSpaceCollider: {fileID: 3376200797259380661}
+  otherSpaceCollider: {fileID: 3376200797259380661}
   meshRenderer: {fileID: 5683380558209824666}
 --- !u!1 &4537015792619281570
 GameObject:
@@ -163,7 +163,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 690441199407318919}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &327312950769653914
 MeshFilter:
@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd1c9f23926d87745b2024c0b072df93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upgradeSpaceCollider: {fileID: 3840170442683994478}
+  otherSpaceCollider: {fileID: 3840170442683994478}
   meshRenderer: {fileID: 4519812725132034993}
 --- !u!54 &8559666696908496720
 Rigidbody:
@@ -267,8 +267,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 690441199407318919}
-  - component: {fileID: 250160692}
-  m_Layer: 0
+  - component: {fileID: 8665705405546432158}
+  - component: {fileID: 2279716557035835614}
+  m_Layer: 7
   m_Name: House
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,13 +288,13 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4528063027543453506}
   - {fileID: 6821885835710414688}
   - {fileID: 6119674015810818457}
+  - {fileID: 4528063027543453506}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &250160692
+--- !u!114 &8665705405546432158
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -302,10 +303,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 8302093199528310758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ac55237305bdc146a42d587f99fcb32, type: 3}
+  m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 7, y: 7}
+  buildingName: Unnamed Building
+  recipes: []
+  buildingModel: {fileID: 3863307799916115448}
   neededMaterials:
   - goodName: 1
     amount: 100
@@ -315,8 +318,19 @@ MonoBehaviour:
     amount: 63
   - goodName: 4
     amount: 80
-  constructionSpace: {fileID: 6575614878177439952}
-  upgradeSpace: {fileID: 768070906269969844}
+--- !u!65 &2279716557035835614
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8302093199528310758}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4133266692022454441
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -327,7 +341,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 61c5b43253402384886bd66f53621677,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61c5b43253402384886bd66f53621677,
         type: 3}
@@ -386,6 +400,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61c5b43253402384886bd66f53621677, type: 3}
+--- !u!1 &3863307799916115448 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 61c5b43253402384886bd66f53621677,
+    type: 3}
+  m_PrefabInstance: {fileID: 4133266692022454441}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4528063027543453506 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 61c5b43253402384886bd66f53621677,
