@@ -31,7 +31,6 @@ namespace Pinwheel.Poseidon
 
         private static void CheckUnityPackagesAndInit()
         {
-            listPackageRequest = Client.List(true);
             EditorApplication.update += OnRequestingPackageList;
         }
 

@@ -36,7 +36,6 @@ namespace Pinwheel.Jupiter
 
         private static void CheckUnityPackagesAndInit()
         {
-            listPackageRequest = Client.List(true);
             EditorApplication.update += OnRequestingPackageList;
         }
 
