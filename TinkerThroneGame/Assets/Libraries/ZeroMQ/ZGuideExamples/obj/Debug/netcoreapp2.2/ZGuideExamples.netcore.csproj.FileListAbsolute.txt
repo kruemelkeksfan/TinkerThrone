@@ -1,0 +1,13 @@
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netcoreapp2.2\ZGuideExamples.deps.json
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netcoreapp2.2\ZGuideExamples.runtimeconfig.json
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netcoreapp2.2\ZGuideExamples.runtimeconfig.dev.json
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netcoreapp2.2\ZGuideExamples.dll
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netcoreapp2.2\ZGuideExamples.pdb
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.csprojAssemblyReference.cache
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.AssemblyInfoInputs.cache
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.AssemblyInfo.cs
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.csproj.CoreCompileInputs.cache
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.csproj.CopyComplete
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.dll
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.pdb
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\ZGuideExamples\obj\Debug\netcoreapp2.2\ZGuideExamples.netcore.genruntimeconfig.cache
