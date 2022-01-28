@@ -15,9 +15,9 @@ Woodcutting
 	Off-Map Forests have a current Wood Amount
 		Wood Amount is reduced with each felled Tree
 		Below a certain Min Wood Amount no more Trees can be felled
-		There is a Max Wood Amount, based on the accessible Forest Area (Area can increase with better Vehicles)
-		Wood Amount increases each Day with a Rate determined by the current Wood Count (exponential Increase)
-	A Felling Trip for one Tree takes a random Time, determined by Lumberjack Vehicle and accessible Area
+		There is a Max Wood Amount, based on the accessible Forest Area
+		Wood Amount increases each Day
+	A Felling Trip for one Tree takes a random Time, influenced by Lumberjack Vehicle Speed and already deforested Area
 Trade
 	Players can trade Goods between Towns by making Offers
 	AI Traders

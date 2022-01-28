@@ -1,0 +1,8 @@
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netstandard2.0\ZeroMQ.dll.config
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netstandard2.0\ZeroMQ.deps.json
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netstandard2.0\ZeroMQ.dll
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\bin\Debug\netstandard2.0\ZeroMQ.pdb
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\obj\Debug\netstandard2.0\ZeroMQ.netcore.csprojAssemblyReference.cache
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\obj\Debug\netstandard2.0\ZeroMQ.netcore.csproj.CoreCompileInputs.cache
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\obj\Debug\netstandard2.0\ZeroMQ.dll
+C:\Users\kruemelkeksfan\Downloads\ZeroMQ.Release\obj\Debug\netstandard2.0\ZeroMQ.pdb
