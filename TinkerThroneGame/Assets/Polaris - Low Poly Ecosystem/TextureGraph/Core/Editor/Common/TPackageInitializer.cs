@@ -43,7 +43,6 @@ namespace Pinwheel.TextureGraph
             addPackageRequest = Client.Add("com.unity.searcher");
             EditorApplication.update += OnRequestingPackageAdd;
 #endif
-            listPackageRequest = Client.List(true);
             EditorApplication.update += OnRequestingPackageList;
         }
 
@@ -84,7 +83,6 @@ namespace Pinwheel.TextureGraph
             {
                 Debug.Log("TEXTURE GRAPH: Dependency package installed [com.unity.searcher]");
             }
-            listPackageRequest = Client.List(true);
             EditorApplication.update += OnRequestingPackageList;
             EditorApplication.update -= OnRequestingPackageAdd;
         }

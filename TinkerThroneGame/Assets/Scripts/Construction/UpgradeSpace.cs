@@ -2,11 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UpgradeSpace : MonoBehaviour
+public class UpgradeSpace : BuildingSpace
 {
-    [SerializeField] Collider constructionSpaceCollider;
-    [SerializeField] MeshRenderer meshRenderer;
-    List<Collider> colliders = new List<Collider>();
     private void Update()
     {
         int colorEscelation = 0;
@@ -28,21 +25,5 @@ public class UpgradeSpace : MonoBehaviour
             }
         }
         meshRenderer.material.SetColor("_EmissionColor", WorldConsts.BUILDING_SPACE_COLORS[colorEscelation]);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other != constructionSpaceCollider && !colliders.Contains(other))
-        {
-            colliders.Add(other);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (colliders.Contains(other))
-        {
-            colliders.Remove(other);
-        }
     }
 }
