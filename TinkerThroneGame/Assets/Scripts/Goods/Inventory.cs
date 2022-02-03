@@ -22,6 +22,15 @@ public class Inventory : MonoBehaviour
 			this.volumeCapacity = volumeCapacity;
 		}
 
+		public Capacity(Stack stack)
+		{
+			Good goodType = GoodManager.GetInstance().GetGood(stack.goodName);
+
+			this.unitCapacity = (int)stack.amount;
+			this.massCapacity = stack.amount * goodType.mass;
+			this.volumeCapacity = stack.amount * goodType.volume;
+		}
+
 		public static Capacity operator +(Capacity lhs, Capacity rhs)
 		{
 			return new Capacity((lhs.unitCapacity >= 0 && rhs.unitCapacity >= 0) ? lhs.unitCapacity + rhs.unitCapacity : -1,
@@ -34,6 +43,18 @@ public class Inventory : MonoBehaviour
 			return new Capacity((lhs.unitCapacity >= 0 && rhs.unitCapacity >= 0) ? lhs.unitCapacity - rhs.unitCapacity : -1,
 				(lhs.massCapacity >= 0.0f && rhs.massCapacity >= 0.0f) ? lhs.massCapacity - rhs.massCapacity : -1.0f,
 				(lhs.volumeCapacity >= 0.0f && rhs.volumeCapacity >= 0.0f) ? lhs.volumeCapacity - rhs.volumeCapacity : -1.0f);
+		}
+
+		public uint ToAmount(string goodName)
+		{
+			Good goodType = GoodManager.GetInstance().GetGood(goodName);
+
+			return (uint) Mathf.Min(unitCapacity, massCapacity / goodType.mass, volumeCapacity / goodType.volume);
+		}
+
+		public uint ToAmount(Good goodType)
+		{
+			return (uint) Mathf.Min(unitCapacity, massCapacity / goodType.mass, volumeCapacity / goodType.volume);
 		}
 	}
 
@@ -58,8 +79,7 @@ public class Inventory : MonoBehaviour
 	// Storing will fail if not all Goods fit into the Inventory in which case no Goods at all will be stored.
 	public bool Deposit(Stack goodStack)
 	{
-		Good goodType = goodManager.GetGood(goodStack.goodName);
-		Capacity requiredCapacity = new Capacity((int) goodStack.amount, goodType.mass * goodStack.amount, goodType.volume * goodStack.amount);
+		Capacity requiredCapacity = new Capacity(goodStack);
 		if(CheckCapacity(requiredCapacity))
 		{
 			if(!storedGoods.TryAdd(goodStack.goodName, goodStack.amount))
@@ -83,9 +103,7 @@ public class Inventory : MonoBehaviour
 		if(storedGoods.ContainsKey(goodStack.goodName) && storedGoods[goodStack.goodName] >= goodStack.amount)
 		{
 			storedGoods[goodStack.goodName] -= goodStack.amount;
-
-			Good goodType = goodManager.GetGood(goodStack.goodName);
-			freeCapacity += new Capacity((int) goodStack.amount, goodType.mass * goodStack.amount, goodType.volume * goodStack.amount);
+			freeCapacity += new Capacity(goodStack);
 
 			return true;
 		}
