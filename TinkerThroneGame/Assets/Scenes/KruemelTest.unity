@@ -4116,6 +4116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc77c718f87d994999e5d07101971d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forestController: {fileID: 0}
 --- !u!4 &1006790978
 Transform:
   m_ObjectHideFlags: 0
@@ -6692,6 +6693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc77c718f87d994999e5d07101971d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  forestController: {fileID: 0}
 --- !u!4 &1546337293
 Transform:
   m_ObjectHideFlags: 0
@@ -8320,6 +8322,7 @@ MonoBehaviour:
   forestArea: 10
   forestDensity: 50000
   minWoodAmount: 0.2
+  ventureAreaMultiplier: 1.2
   woodGrowTime: 80
   woodGrowInterval: 600
 --- !u!4 &2136661416
