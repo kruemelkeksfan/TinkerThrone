@@ -7,12 +7,13 @@ public class InventoryTester : MonoBehaviour
     [SerializeField] private TMPro.TMP_Text text = null;
     [SerializeField] private TMPro.TMP_Dropdown dropdown = null;
     [SerializeField] private TMPro.TMP_InputField input = null;
+    [SerializeField] private Capacity inventoryCapacity = new Capacity(6, 12000.0f, 10.0f);
     private Inventory inventory = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        inventory = gameObject.GetComponent<Inventory>();
+        inventory = new Inventory(inventoryCapacity);
     }
 
     // Update is called once per frame
@@ -31,13 +32,21 @@ public class InventoryTester : MonoBehaviour
 	{
         string goodName = dropdown.options[dropdown.value].text;
         uint amount = uint.Parse(input.text);
-        Debug.Log("Deposit " + amount + " " + goodName + " " + inventory.Deposit(new Stack(goodName, amount)));
+
+        if(inventory.ReserveDeposit(new Stack(goodName, amount)))
+            Debug.Log("Deposit " + amount + " " + goodName + " " + inventory.Deposit(new Stack(goodName, amount)));
+        else
+            Debug.Log("Insufficient Capacity");
 	}
 
     public void Withdraw()
 	{
         string goodName = dropdown.options[dropdown.value].text;
         uint amount = uint.Parse(input.text);
-        Debug.Log("Withdraw " + amount + " " + goodName + " " + inventory.Withdraw(new Stack(goodName, amount)));
+
+        if(inventory.ReserveWithdrawal(new Stack(goodName, amount)))
+            Debug.Log("Withdraw " + amount + " " + goodName + " " + inventory.Withdraw(new Stack(goodName, amount)));
+        else
+            Debug.Log("Insufficient Stock");
 	}
 }

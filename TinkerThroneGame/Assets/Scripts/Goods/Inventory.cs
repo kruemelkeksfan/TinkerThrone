@@ -3,75 +3,61 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inventory : MonoBehaviour
+public class Inventory
 {
-	[Serializable]
-	public struct Capacity
-	{
-		[Tooltip("How many Units of Goods an Inventory holds or can hold, negative Values for infinite.")]
-		public int unitCapacity;
-		[Tooltip("How much Mass an Inventory holds or can hold, negative Values for infinite.")]
-		public float massCapacity;
-		[Tooltip("How much Volume an Inventory holds or can hold, negative Values for infinite.")]
-		public float volumeCapacity;
-
-		public Capacity(int unitCapacity, float massCapacity, float volumeCapacity)
-		{
-			this.unitCapacity = unitCapacity;
-			this.massCapacity = massCapacity;
-			this.volumeCapacity = volumeCapacity;
-		}
-
-		public Capacity(Stack stack)
-		{
-			Good goodType = GoodManager.GetInstance().GetGood(stack.goodName);
-
-			this.unitCapacity = (int)stack.amount;
-			this.massCapacity = stack.amount * goodType.mass;
-			this.volumeCapacity = stack.amount * goodType.volume;
-		}
-
-		public static Capacity operator +(Capacity lhs, Capacity rhs)
-		{
-			return new Capacity((lhs.unitCapacity >= 0 && rhs.unitCapacity >= 0) ? lhs.unitCapacity + rhs.unitCapacity : -1,
-				(lhs.massCapacity >= 0.0f && rhs.massCapacity >= 0.0f) ? lhs.massCapacity + rhs.massCapacity : -1.0f,
-				(lhs.volumeCapacity >= 0.0f && rhs.volumeCapacity >= 0.0f) ? lhs.volumeCapacity + rhs.volumeCapacity : -1.0f);
-		}
-
-		public static Capacity operator -(Capacity lhs, Capacity rhs)
-		{
-			return new Capacity((lhs.unitCapacity >= 0 && rhs.unitCapacity >= 0) ? lhs.unitCapacity - rhs.unitCapacity : -1,
-				(lhs.massCapacity >= 0.0f && rhs.massCapacity >= 0.0f) ? lhs.massCapacity - rhs.massCapacity : -1.0f,
-				(lhs.volumeCapacity >= 0.0f && rhs.volumeCapacity >= 0.0f) ? lhs.volumeCapacity - rhs.volumeCapacity : -1.0f);
-		}
-
-		public uint ToAmount(string goodName)
-		{
-			Good goodType = GoodManager.GetInstance().GetGood(goodName);
-
-			return (uint) Mathf.Min(unitCapacity, massCapacity / goodType.mass, volumeCapacity / goodType.volume);
-		}
-
-		public uint ToAmount(Good goodType)
-		{
-			return (uint) Mathf.Min(unitCapacity, massCapacity / goodType.mass, volumeCapacity / goodType.volume);
-		}
-	}
-
-	[SerializeField] private Capacity maxCapacity = new Capacity(-1, -1.0f, -1.0f);
-	private GoodManager goodManager = null;
+	private Capacity maxCapacity = new Capacity(-1, -1.0f, -1.0f);
+	private Dictionary<string, uint> reservedCapacities = null;
+	private Dictionary<string, uint> reservedGoods = null;
 	private Dictionary<string, uint> storedGoods = null;
+	private Capacity reservedCapacity = new Capacity(0, 0.0f, 0.0f);
+	private Capacity temporarilyOccupiedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity freeCapacity = new Capacity(-1, -1.0f, -1.0f);
 
-	private void Awake()
+	public Inventory(Capacity maxCapacity)
 	{
+		this.maxCapacity = maxCapacity;
+
+		reservedCapacities = new Dictionary<string, uint>();
+		reservedGoods = new Dictionary<string, uint>();
 		storedGoods = new Dictionary<string, uint>();
 		freeCapacity = maxCapacity;
 	}
 
-	private void Start()
+	public bool ReserveDeposit(Stack goodStack)
 	{
-		goodManager = GoodManager.GetInstance();
+		Capacity requiredCapacity = new Capacity(goodStack);
+		if(requiredCapacity <= freeCapacity)
+		{
+			if(!reservedCapacities.TryAdd(goodStack.goodName, goodStack.amount))
+			{
+				reservedCapacities[goodStack.goodName] += goodStack.amount;
+			}
+
+			reservedCapacity += requiredCapacity;
+			freeCapacity -= requiredCapacity;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool ReserveWithdrawal(Stack goodStack)
+	{
+		if(storedGoods.ContainsKey(goodStack.goodName) && storedGoods[goodStack.goodName] >= goodStack.amount)
+		{
+			if(!reservedGoods.TryAdd(goodStack.goodName, goodStack.amount))
+			{
+				reservedGoods[goodStack.goodName] += goodStack.amount;
+			}
+			storedGoods[goodStack.goodName] -= goodStack.amount;
+
+			temporarilyOccupiedCapacity += new Capacity(goodStack);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	// Stores a Stack of Goods in this Inventory.
@@ -80,16 +66,22 @@ public class Inventory : MonoBehaviour
 	public bool Deposit(Stack goodStack)
 	{
 		Capacity requiredCapacity = new Capacity(goodStack);
-		if(CheckCapacity(requiredCapacity))
+		if(reservedCapacities.ContainsKey(goodStack.goodName) && reservedCapacities[goodStack.goodName] >= goodStack.amount)
 		{
+			reservedCapacities[goodStack.goodName] -= goodStack.amount;
+
 			if(!storedGoods.TryAdd(goodStack.goodName, goodStack.amount))
 			{
 				storedGoods[goodStack.goodName] += goodStack.amount;
 			}
 
-			freeCapacity -= requiredCapacity;
+			reservedCapacity -= requiredCapacity;
 
 			return true;
+		}
+		else
+		{
+			Debug.LogError(this + " received a Deposit()-Request for " + goodStack + " without proper Reservation!");
 		}
 
 		return false;
@@ -100,23 +92,22 @@ public class Inventory : MonoBehaviour
 	// Retrieving will fail if an insufficient amount of Goods is stored in which case no Goods at all will be retrieved.
 	public bool Withdraw(Stack goodStack)
 	{
-		if(storedGoods.ContainsKey(goodStack.goodName) && storedGoods[goodStack.goodName] >= goodStack.amount)
+		if(reservedGoods.ContainsKey(goodStack.goodName) && reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
-			storedGoods[goodStack.goodName] -= goodStack.amount;
-			freeCapacity += new Capacity(goodStack);
+			reservedGoods[goodStack.goodName] -= goodStack.amount;
+
+			Capacity requiredCapacity = new Capacity(goodStack);
+			temporarilyOccupiedCapacity -= requiredCapacity;
+			freeCapacity += requiredCapacity;
 
 			return true;
 		}
+		else
+		{
+			Debug.LogError(this + " received a Withdraw()-Request for " + goodStack + " without proper Reservation!");
+		}
 
 		return false;
-	}
-
-	// Returns if the required Capacity would be free in this Inventory.
-	public bool CheckCapacity(Capacity requiredCapacity)
-	{
-		return (freeCapacity.unitCapacity < 0 || freeCapacity.unitCapacity >= requiredCapacity.unitCapacity)
-			&& (freeCapacity.massCapacity < 0.0f || freeCapacity.massCapacity >= requiredCapacity.massCapacity)
-			&& (freeCapacity.volumeCapacity < 0.0f || freeCapacity.volumeCapacity >= requiredCapacity.volumeCapacity);
 	}
 
 	// Returns the stored amount of a Good in this Inventory
@@ -134,6 +125,16 @@ public class Inventory : MonoBehaviour
 	public Dictionary<string, uint> GetStoredGoods()
 	{
 		return storedGoods;
+	}
+
+	public Capacity GetReservedCapacity()
+	{
+		return reservedCapacity;
+	}
+
+	public Capacity GetTemporarilyOccupiedCapacity()
+	{
+		return temporarilyOccupiedCapacity;
 	}
 
 	// Returns the free Capacity of this Inventory.

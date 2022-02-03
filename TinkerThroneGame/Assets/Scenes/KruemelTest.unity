@@ -6546,7 +6546,6 @@ GameObject:
   - component: {fileID: 1522662802}
   - component: {fileID: 1522662801}
   - component: {fileID: 1522662800}
-  - component: {fileID: 1522662805}
   - component: {fileID: 1522662804}
   m_Layer: 0
   m_Name: MagicInventoryCube
@@ -6648,21 +6647,9 @@ MonoBehaviour:
   text: {fileID: 1278198279}
   dropdown: {fileID: 2030367649}
   input: {fileID: 814338758}
---- !u!114 &1522662805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1522662799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12b4ed5a1a78334dafe40842a220bdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxCapacity:
-    unitCapacity: 12
-    massCapacity: 17999.99
+  inventoryCapacity:
+    unitCapacity: 6
+    massCapacity: 12000
     volumeCapacity: 20
 --- !u!1 &1546337291
 GameObject:
