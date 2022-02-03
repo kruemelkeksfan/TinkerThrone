@@ -22,15 +22,6 @@ public class Inventory : MonoBehaviour
 			this.volumeCapacity = volumeCapacity;
 		}
 
-<<<<<<< HEAD
-		public Capacity(string goodName, uint amount)
-		{
-			Good goodType = GoodManager.GetInstance().GetGood(goodName);
-
-			this.unitCapacity = (int)amount;
-			this.massCapacity = amount * goodType.mass;
-			this.volumeCapacity = amount * goodType.volume;
-=======
 		public Capacity(Stack stack)
 		{
 			Good goodType = GoodManager.GetInstance().GetGood(stack.goodName);
@@ -38,7 +29,6 @@ public class Inventory : MonoBehaviour
 			this.unitCapacity = (int)stack.amount;
 			this.massCapacity = stack.amount * goodType.mass;
 			this.volumeCapacity = stack.amount * goodType.volume;
->>>>>>> 0915882d2afe2c8bd1f377feb57835ec82fc4baa
 		}
 
 		public static Capacity operator +(Capacity lhs, Capacity rhs)
