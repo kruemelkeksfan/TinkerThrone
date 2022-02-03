@@ -31,6 +31,18 @@
       "buildingSteps": 5
     },
     {
+      "moduleName": "PlankWall",
+      "materialId": 3,
+      "amountNeeded": 7,
+      "buildingSteps": 7
+    },
+    {
+      "moduleName": "PlankRoof",
+      "materialId": 3,
+      "amountNeeded": 10,
+      "buildingSteps": 10
+    },
+    {
       "moduleName": "ThatchRoof",
       "materialId": 4,
       "amountNeeded": 20,
