@@ -28,6 +28,19 @@ Trade
 			Resting costs Money
 				Costs are added to Good Sale Price
 				Profit is given to Tavern owning Player
+	Bandits
+		Can rob Traders
+		Traders need to be compensated for Robberies by additional Payments
+		Bandits can be cleared through Patrols by the King or Soldiers in active Gameplay
+		Bandits are attracted to Areas with more Players
+Expeditions
+	Can be sent to a distant Continent
+	Led by King or other Leader
+	Semi-active or passive Gameplay
+	Possible Rewards
+		Research Boosts to reduce Research Times from Years to Months or Weeks
+			Ancient Culture Relicts or Plans
+			Exotic Plants
 Map
 	Players can choose their Town Location on an Overview Map
 	Map consists of square Tiles
@@ -44,6 +57,11 @@ Map
 			Abundant Mineral and Metal Deposits
 			Slow Movement Speed
 	Players can build Roads for faster Trade Connections and to route more Traders into their Taverns
+	Move Town
+		Town can be moved for Money Fee and Cooldown
+		Move can be bought at a Druid/Shaman
+		Moving takes about 12h during which all Productions and Activities are halted
+		How exactly the whole Town is moved across the Map is not explained (we could clearly make something up, but we chose not to, bc it would be trivial)
 Skill System
 	Pawn XP
 		Gained by performing Actions
