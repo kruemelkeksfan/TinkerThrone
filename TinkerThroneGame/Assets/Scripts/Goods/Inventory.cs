@@ -22,6 +22,15 @@ public class Inventory : MonoBehaviour
 			this.volumeCapacity = volumeCapacity;
 		}
 
+		public Capacity(string goodName, uint amount)
+		{
+			Good goodType = GoodManager.GetInstance().GetGood(goodName);
+
+			this.unitCapacity = (int)amount;
+			this.massCapacity = amount * goodType.mass;
+			this.volumeCapacity = amount * goodType.volume;
+		}
+
 		public static Capacity operator +(Capacity lhs, Capacity rhs)
 		{
 			return new Capacity((lhs.unitCapacity >= 0 && rhs.unitCapacity >= 0) ? lhs.unitCapacity + rhs.unitCapacity : -1,

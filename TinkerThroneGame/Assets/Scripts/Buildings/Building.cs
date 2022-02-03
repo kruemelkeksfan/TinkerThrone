@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class Building : MonoBehaviour
+public class Building : InventoryUser
 {
 	[Tooltip("The Name of this Building.")]
 	public string buildingName = "Unnamed Building";
@@ -16,10 +16,14 @@ public class Building : MonoBehaviour
     ConstructionSpace constructionSpace;
     UpgradeSpace upgradeSpace;
 
-    private void Awake()
+    bool active = true;
+
+
+    private void Start()
     {
         constructionSpace = GetComponentInChildren<ConstructionSpace>();
         upgradeSpace = GetComponentInChildren<UpgradeSpace>();
+        inventory = GetComponent<Inventory>();
     }
     public ConstructionSpace GetConstructionSpace()
     {
@@ -29,4 +33,15 @@ public class Building : MonoBehaviour
     {
         return upgradeSpace;
     }
+    public Inventory GetInventory()
+    {
+        return inventory;
+    }
+
+    public void ActivateBuilding()
+    {
+        SetLogisticsValues();
+        UpdateLogisticCommissions();
+    }
+   
 }

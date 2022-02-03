@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConstructionManager : MonoBehaviour
+public class ConstructionManager : InventoryUser
 {
     // Start is called before the first frame update
     void Start()
