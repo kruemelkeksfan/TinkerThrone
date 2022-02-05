@@ -20,6 +20,13 @@ public class Inventory
 		reservedCapacities = new Dictionary<string, uint>();
 		reservedGoods = new Dictionary<string, uint>();
 		storedGoods = new Dictionary<string, uint>();
+		foreach(String goodName in GoodManager.GetInstance().GetGoodDictionary().Keys)
+		{
+			reservedCapacities.Add(goodName, 0);
+			reservedGoods.Add(goodName, 0);
+			storedGoods.Add(goodName, 0);
+		}
+
 		freeCapacity = maxCapacity;
 	}
 
@@ -28,11 +35,8 @@ public class Inventory
 		Capacity requiredCapacity = new Capacity(goodStack);
 		if(requiredCapacity <= freeCapacity)
 		{
-			if(!reservedCapacities.TryAdd(goodStack.goodName, goodStack.amount))
-			{
-				reservedCapacities[goodStack.goodName] += goodStack.amount;
-			}
-
+			reservedCapacities[goodStack.goodName] += goodStack.amount;
+		
 			reservedCapacity += requiredCapacity;
 			freeCapacity -= requiredCapacity;
 
@@ -44,12 +48,9 @@ public class Inventory
 
 	public bool ReserveWithdrawal(Stack goodStack)
 	{
-		if(storedGoods.ContainsKey(goodStack.goodName) && storedGoods[goodStack.goodName] >= goodStack.amount)
+		if(storedGoods[goodStack.goodName] >= goodStack.amount)
 		{
-			if(!reservedGoods.TryAdd(goodStack.goodName, goodStack.amount))
-			{
-				reservedGoods[goodStack.goodName] += goodStack.amount;
-			}
+			reservedGoods[goodStack.goodName] += goodStack.amount;
 			storedGoods[goodStack.goodName] -= goodStack.amount;
 
 			temporarilyOccupiedCapacity += new Capacity(goodStack);
@@ -65,17 +66,12 @@ public class Inventory
 	// Storing will fail if not all Goods fit into the Inventory in which case no Goods at all will be stored.
 	public bool Deposit(Stack goodStack)
 	{
-		Capacity requiredCapacity = new Capacity(goodStack);
-		if(reservedCapacities.ContainsKey(goodStack.goodName) && reservedCapacities[goodStack.goodName] >= goodStack.amount)
+		if(reservedCapacities[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedCapacities[goodStack.goodName] -= goodStack.amount;
+			storedGoods[goodStack.goodName] += goodStack.amount;
 
-			if(!storedGoods.TryAdd(goodStack.goodName, goodStack.amount))
-			{
-				storedGoods[goodStack.goodName] += goodStack.amount;
-			}
-
-			reservedCapacity -= requiredCapacity;
+			reservedCapacity -= new Capacity(goodStack);
 
 			return true;
 		}
@@ -92,7 +88,7 @@ public class Inventory
 	// Retrieving will fail if an insufficient amount of Goods is stored in which case no Goods at all will be retrieved.
 	public bool Withdraw(Stack goodStack)
 	{
-		if(reservedGoods.ContainsKey(goodStack.goodName) && reservedGoods[goodStack.goodName] >= goodStack.amount)
+		if(reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedGoods[goodStack.goodName] -= goodStack.amount;
 
@@ -113,12 +109,7 @@ public class Inventory
 	// Returns the stored amount of a Good in this Inventory
 	public uint GetGoodAmount(string goodName)
 	{
-		if(storedGoods.ContainsKey(goodName))
-		{
-			return storedGoods[goodName];
-		}
-
-		return 0;
+		return storedGoods[goodName];
 	}
 
 	// Returns a Dictionary with the names and amounts of all currently stored Goods in this Inventory
