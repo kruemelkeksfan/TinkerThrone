@@ -8,17 +8,26 @@ public class InventoryUser : MonoBehaviour
     [SerializeField] LogisticValue[] specialLogisticValues;
     [SerializeField] int defaultPriorityBeeingEmpty;
     [SerializeField] int defaultPriorityBeeingFull;
-    [SerializeField] int defaultTargetAmount;
+    [SerializeField] uint defaultTargetAmount;
 
-    public LogisticCommision[] logisticInCommisions;
-    public LogisticCommision[] logisticOutCommisions;
+    public List<LogisticCommission> logisticInCommissions;
+    public List<LogisticCommission> logisticOutCommissions;
+    protected bool hasInventory = false;
     protected Inventory inventory;
-    protected Dictionary<string, LogisticValue> logisticsValues;
+    [SerializeField] Capacity inventoryCapacity;
+    protected Dictionary<string, LogisticValue> logisticValues;
 
+    public Inventory GetInventory()
+    {
+        return inventory;
+    }
 
     protected void SetLogisticsValues()
     {
-        if (inventory == null) return;
+        if (inventory == null)
+        {
+            inventory = new Inventory(inventoryCapacity);
+        }
 
         //TODO switch to only specialized for produktion/construction or default values for storage
         Dictionary<string, LogisticValue> logisticsValues = new Dictionary<string, LogisticValue>();
@@ -36,24 +45,32 @@ public class InventoryUser : MonoBehaviour
                 logisticsValues[logisticsValue.goodName] = logisticsValue;
             }
         }
-        this.logisticsValues = logisticsValues;
+        this.logisticValues = logisticsValues;
         return;
     }
 
-    protected void UpdateLogisticCommissions()
+    public List<LogisticCommission>[] UpdateLogisticCommissions()
     {
         Dictionary<string,uint> storedGoods = inventory.GetStoredGoods();
 
-        List<LogisticCommision> inCommisions = new List<LogisticCommision>();
-        List<LogisticCommision> outCommisions = new List<LogisticCommision>();
+        logisticInCommissions = new List<LogisticCommission>();
+        logisticOutCommissions = new List<LogisticCommission>();
 
-        foreach(LogisticValue logisticValue in logisticsValues.Values)
+        foreach(LogisticValue logisticValue in logisticValues.Values)
         {
-            uint amount = storedGoods[logisticValue.goodName];
+            uint currentAmount = storedGoods[logisticValue.goodName];
 
+            if (currentAmount == logisticValue.targetAmount) continue;
+            else if(currentAmount > logisticValue.targetAmount)
+            {
+                logisticOutCommissions.Add(new LogisticCommission(inventory, logisticValue.goodName, currentAmount, logisticValue.PriorityForHigherAmount(currentAmount)));
+            }
+            else
+            {
+                logisticInCommissions.Add(new LogisticCommission(inventory, logisticValue.goodName, currentAmount, logisticValue.PriorityForLowerAmount(currentAmount)));
+            }
         }
-
-
+        return new List<LogisticCommission>[] { logisticInCommissions, logisticOutCommissions };
     }
 
 }

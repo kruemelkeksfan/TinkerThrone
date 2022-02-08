@@ -9,15 +9,15 @@ struct LogisticJob
 {
     Inventory sourceInventory;
     Inventory tragetInventory;
-    Good good;
-    int amount;
-    int priority;
+    string goodName;
+    uint amount;
+    float priority;
 
-    public LogisticJob(Inventory sourceInventory, Inventory tragetInventory, Good good, int amount, int priority)
+    public LogisticJob(Inventory sourceInventory, Inventory tragetInventory, string goodName, uint amount, float priority)
     {
         this.sourceInventory = sourceInventory;
         this.tragetInventory = tragetInventory;
-        this.good = good;
+        this.goodName = goodName;
         this.amount = amount;
         this.priority = priority;
     }

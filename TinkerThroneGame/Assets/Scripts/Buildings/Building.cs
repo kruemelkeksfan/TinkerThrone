@@ -13,35 +13,34 @@ public class Building : InventoryUser
 	[Tooltip("The 3D-Model for this Building.")]
 	public  GameObject buildingModel = null;
 	[SerializeField] Stack[] neededMaterials;
-    ConstructionSpace constructionSpace;
+    public ConstructionSpace constructionSpace;
     UpgradeSpace upgradeSpace;
 
     bool active = true;
 
 
-    private void Start()
+    private void Awake()
     {
         constructionSpace = GetComponentInChildren<ConstructionSpace>();
         upgradeSpace = GetComponentInChildren<UpgradeSpace>();
-        inventory = GetComponent<Inventory>();
     }
     public ConstructionSpace GetConstructionSpace()
     {
+        if (!constructionSpace)
+        {
+            constructionSpace = GetComponentInChildren<ConstructionSpace>();
+        }
         return constructionSpace;
     }
     public UpgradeSpace GetUpgradeSpace()
     {
         return upgradeSpace;
     }
-    public Inventory GetInventory()
-    {
-        return inventory;
-    }
+
 
     public void ActivateBuilding()
     {
         SetLogisticsValues();
-        UpdateLogisticCommissions();
     }
    
 }

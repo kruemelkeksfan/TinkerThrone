@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2189416536792818042}
   - component: {fileID: 5394129714099071211}
   - component: {fileID: 4512580937307336250}
-  - component: {fileID: 4726104552692011915}
   m_Layer: 7
   m_Name: Lumber1
   m_TagString: Untagged
@@ -49,15 +48,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  specialLogisticValues: []
+  defaultPriorityBeeingEmpty: 0
+  defaultPriorityBeeingFull: 0
+  defaultTargetAmount: 0
+  inventoryCapacity:
+    unitCapacity: 0
+    massCapacity: 0
+    volumeCapacity: 0
   buildingName: Unnamed Building
   recipes: []
   buildingModel: {fileID: 0}
   neededMaterials:
   - goodName: 0
     amount: 5
-  specialLogisticValues: []
-  defaultPriority: 0
-  defaultTargetAmount: 0
+  constructionSpace: {fileID: 0}
 --- !u!65 &4512580937307336250
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -71,22 +76,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4726104552692011915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3299994033014394870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12b4ed5a1a78334dafe40842a220bdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxCapacity:
-    unitCapacity: -1
-    massCapacity: -1
-    volumeCapacity: -1
 --- !u!1 &4918341520560404638
 GameObject:
   m_ObjectHideFlags: 0

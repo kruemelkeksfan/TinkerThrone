@@ -6,7 +6,7 @@ public class LogisticsManager : MonoBehaviour
 {
     public static LogisticsManager instance = null;
 
-    Dictionary<Inventory, Dictionary<string, LogisticValue>> inventoryDictionary = new Dictionary<Inventory, Dictionary<string, LogisticValue>>();
+    public List<InventoryUser> inventoryUsers = new List<InventoryUser>();
     List<LogisticJob> activeJobs = new List<LogisticJob>();
     List<LogisticJob> availableJobs = new List<LogisticJob>();
 
@@ -19,38 +19,54 @@ public class LogisticsManager : MonoBehaviour
     {
         instance = this;
     }
-
-    //TODO Replace with order system
-    public void AddInventory(Inventory inventory, Dictionary<string, LogisticValue> logisticValues)
+    private void Start()
     {
-        if (inventoryDictionary.ContainsKey(inventory))
-        {
-            inventoryDictionary[inventory] = logisticValues;
-        }
-        else
-        {
-            inventoryDictionary.Add(inventory, logisticValues);
-        }
-
+        StartCoroutine(UpdateCycle()); 
     }
 
-    public void RemoveInventory(Inventory inventory)
+    public void AddInventory(InventoryUser inventory)
+    {
+        if (!inventoryUsers.Contains(inventory))
+        {
+            inventoryUsers.Add(inventory);
+        }
+    }
+
+    public void RemoveInventory(InventoryUser inventory)
     {
         //TODO check for running jobs
-        if (inventoryDictionary.ContainsKey(inventory))
+        if (inventoryUsers.Contains(inventory))
         {
-            inventoryDictionary.Remove(inventory);
+            inventoryUsers.Remove(inventory);
         }
     }
 
     IEnumerator UpdateCycle()
     {
-        yield return new WaitForSeconds(0.5f);
-        UpdateLogisticsJobs();
+        while (true)
+        {
+            yield return new WaitForSeconds(5f);
+            UpdateLogisticsJobs();
+        }
     }
 
     private void UpdateLogisticsJobs()
     {
-        
+        List<LogisticCommission> inCommissions = new List<LogisticCommission>();
+        List<LogisticCommission> outCommissions = new List<LogisticCommission>();
+
+        foreach (InventoryUser inventoryUser in inventoryUsers)
+        {
+            List<LogisticCommission>[] inventoryLogisticCommissions = inventoryUser.UpdateLogisticCommissions();
+            inCommissions.AddRange(inventoryLogisticCommissions[0]);
+            outCommissions.AddRange(inventoryLogisticCommissions[1]);
+        }
+        if (inCommissions.Count == 0 || outCommissions.Count == 0) return;
+        inCommissions.Sort();
+        outCommissions.Sort();
+        /*foreach (LogisticCommission logisticCommission in outCommissions)
+        {
+            Debug.Log(logisticCommission.priority);
+        }*/
     }
 }

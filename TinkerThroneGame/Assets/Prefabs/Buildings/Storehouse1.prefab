@@ -177,6 +177,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  specialLogisticValues:
+  - goodName: Wood
+    logisticsPriorityBeeingEmpty: 5
+    logisticsPriorityBeeingFull: 6
+    targetAmount: 50
+  - goodName: Lumber
+    logisticsPriorityBeeingEmpty: 2
+    logisticsPriorityBeeingFull: 4
+    targetAmount: 25
+  defaultPriorityBeeingEmpty: 5
+  defaultPriorityBeeingFull: 6
+  defaultTargetAmount: 50
+  inventoryCapacity:
+    unitCapacity: -1
+    massCapacity: -1
+    volumeCapacity: -1
   buildingName: Unnamed Building
   recipes: []
   buildingModel: {fileID: 1990378455300879859}
@@ -185,10 +201,7 @@ MonoBehaviour:
     amount: 22
   - goodName: 3
     amount: 108
-  specialLogisticValues: []
-  defaultPriorityBeeingEmpty: 0
-  defaultPriorityBeeingFull: 0
-  defaultTargetAmount: 0
+  constructionSpace: {fileID: 0}
 --- !u!65 &3201354548287207068
 BoxCollider:
   m_ObjectHideFlags: 0

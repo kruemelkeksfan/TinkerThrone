@@ -10,7 +10,7 @@ public class ConstructionPlacementManager : MonoBehaviour
     [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
     [SerializeField] NavMeshManager navMeshManager;
     Building prefab;
-    ConstructionSpace constructionSpace;
+    public ConstructionSpace constructionSpace;
     [SerializeField] Building currentBuilding;
     public bool isBuilding = false;
     Vector3 modulePos = Vector3.zero;
@@ -122,6 +122,8 @@ public class ConstructionPlacementManager : MonoBehaviour
         currentBuilding.transform.SetParent(navMeshManager.transform);
         navMeshManager.UpdateNavMesh();
         //!!TODO start building
+        LogisticsManager.GetInstance().AddInventory(currentBuilding); // move to ConstructionManager
+        currentBuilding.ActivateBuilding();// move to ConstructionManager
         //reset current building..
         currentBuilding = null;
         //..and building selection
