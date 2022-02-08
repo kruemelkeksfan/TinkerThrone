@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 public struct LogisticCommission : IComparable<LogisticCommission>
 {
-    Inventory sourceInventory;
-    string goodName;
-    uint amount;
-    public float priority;
+    public readonly Inventory sourceInventory;
+    public readonly string goodName;
+    public readonly uint amount;
+    public readonly float priority;
 
     public LogisticCommission(Inventory sourceInventory, string goodName, uint amount, float priority)
     {
