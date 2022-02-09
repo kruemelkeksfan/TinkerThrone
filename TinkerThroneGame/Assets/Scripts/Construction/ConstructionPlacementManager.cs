@@ -28,10 +28,6 @@ public class ConstructionPlacementManager : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetButtonUp("Building Menu"))
-        {
-            uiNavigation.ToggleBuildingUI();
-        }
         if (Input.GetButtonUp("Fire2") && !EventSystem.current.IsPointerOverGameObject())
         {
             SelectBuildingType(null);
