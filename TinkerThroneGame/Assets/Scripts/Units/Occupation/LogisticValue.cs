@@ -16,15 +16,17 @@ public struct LogisticValue
         this.targetAmount = targetAmount;
     }
 
-    public float PriorityForHigherAmount(uint currentAmount)
+    public float PriorityForHigherAmount(uint currentAmount, Capacity maxCapacity)
     {
-        float amountRatio = 1 - ((float)targetAmount / currentAmount);
+        uint maxAmount = maxCapacity.ToAmount(goodName);
+        if (maxAmount == 0) maxAmount = 10000; //preventing infinit priority with infinit capacity
+        float amountRatio = ((float)(currentAmount - targetAmount) / maxAmount);
         int priorityDif = logisticsPriorityBeeingFull - logisticsPriorityBeeingEmpty;
         return logisticsPriorityBeeingEmpty + priorityDif * amountRatio;
     }
     public float PriorityForLowerAmount(uint currentAmount)
     {
-        float amountRatio = 1 - ((float)currentAmount / targetAmount);
+        float amountRatio = ((float)currentAmount / targetAmount);
         int priorityDif = logisticsPriorityBeeingFull - logisticsPriorityBeeingEmpty;
         return logisticsPriorityBeeingEmpty + priorityDif * amountRatio;
     }

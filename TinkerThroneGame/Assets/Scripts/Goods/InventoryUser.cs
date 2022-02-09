@@ -9,6 +9,7 @@ public class InventoryUser : MonoBehaviour
     [SerializeField] int defaultPriorityBeeingEmpty;
     [SerializeField] int defaultPriorityBeeingFull;
     [SerializeField] uint defaultTargetAmount;
+    [SerializeField] Stack[] testStacks;
 
     public List<LogisticCommission> logisticInCommissions;
     public List<LogisticCommission> logisticOutCommissions;
@@ -27,6 +28,11 @@ public class InventoryUser : MonoBehaviour
         if (inventory == null)
         {
             inventory = new Inventory(inventoryCapacity);
+            foreach(Stack stack in testStacks)
+            {
+                inventory.ReserveDeposit(stack);
+                inventory.Deposit(stack);
+            }
         }
 
         //TODO switch to only specialized for produktion/construction or default values for storage
@@ -63,7 +69,7 @@ public class InventoryUser : MonoBehaviour
             if (currentAmount == logisticValue.targetAmount) continue;
             else if(currentAmount > logisticValue.targetAmount)
             {
-                logisticOutCommissions.Add(new LogisticCommission(inventory, logisticValue.goodName, currentAmount, logisticValue.PriorityForHigherAmount(currentAmount)));
+                logisticOutCommissions.Add(new LogisticCommission(inventory, logisticValue.goodName, currentAmount-logisticValue.targetAmount, logisticValue.PriorityForHigherAmount(currentAmount, inventoryCapacity)));
             }
             else
             {

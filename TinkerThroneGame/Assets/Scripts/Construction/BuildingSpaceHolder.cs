@@ -7,6 +7,11 @@ public class BuildingSpaceHolder : MonoBehaviour
     List<BuildingSpace> buildingSpaceList = new List<BuildingSpace>();
     bool isActive = false;
 
+    private void Awake()
+    {
+        buildingSpaceList.AddRange(gameObject.GetComponentsInChildren<BuildingSpace>());
+    }
+
     public void AddBuildingSpaces(BuildingSpace[] buildingSpaces)
     {
         foreach (BuildingSpace buildingSpace in buildingSpaces)

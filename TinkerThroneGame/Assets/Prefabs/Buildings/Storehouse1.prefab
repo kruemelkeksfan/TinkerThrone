@@ -177,18 +177,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  specialLogisticValues:
-  - goodName: Wood
-    logisticsPriorityBeeingEmpty: 5
-    logisticsPriorityBeeingFull: 6
-    targetAmount: 50
-  - goodName: Lumber
-    logisticsPriorityBeeingEmpty: 2
-    logisticsPriorityBeeingFull: 4
-    targetAmount: 25
+  specialLogisticValues: []
   defaultPriorityBeeingEmpty: 5
   defaultPriorityBeeingFull: 6
   defaultTargetAmount: 50
+  testStacks: []
   inventoryCapacity:
     unitCapacity: -1
     massCapacity: -1
@@ -202,6 +195,8 @@ MonoBehaviour:
   - goodName: 3
     amount: 108
   constructionSpace: {fileID: 0}
+  upgradeSpace: {fileID: 0}
+  active: 0
 --- !u!65 &3201354548287207068
 BoxCollider:
   m_ObjectHideFlags: 0

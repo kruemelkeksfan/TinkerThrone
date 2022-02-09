@@ -13,14 +13,21 @@ public class Building : InventoryUser
 	[Tooltip("The 3D-Model for this Building.")]
 	public  GameObject buildingModel = null;
 	[SerializeField] Stack[] neededMaterials;
-    public ConstructionSpace constructionSpace;
-    UpgradeSpace upgradeSpace;
+    [SerializeField] ConstructionSpace constructionSpace;
+    [SerializeField] UpgradeSpace upgradeSpace;
 
-    bool active = true;
+    [SerializeField] bool active = false;
 
 
-    private void Awake()
+    private void Start()
     {
+        
+        if (active)
+        {
+            ActivateBuilding();
+            LogisticsManager.GetInstance().AddInventory(this);
+            return;
+        }
         constructionSpace = GetComponentInChildren<ConstructionSpace>();
         upgradeSpace = GetComponentInChildren<UpgradeSpace>();
     }
@@ -40,6 +47,7 @@ public class Building : InventoryUser
 
     public void ActivateBuilding()
     {
+        active = true;
         SetLogisticsValues();
     }
    
