@@ -5,10 +5,46 @@ using UnityEngine;
 public class UiNavigation : MonoBehaviour
 {
     [SerializeField] GameObject currentPanel;
-    public void MoveToPanel(GameObject nextPanel)
+    [SerializeField] GameObject buildingUI;
+    [SerializeField] GameObject buildingMainPanel;
+    [SerializeField] GameObject mainPanel;
+    ConstructionPlacementManager placementManager;
+
+    private void Start()
+    {
+        placementManager = ConstructionPlacementManager.GetInstance();
+    }
+
+    void Update()
+    {
+        if (Input.GetButtonUp("Building Menu"))
+        {
+            ToggleBuildingUI();
+        }
+    }
+
+        public void MoveToPanel(GameObject nextPanel)
     {
         nextPanel.SetActive(true);
         currentPanel.SetActive(false);
         currentPanel = nextPanel;
+    }
+
+    public void ToggleBuildingUI()
+    {
+        if (buildingUI.activeSelf)
+        {
+            buildingUI.SetActive(false);
+            mainPanel.SetActive(true);
+            currentPanel = mainPanel;
+            placementManager.ToggleBuildingMode();
+        }
+        else
+        {
+            buildingUI.SetActive(true);
+            mainPanel.SetActive(false);
+            currentPanel = buildingMainPanel;
+            placementManager.ToggleBuildingMode();
+        }
     }
 }

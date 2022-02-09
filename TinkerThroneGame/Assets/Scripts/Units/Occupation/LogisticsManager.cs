@@ -61,7 +61,6 @@ public class LogisticsManager : MonoBehaviour
             inCommissions.AddRange(inventoryLogisticCommissions[0]);
             outCommissions.AddRange(inventoryLogisticCommissions[1]);
         }
-        Debug.Log(inCommissions.Count + " " + outCommissions.Count);
         if (inCommissions.Count == 0 || outCommissions.Count == 0) return;
         inCommissions.Sort();
         outCommissions.Sort();

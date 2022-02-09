@@ -6,7 +6,8 @@ using UnityEngine.EventSystems;
 
 public class ConstructionPlacementManager : MonoBehaviour
 {
-    [SerializeField] GameObject buildingUi;
+    static ConstructionPlacementManager instance;
+
     [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
     [SerializeField] NavMeshManager navMeshManager;
     Building prefab;
@@ -14,12 +15,22 @@ public class ConstructionPlacementManager : MonoBehaviour
     [SerializeField] Building currentBuilding;
     public bool isBuilding = false;
     Vector3 modulePos = Vector3.zero;
+    
 
+    public static ConstructionPlacementManager GetInstance()
+    {
+        return instance;
+    }
+
+    private void Awake()
+    {
+        instance = this;
+    }
     void Update()
     {
         if (Input.GetButtonUp("Building Menu"))
         {
-            ToggleBuildingMode();
+            uiNavigation.ToggleBuildingUI();
         }
         if (Input.GetButtonUp("Fire2") && !EventSystem.current.IsPointerOverGameObject())
         {
@@ -80,7 +91,6 @@ public class ConstructionPlacementManager : MonoBehaviour
     public void ToggleBuildingMode(bool destroy = true)
     {
         isBuilding = !isBuilding;
-        buildingUi.SetActive(isBuilding);
         buildingSpaceHolder.ToggleBuildingSpaces();
 
         if (!isBuilding)

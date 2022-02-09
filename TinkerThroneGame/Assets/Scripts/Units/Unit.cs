@@ -7,7 +7,19 @@ using UnityEngine.AI;
 public class Unit : MonoBehaviour
 {
     [SerializeField] Transform goal;
+    [SerializeField] float agentRadius;
     NavMeshAgent navMeshAgent;
+    
+    public void UpdateGoal(Transform goal)
+    {
+        this.goal = goal;
+        navMeshAgent.destination = goal.position;
+    }
+
+    public bool HasGoal()
+    {
+        return goal != null;
+    }
 
     private void Awake()
     {
@@ -15,9 +27,9 @@ public class Unit : MonoBehaviour
     }
     void Update()
     {
-        if(goal != null)
+        if(Vector3.Distance(transform.position, goal.position) <=  agentRadius)
         {
-            navMeshAgent.destination = goal.position;
+            UpdateGoal(null);
         }
     }
 }
