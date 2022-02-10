@@ -6,7 +6,7 @@ public class LogisticsManager : MonoBehaviour
 {
     static LogisticsManager instance = null;
 
-    public List<InventoryUser> inventoryUsers = new List<InventoryUser>();
+    public List<LogisticsUser> logisticUsers = new List<LogisticsUser>();
     public List<LogisticJob> availableJobs = new List<LogisticJob>();
 
     public static LogisticsManager GetInstance()
@@ -23,20 +23,20 @@ public class LogisticsManager : MonoBehaviour
         StartCoroutine(UpdateCycle()); 
     }
 
-    public void AddInventory(InventoryUser inventory)
+    public void AddInventory(LogisticsUser inventory)
     {
-        if (!inventoryUsers.Contains(inventory))
+        if (!logisticUsers.Contains(inventory))
         {
-            inventoryUsers.Add(inventory);
+            logisticUsers.Add(inventory);
         }
     }
 
-    public void RemoveInventory(InventoryUser inventory)
+    public void RemoveInventory(LogisticsUser inventory)
     {
         //TODO check for running jobs
-        if (inventoryUsers.Contains(inventory))
+        if (logisticUsers.Contains(inventory))
         {
-            inventoryUsers.Remove(inventory);
+            logisticUsers.Remove(inventory);
         }
     }
 
@@ -55,9 +55,9 @@ public class LogisticsManager : MonoBehaviour
         List<LogisticCommission> outCommissions = new List<LogisticCommission>();
         availableJobs = new List<LogisticJob>();
 
-        foreach (InventoryUser inventoryUser in inventoryUsers)
+        foreach (LogisticsUser logisticUser in logisticUsers)
         {
-            List<LogisticCommission>[] inventoryLogisticCommissions = inventoryUser.UpdateLogisticCommissions();
+            List<LogisticCommission>[] inventoryLogisticCommissions = logisticUser.UpdateLogisticCommissions();
             inCommissions.AddRange(inventoryLogisticCommissions[0]);
             outCommissions.AddRange(inventoryLogisticCommissions[1]);
         }

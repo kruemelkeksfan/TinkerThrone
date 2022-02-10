@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class Building : InventoryUser
+public class Building : LogisticsUser
 {
 	[Tooltip("The Name of this Building.")]
 	public string buildingName = "Unnamed Building";

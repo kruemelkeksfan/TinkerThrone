@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 [Serializable]
 public class LogisticJob : IComparable<LogisticJob>
 {
-    public Inventory sourceInventory;
-    public Inventory targetInventory;
+    public LogisticsUser sourceInventory;
+    public LogisticsUser targetInventory;
     public Stack stack;
     public float priority;
     public Villager villager { get; set; }
 
-    public LogisticJob(Inventory sourceInventory, Inventory tragetInventory, string goodName, uint amount, float priority)
+    public LogisticJob(LogisticsUser sourceInventory, LogisticsUser tragetInventory, string goodName, uint amount, float priority)
     {
         this.sourceInventory = sourceInventory;
         this.targetInventory = tragetInventory;
