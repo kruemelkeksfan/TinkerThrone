@@ -33,10 +33,14 @@ public class InventoryTester : MonoBehaviour
         string goodName = dropdown.options[dropdown.value].text;
         uint amount = uint.Parse(input.text);
 
-        if(inventory.ReserveDeposit(new Stack(goodName, amount)))
+        if(inventory.DirectDeposit(new Stack(goodName, amount)))
             Debug.Log("Deposit " + amount + " " + goodName + " " + inventory.Deposit(new Stack(goodName, amount)));
         else
             Debug.Log("Insufficient Capacity");
+        /*if(inventory.ReserveDeposit(new Stack(goodName, amount)))
+            Debug.Log("Deposit " + amount + " " + goodName + " " + inventory.Deposit(new Stack(goodName, amount)));
+        else
+            Debug.Log("Insufficient Capacity");*/
 	}
 
     public void Withdraw()
@@ -44,9 +48,13 @@ public class InventoryTester : MonoBehaviour
         string goodName = dropdown.options[dropdown.value].text;
         uint amount = uint.Parse(input.text);
 
-        if(inventory.ReserveWithdrawal(new Stack(goodName, amount)))
+        if(inventory.DirectWithdraw(new Stack(goodName, amount)))
             Debug.Log("Withdraw " + amount + " " + goodName + " " + inventory.Withdraw(new Stack(goodName, amount)));
         else
             Debug.Log("Insufficient Stock");
+        /*if(inventory.ReserveWithdraw(new Stack(goodName, amount)))
+            Debug.Log("Withdraw " + amount + " " + goodName + " " + inventory.Withdraw(new Stack(goodName, amount)));
+        else
+            Debug.Log("Insufficient Stock");*/
 	}
 }
