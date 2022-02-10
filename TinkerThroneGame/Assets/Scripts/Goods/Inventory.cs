@@ -46,7 +46,7 @@ public class Inventory
 		return false;
 	}
 
-	public bool ReserveWithdrawal(Stack goodStack)
+	public bool ReserveWithdraw(Stack goodStack)
 	{
 		if(storedGoods[goodStack.goodName] >= goodStack.amount)
 		{
@@ -101,6 +101,35 @@ public class Inventory
 		else
 		{
 			Debug.LogError(this + " received a Withdraw()-Request for " + goodStack + " without proper Reservation!");
+		}
+
+		return false;
+	}
+
+	public bool DirectDeposit(Stack goodStack)
+	{
+		Capacity requiredCapacity = new Capacity(goodStack);
+		if(requiredCapacity <= freeCapacity)
+		{
+			storedGoods[goodStack.goodName] += goodStack.amount;
+
+			freeCapacity -= new Capacity(goodStack);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool DirectWithdraw(Stack goodStack)
+	{
+		if(storedGoods[goodStack.goodName] >= goodStack.amount)
+		{
+			storedGoods[goodStack.goodName] -= goodStack.amount;
+
+			freeCapacity += new Capacity(goodStack);
+
+			return true;
 		}
 
 		return false;
