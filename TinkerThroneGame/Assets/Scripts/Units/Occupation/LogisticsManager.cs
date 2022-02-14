@@ -9,6 +9,8 @@ public class LogisticsManager : MonoBehaviour
     public List<LogisticsUser> logisticUsers = new List<LogisticsUser>();
     public List<LogisticJob> availableJobs = new List<LogisticJob>();
 
+    JobsManager jobsManager;
+
     public static LogisticsManager GetInstance()
     {
         return instance;
@@ -20,6 +22,7 @@ public class LogisticsManager : MonoBehaviour
     }
     private void Start()
     {
+        jobsManager = JobsManager.GetInstance();
         StartCoroutine(UpdateCycle()); 
     }
 
@@ -46,6 +49,7 @@ public class LogisticsManager : MonoBehaviour
         {
             yield return new WaitForSeconds(5f);
             UpdateLogisticsJobs();
+            AssignJobs();
         }
     }
 
@@ -108,5 +112,28 @@ public class LogisticsManager : MonoBehaviour
                 }
             }
         }
+        availableJobs.Sort();
+    }
+
+    void AssignJobs()
+    {
+        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers())
+        {
+            if (!TryAssignJob(villager)) break;
+        }
+    }
+
+    public bool TryAssignJob(Villager villager)
+    {
+        if (availableJobs.Count == 0) return false;
+        //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
+        LogisticJob newJob = availableJobs[availableJobs.Count - 1].GetJobPart(villager, out bool completedAssignment);
+        villager.StartCoroutine(villager.DoLogisticJob(newJob));
+        if (completedAssignment)
+        {
+            availableJobs.RemoveAt(availableJobs.Count - 1);
+        }
+        jobsManager.LogisticVillagerIdleToBusy(villager, newJob);
+        return true;
     }
 }

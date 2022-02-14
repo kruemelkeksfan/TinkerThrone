@@ -4,21 +4,24 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Unit : MonoBehaviour
+public class Unit : InventoryUser
 {
-    [SerializeField] Transform goal;
+    [SerializeField] Vector3 goal;
     [SerializeField] float agentRadius;
+    bool hasGoal;
     NavMeshAgent navMeshAgent;
     
-    public void UpdateGoal(Transform goal)
+    public void UpdateGoal(Vector3 goal)
     {
         this.goal = goal;
-        navMeshAgent.destination = goal.position;
+        navMeshAgent.destination = goal;
+        navMeshAgent.stoppingDistance = agentRadius * 0.5f;
+        hasGoal = true;
     }
 
     public bool HasGoal()
     {
-        return goal != null;
+        return hasGoal;
     }
 
     private void Awake()
@@ -27,9 +30,11 @@ public class Unit : MonoBehaviour
     }
     void Update()
     {
-        if(Vector3.Distance(transform.position, goal.position) <=  agentRadius)
+        //Debug.Log(Vector3.Distance(transform.position, goal));
+        if(hasGoal && Vector3.Distance(transform.position, goal) <=  agentRadius)
         {
-            UpdateGoal(null);
+            Debug.Log("reset gola");
+            hasGoal = false;
         }
     }
 }

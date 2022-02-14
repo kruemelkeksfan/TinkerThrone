@@ -20,6 +20,14 @@ public class LogisticJob : IComparable<LogisticJob>
         this.stack = new Stack(goodName, amount);
         this.priority = priority;
     }
+    public LogisticJob(LogisticsUser sourceInventory, LogisticsUser tragetInventory, string goodName, uint amount, float priority, Villager villager)
+    {
+        this.sourceInventory = sourceInventory;
+        this.targetInventory = tragetInventory;
+        this.stack = new Stack(goodName, amount);
+        this.priority = priority;
+        this.villager = villager;
+    }
 
     public LogisticJob(LogisticCommission inCommission, LogisticCommission outCommission)
     {
@@ -35,6 +43,29 @@ public class LogisticJob : IComparable<LogisticJob>
         }
         this.priority = inCommission.priority - outCommission.priority;
     }
+
+    public LogisticJob GetJobPart(Villager assignedVillager, out bool completedAssignment)
+    {
+        uint carryCapacity = assignedVillager.GetInventory().GetFreeCapacity().ToAmount(stack.goodName);
+        if(carryCapacity < stack.amount)
+        {
+            completedAssignment = false;
+            return new LogisticJob(sourceInventory, targetInventory, stack.goodName, carryCapacity, priority, assignedVillager);
+        }
+        else
+        {
+            villager = assignedVillager;
+            completedAssignment = true;
+            return this;
+        }
+    }
+
+    public void ReserveStack()
+    {
+        sourceInventory.GetInventory().ReserveWithdraw(stack);
+        targetInventory.GetInventory().ReserveDeposit(stack);
+    }
+
 
     public int CompareTo(LogisticJob other)
     {

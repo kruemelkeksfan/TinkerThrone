@@ -2,7 +2,7 @@
 
 public struct LogisticCommission : IComparable<LogisticCommission>
 {
-    public readonly Inventory sourceInventory;
+    public readonly LogisticsUser sourceInventory;
     public readonly string goodName;
     public uint amount { get; private set; }
     public readonly float priority;
@@ -12,7 +12,7 @@ public struct LogisticCommission : IComparable<LogisticCommission>
         this.amount -= amount;
     }
 
-    public LogisticCommission(Inventory sourceInventory, string goodName, uint amount, float priority)
+    public LogisticCommission(LogisticsUser sourceInventory, string goodName, uint amount, float priority)
     {
         this.sourceInventory = sourceInventory;
         this.goodName = goodName;
