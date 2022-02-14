@@ -18,9 +18,9 @@ public class JobUiController : MonoBehaviour
         instance = this;
     }
 
-    public void UpdateUi(int idleCount, int logisticCount)
+    public void UpdateUi(int idleCount, int neededIdleCount, int logisticCount, int neededLogisticCount)
     {
-        idleAmountText.text = idleCount.ToString();
-        logisticAmountText.text = logisticCount.ToString();
+        idleAmountText.text = idleCount + " / " + neededIdleCount;
+        logisticAmountText.text = logisticCount + " / " + neededLogisticCount;
     }
 }

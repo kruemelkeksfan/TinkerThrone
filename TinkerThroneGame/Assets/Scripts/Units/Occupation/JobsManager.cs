@@ -11,6 +11,8 @@ public class JobsManager : MonoBehaviour
     [SerializeField] List<Villager> idleVillagers = new List<Villager>();
     [SerializeField] Dictionary<Villager, LogisticJob> logisticVillagers = new Dictionary<Villager, LogisticJob>();
     [SerializeField] List<Villager> idleLogisticVillagers = new List<Villager>();
+    int neededIdleVillagers = 0;
+    int neededLogisticVillager = 0;
     
 
     //Dictionary<Villager, InventoryUser> productionVillager; //shadows of future greatness || wip
@@ -37,6 +39,7 @@ public class JobsManager : MonoBehaviour
         {
             logisticVillagers[villager] = logisticJob;
         }
+        else
         {
             logisticVillagers.Add(villager, logisticJob);
         }
@@ -46,14 +49,21 @@ public class JobsManager : MonoBehaviour
     {
         if (!completed)
         {
+            Debug.LogWarning("Logistic Job not finished");
             //drop it for now
         }
-        //make villager idle if no job is found
-        if (!logisticsManager.TryAssignJob(villager))
+        if (idleVillagers.Count < neededIdleVillagers && idleLogisticVillagers.Count + logisticVillagers.Count > neededLogisticVillager)
+        {
+            logisticVillagers.Remove(villager);
+            idleVillagers.Add(villager);
+        }
+        //make villager idle Logistic if no job is found
+        else if (!logisticsManager.TryAssignJob(villager))
         {
             logisticVillagers.Remove(villager);
             idleLogisticVillagers.Add(villager);
         }
+        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 
     private void Awake()
@@ -69,22 +79,18 @@ public class JobsManager : MonoBehaviour
 
     public void AddIdleVillager(Villager villager)
     {
-        if (logisticVillagers.ContainsKey(villager))
-        {
-            //stop current work
-            logisticVillagers.Remove(villager);
-        }
-        else if (idleLogisticVillagers.Contains(villager))
-        {
-            idleLogisticVillagers.Remove(villager);
-        }
         idleVillagers.Add(villager);
-        jobUi.UpdateUi(idleVillagers.Count, logisticVillagers.Count + idleLogisticVillagers.Count);
+        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 
     public void IdleVillagerToLogistickVillager() // UI called
     {
-        if(idleVillagers.Count > 0)
+        neededLogisticVillager++;
+        if(neededIdleVillagers > 0)
+        {
+            neededIdleVillagers--;
+        }
+        if (idleVillagers.Count > neededIdleVillagers && idleLogisticVillagers.Count + logisticVillagers.Count < neededLogisticVillager && idleVillagers.Count > 0)
         {
             if (!logisticsManager.TryAssignJob(idleVillagers[0]))
             {
@@ -92,25 +98,21 @@ public class JobsManager : MonoBehaviour
             }
             idleVillagers.RemoveAt(0);
         }
-        jobUi.UpdateUi(idleVillagers.Count, logisticVillagers.Count + idleLogisticVillagers.Count);
+        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 
     public void LogisticVillagerToIdleVillager() // UI called
     {
-        if (idleLogisticVillagers.Count > 0)
+        neededIdleVillagers++;
+        if(neededLogisticVillager > 0)
+        {
+            neededLogisticVillager--;
+        }
+        if (idleVillagers.Count < neededIdleVillagers && idleLogisticVillagers.Count + logisticVillagers.Count > neededLogisticVillager && idleLogisticVillagers.Count > 0)
         {
             idleVillagers.Add(idleLogisticVillagers[idleLogisticVillagers.Count - 1]);
             idleLogisticVillagers.RemoveAt(idleLogisticVillagers.Count - 1);
         }
-        else if (logisticVillagers.Count > 0)
-        {
-            List<LogisticJob> logisticJobs = new List<LogisticJob>();
-            logisticJobs.AddRange(logisticVillagers.Values);
-            logisticJobs.Sort();
-            //stop current work
-            idleVillagers.Add(logisticJobs[0].villager);
-            logisticVillagers.Remove(logisticJobs[0].villager);
-        }
-        jobUi.UpdateUi(idleVillagers.Count, logisticVillagers.Count + idleLogisticVillagers.Count);
+        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 }

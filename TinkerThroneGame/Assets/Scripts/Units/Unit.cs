@@ -33,7 +33,6 @@ public class Unit : InventoryUser
         //Debug.Log(Vector3.Distance(transform.position, goal));
         if(hasGoal && Vector3.Distance(transform.position, goal) <=  agentRadius)
         {
-            Debug.Log("reset gola");
             hasGoal = false;
         }
     }
