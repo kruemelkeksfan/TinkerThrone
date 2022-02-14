@@ -10,6 +10,17 @@ public class InventoryUser : MonoBehaviour
     protected Inventory inventory;
     [SerializeField] protected Capacity inventoryCapacity;
 
+    protected void InitializeInventory()
+    {
+        inventory = new Inventory(inventoryCapacity);
+        foreach (Stack stack in testStacks)
+        {
+            inventory.ReserveDeposit(stack);
+            inventory.Deposit(stack);
+        }
+    }
+
+
     public Inventory GetInventory()
     {
         return inventory;

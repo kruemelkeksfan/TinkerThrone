@@ -16,14 +16,9 @@ public class LogisticsUser : InventoryUser
 
     protected void SetLogisticsValues()
     {
-        if (inventory == null)
+        if(inventory == null)
         {
-            inventory = new Inventory(inventoryCapacity);
-            foreach(Stack stack in testStacks)
-            {
-                inventory.ReserveDeposit(stack);
-                inventory.Deposit(stack);
-            }
+            InitializeInventory();
         }
 
         //TODO switch to only specialized for produktion/construction or default values for storage

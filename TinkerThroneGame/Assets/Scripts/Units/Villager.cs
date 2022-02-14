@@ -4,5 +4,9 @@ using UnityEngine;
 
 public class Villager : Unit
 {
+    private void Start()
+    {
+        InitializeInventory();
+    }
 
 }
