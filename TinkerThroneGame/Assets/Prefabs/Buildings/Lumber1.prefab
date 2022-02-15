@@ -48,12 +48,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  specialLogisticValues: []
+  defaultPriorityBeeingEmpty: 0
+  defaultPriorityBeeingFull: 0
+  defaultTargetAmount: 0
+  inventoryCapacity:
+    unitCapacity: 0
+    massCapacity: 0
+    volumeCapacity: 0
   buildingName: Unnamed Building
   recipes: []
   buildingModel: {fileID: 0}
   neededMaterials:
   - goodName: 0
     amount: 5
+  constructionSpace: {fileID: 0}
 --- !u!65 &4512580937307336250
 BoxCollider:
   m_ObjectHideFlags: 0

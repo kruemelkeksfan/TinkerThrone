@@ -1,28 +1,68 @@
 {
-    "goods": [
-        {
-            "goodName": "Wood",
-            "decription": "Raw Wood from se Woods.",
-            "mass": 200.0,
-            "volume": 4,
-            "flammability": 1.0,
-            "price": 5
-        },
-        {
-            "goodName": "Lumber",
-            "decription": "Lumber, Jack Lumber.",
-            "mass": 100.0,
-            "volume": 2,
-            "flammability": 0.800000011920929,
-            "price": 20
-        },
-        {
-            "goodName": "Stone",
-            "decription": "The Stone of infinite Heavyness.",
-            "mass": 9000.0,
-            "volume": 1,
-            "flammability": 0.0,
-            "price": 1
-        }
-    ]
+  "goods": [
+    {
+      "goodName": "Wood",
+      "decription": "Test | Raw Wood from se Woods.",
+      "mass": 200.0,
+      "volume": 4,
+      "flammability": 1.0,
+      "price": 5
+    },
+    {
+      "goodName": "Lumber",
+      "decription": "Test | Lumber, Jack Lumber.",
+      "mass": 100.0,
+      "volume": 2,
+      "flammability": 0.800000011920929,
+      "price": 20
+    },
+    {
+      "goodName": "Stone",
+      "decription": "Test | The Stone of infinite Heavyness.",
+      "mass": 9000.0,
+      "volume": 1,
+      "flammability": 0.0,
+      "price": 1
+    },
+    {
+      "goodName": "Log",
+      "decription": "Raw Wood from the Woods.",
+      "mass": 60.0,
+      "volume": 0.075,
+      "flammability": 1.0,
+      "price": 5
+    },
+    {
+      "goodName": "Round Beam",
+      "decription": "A striped log.",
+      "mass": 50,
+      "volume": 0.075,
+      "flammability": 1.0,
+      "price": 5
+    },
+    {
+      "goodName": "Square Beam",
+      "decription": "A wooden square beam.",
+      "mass": 40,
+      "volume": 0.06,
+      "flammability": 1.0,
+      "price": 5
+    },
+    {
+      "goodName": "Board",
+      "decription": "A wooden plank",
+      "mass": 10,
+      "volume": 0.0125,
+      "flammability": 1.0,
+      "price": 5
+    },
+    {
+      "goodName": "Thatchbundle",
+      "decription": "A bundle of dried thatch",
+      "mass": 0.6,
+      "volume": 0.5,
+      "flammability": 1.0,
+      "price": 5
+    }
+  ]
 }

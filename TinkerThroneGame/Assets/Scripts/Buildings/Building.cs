@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class Building : MonoBehaviour
+public class Building : LogisticsUser
 {
 	[Tooltip("The Name of this Building.")]
 	public string buildingName = "Unnamed Building";
@@ -13,20 +13,42 @@ public class Building : MonoBehaviour
 	[Tooltip("The 3D-Model for this Building.")]
 	public  GameObject buildingModel = null;
 	[SerializeField] Stack[] neededMaterials;
-    ConstructionSpace constructionSpace;
-    UpgradeSpace upgradeSpace;
+    [SerializeField] ConstructionSpace constructionSpace;
+    [SerializeField] UpgradeSpace upgradeSpace;
 
-    private void Awake()
+    [SerializeField] bool active = false;
+
+
+    private void Start()
     {
+        
+        if (active)
+        {
+            ActivateBuilding();
+            LogisticsManager.GetInstance().AddInventory(this);
+            return;
+        }
         constructionSpace = GetComponentInChildren<ConstructionSpace>();
         upgradeSpace = GetComponentInChildren<UpgradeSpace>();
     }
     public ConstructionSpace GetConstructionSpace()
     {
+        if (!constructionSpace)
+        {
+            constructionSpace = GetComponentInChildren<ConstructionSpace>();
+        }
         return constructionSpace;
     }
     public UpgradeSpace GetUpgradeSpace()
     {
         return upgradeSpace;
     }
+
+
+    public void ActivateBuilding()
+    {
+        active = true;
+        SetLogisticsValues();
+    }
+   
 }

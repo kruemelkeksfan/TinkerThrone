@@ -6,20 +6,28 @@ using UnityEngine.EventSystems;
 
 public class ConstructionPlacementManager : MonoBehaviour
 {
-    [SerializeField] GameObject buildingUi;
+    static ConstructionPlacementManager instance;
+
     [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
+    [SerializeField] NavMeshManager navMeshManager;
     Building prefab;
-    ConstructionSpace constructionSpace;
+    public ConstructionSpace constructionSpace;
     [SerializeField] Building currentBuilding;
     public bool isBuilding = false;
     Vector3 modulePos = Vector3.zero;
+    
 
+    public static ConstructionPlacementManager GetInstance()
+    {
+        return instance;
+    }
+
+    private void Awake()
+    {
+        instance = this;
+    }
     void Update()
     {
-        if (Input.GetButtonUp("Building Menu"))
-        {
-            ToggleBuildingMode();
-        }
         if (Input.GetButtonUp("Fire2") && !EventSystem.current.IsPointerOverGameObject())
         {
             SelectBuildingType(null);
@@ -79,7 +87,6 @@ public class ConstructionPlacementManager : MonoBehaviour
     public void ToggleBuildingMode(bool destroy = true)
     {
         isBuilding = !isBuilding;
-        buildingUi.SetActive(isBuilding);
         buildingSpaceHolder.ToggleBuildingSpaces();
 
         if (!isBuilding)
@@ -114,15 +121,21 @@ public class ConstructionPlacementManager : MonoBehaviour
         buildingSpaceHolder.AddBuildingSpaces(new BuildingSpace[2] { constructionSpace, upgradeSpace });
         //get and scale Raycast Target
         BoxCollider raycastTarget = currentBuilding.GetComponent<BoxCollider>();
-        Debug.Log(constructionSpace.transform.localScale);
         int buildingHight = 5;//TODO remove hardecoded number
         raycastTarget.center = new Vector3(0, buildingHight*0.5f, 0);
         raycastTarget.size = new Vector3(constructionSpace.transform.localScale.x,buildingHight,constructionSpace.transform.localScale.z);
+        //Add Building to NavMeshHolder and Update NavMesh
+        currentBuilding.transform.SetParent(navMeshManager.transform);
+        navMeshManager.UpdateNavMesh();
         //!!TODO start building
+        LogisticsManager.GetInstance().AddInventory(currentBuilding); // move to ConstructionManager
+        currentBuilding.ActivateBuilding();// move to ConstructionManager
         //reset current building..
         currentBuilding = null;
         //..and building selection
         SelectBuildingType(null);
+
+        
     }
 
 
