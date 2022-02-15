@@ -36,14 +36,16 @@ public class UiNavigation : MonoBehaviour
         {
             buildingUI.SetActive(false);
             mainPanel.SetActive(true);
+            currentPanel.SetActive(false);
             currentPanel = mainPanel;
             placementManager.ToggleBuildingMode();
         }
         else
         {
             buildingUI.SetActive(true);
-            mainPanel.SetActive(false);
+            currentPanel.SetActive(false);
             currentPanel = buildingMainPanel;
+            currentPanel.SetActive(true);
             placementManager.ToggleBuildingMode();
         }
     }
