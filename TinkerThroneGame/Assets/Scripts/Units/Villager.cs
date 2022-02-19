@@ -15,19 +15,14 @@ public class Villager : Unit
         UpdateGoal(logisticJob.sourceInventory.transform.position);
         yield return new WaitUntil(() => HasGoal() == false);
         yield return new WaitForSeconds(0.5f * logisticJob.stack.amount);
-        if (!(logisticJob.sourceInventory.GetInventory().Withdraw(logisticJob.stack) && inventory.DirectDeposit(logisticJob.stack)))
-        {
-            jobsManager.LogisticVillagerBusyToIdle(this, logisticJob, false);
-            this.StopCoroutine(DoLogisticJob(logisticJob));
-        }
+        logisticJob.sourceInventory.GetInventory().Withdraw(logisticJob.stack);
+        inventory.DirectDeposit(logisticJob.stack);
         UpdateGoal(logisticJob.targetInventory.transform.position);
         yield return new WaitUntil(() => HasGoal() == false);
         yield return new WaitForSeconds(0.5f * logisticJob.stack.amount);
-        if (!(inventory.DirectWithdraw(logisticJob.stack) && logisticJob.targetInventory.GetInventory().Deposit(logisticJob.stack)))
-        {
-            jobsManager.LogisticVillagerBusyToIdle(this, logisticJob, false);
-            this.StopCoroutine(DoLogisticJob(logisticJob));
-        }
+        inventory.DirectWithdraw(logisticJob.stack);
+        logisticJob.targetInventory.GetInventory().Deposit(logisticJob.stack);
+
         jobsManager.LogisticVillagerBusyToIdle(this, logisticJob);
     }
 }

@@ -48,7 +48,7 @@ public class Inventory
 
 	public bool ReserveWithdraw(Stack goodStack)
 	{
-		if(storedGoods[goodStack.goodName] - reservedGoods[goodStack] >= goodStack.amount)
+		if (storedGoods[goodStack.goodName] - reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedGoods[goodStack.goodName] += goodStack.amount;
 

@@ -131,7 +131,7 @@ public class LogisticsManager : MonoBehaviour
         int index = availableJobs.Count - 1;
         while(index >= 0)
         {
-            if(availableJobs[index].TryGetJobPart(villager, out LogisticJob logisticJob, out bool completedAssignment))
+            if(!availableJobs[index].TryGetJobPart(villager, out LogisticJob logisticJob, out bool completedAssignment))
             {
                 index--;
                 continue;
