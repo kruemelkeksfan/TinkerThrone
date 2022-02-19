@@ -8,6 +8,7 @@ public class UiNavigation : MonoBehaviour
     [SerializeField] GameObject buildingUI;
     [SerializeField] GameObject buildingMainPanel;
     [SerializeField] GameObject mainPanel;
+    [SerializeField] GameObject jobPanel;
     ConstructionPlacementManager placementManager;
 
     private void Start()
@@ -20,6 +21,10 @@ public class UiNavigation : MonoBehaviour
         if (Input.GetButtonUp("Building Menu"))
         {
             ToggleBuildingUI();
+        }
+        if (Input.GetButtonUp("Job Menu"))
+        {
+            ToggleJobMenu();
         }
     }
 
@@ -47,6 +52,23 @@ public class UiNavigation : MonoBehaviour
             currentPanel = buildingMainPanel;
             currentPanel.SetActive(true);
             placementManager.ToggleBuildingMode();
+        }
+    }
+
+    public void ToggleJobMenu()
+    {
+        if (jobPanel.activeSelf)
+        {
+            MoveToPanel(mainPanel);
+        }
+        else
+        {
+            if (buildingUI.activeSelf)
+            {
+                placementManager.ToggleBuildingMode();
+                buildingUI.SetActive(false);
+            }
+            MoveToPanel(jobPanel);
         }
     }
 }
