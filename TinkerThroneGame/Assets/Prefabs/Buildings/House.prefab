@@ -306,6 +306,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testStacks: []
+  inventoryCapacity:
+    unitCapacity: 0
+    massCapacity: 0
+    volumeCapacity: 0
+  specialLogisticValues: []
+  defaultPriorityBeeingEmpty: 0
+  defaultPriorityBeeingFull: 0
+  defaultTargetAmount: 0
   buildingName: Unnamed Building
   recipes: []
   buildingModel: {fileID: 3863307799916115448}
@@ -318,6 +327,9 @@ MonoBehaviour:
     amount: 63
   - goodName: 4
     amount: 80
+  constructionSpace: {fileID: 0}
+  upgradeSpace: {fileID: 0}
+  active: 0
 --- !u!65 &2279716557035835614
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -329,8 +341,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 7, y: 4.5, z: 7}
+  m_Center: {x: 0, y: 2.25, z: 0}
 --- !u!1001 &4133266692022454441
 PrefabInstance:
   m_ObjectHideFlags: 0

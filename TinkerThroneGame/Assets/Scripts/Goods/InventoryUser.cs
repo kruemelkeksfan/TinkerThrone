@@ -6,7 +6,7 @@ public class InventoryUser : MonoBehaviour
 {
     [SerializeField] protected Stack[] testStacks;
 
-    protected bool hasInventory = false;
+    [SerializeField]protected bool hasInventory = false;
     protected Inventory inventory;
     [SerializeField] protected Capacity inventoryCapacity;
 
@@ -18,6 +18,11 @@ public class InventoryUser : MonoBehaviour
             inventory.ReserveDeposit(stack);
             inventory.Deposit(stack);
         }
+    }
+
+    public Capacity GetCapacity()
+    {
+        return inventoryCapacity;
     }
 
 

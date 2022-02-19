@@ -25,7 +25,6 @@ public class Building : LogisticsUser
         if (active)
         {
             ActivateBuilding();
-            LogisticsManager.GetInstance().AddInventory(this);
             return;
         }
         constructionSpace = GetComponentInChildren<ConstructionSpace>();
@@ -44,11 +43,29 @@ public class Building : LogisticsUser
         return upgradeSpace;
     }
 
+    public List<StackDisplay> GetRelevantStacks()
+    {
+        if (inventory == null) return null;
+        List<StackDisplay> relevantStacks = new List<StackDisplay>();
+        Dictionary<string,uint> storedGoods = inventory.GetStoredGoods();
+        Dictionary<string, uint> reservedGoods = inventory.GetReservedGoods();
+        Dictionary<string, uint> reservedCapacities = inventory.GetReservedCapacities();
+        foreach (LogisticValue relevantLogisticValue in logisticValues.Values)
+        {
+            string goodName = relevantLogisticValue.goodName;
+            relevantStacks.Add(new StackDisplay(goodName, storedGoods[goodName], (int)reservedCapacities[goodName] - (int)reservedGoods[goodName]));
+        }
+        return relevantStacks;
+    }
 
     public void ActivateBuilding()
     {
         active = true;
-        SetLogisticsValues();
+        if (hasInventory)
+        {
+            SetLogisticsValues();
+            LogisticsManager.GetInstance().AddInventory(this);
+        }
     }
    
 }

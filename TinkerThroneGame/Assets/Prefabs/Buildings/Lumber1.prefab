@@ -48,14 +48,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2bdc608386158046a840198c4818ee5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  specialLogisticValues: []
-  defaultPriorityBeeingEmpty: 0
-  defaultPriorityBeeingFull: 0
-  defaultTargetAmount: 0
+  testStacks: []
+  hasInventory: 1
   inventoryCapacity:
     unitCapacity: 0
     massCapacity: 0
     volumeCapacity: 0
+  specialLogisticValues: []
+  defaultPriorityBeeingEmpty: 0
+  defaultPriorityBeeingFull: 0
+  defaultTargetAmount: 0
   buildingName: Unnamed Building
   recipes: []
   buildingModel: {fileID: 0}
@@ -63,6 +65,8 @@ MonoBehaviour:
   - goodName: 0
     amount: 5
   constructionSpace: {fileID: 0}
+  upgradeSpace: {fileID: 0}
+  active: 0
 --- !u!65 &4512580937307336250
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -74,8 +78,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 5, y: 1, z: 5}
+  m_Center: {x: 0, y: -0.5, z: 0}
 --- !u!1 &4918341520560404638
 GameObject:
   m_ObjectHideFlags: 0

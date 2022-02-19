@@ -60,7 +60,7 @@
       "goodName": "Thatchbundle",
       "decription": "A bundle of dried thatch",
       "mass": 0.6,
-      "volume": 0.5,
+      "volume": 0.05,
       "flammability": 1.0,
       "price": 5
     }
