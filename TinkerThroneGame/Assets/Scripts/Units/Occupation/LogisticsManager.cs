@@ -127,13 +127,24 @@ public class LogisticsManager : MonoBehaviour
     {
         if (availableJobs.Count == 0) return false;
         //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
-        LogisticJob newJob = availableJobs[availableJobs.Count - 1].GetJobPart(villager, out bool completedAssignment);
-        villager.StartCoroutine(villager.DoLogisticJob(newJob));
-        if (completedAssignment)
+
+        int index = availableJobs.Count - 1;
+        while(index >= 0)
         {
-            availableJobs.RemoveAt(availableJobs.Count - 1);
+            LogisticJob newJob = availableJobs[index].GetJobPart(villager, out bool completedAssignment);
+            if (newJob.stack.amount == 0)
+            {
+                index--;
+                continue;
+            }
+            villager.StartCoroutine(villager.DoLogisticJob(newJob));
+            if (completedAssignment)
+            {
+                availableJobs.RemoveAt(availableJobs.Count - 1);
+            }
+            jobsManager.LogisticVillagerIdleToBusy(villager, newJob);
+            return true;
         }
-        jobsManager.LogisticVillagerIdleToBusy(villager, newJob);
-        return true;
+        return false;
     }
 }
