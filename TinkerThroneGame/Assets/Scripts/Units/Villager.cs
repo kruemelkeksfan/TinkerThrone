@@ -12,7 +12,6 @@ public class Villager : Unit
     public IEnumerator DoLogisticJob(LogisticJob logisticJob)
     {
         JobsManager jobsManager = JobsManager.GetInstance();
-        logisticJob.ReserveStack();
         UpdateGoal(logisticJob.sourceInventory.transform.position);
         yield return new WaitUntil(() => HasGoal() == false);
         yield return new WaitForSeconds(0.5f * logisticJob.stack.amount);

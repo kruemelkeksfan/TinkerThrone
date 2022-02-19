@@ -60,6 +60,22 @@ public class Inventory
 		return false;
 	}
 
+	public bool CancleReserveWithdraw(Stack goodStack)
+	{
+		if (reservedGoods[goodStack.goodName] >= goodStack.amount)
+		{
+			reservedGoods[goodStack.goodName] -= goodStack.amount;
+
+			temporarilyOccupiedCapacity -= new Capacity(goodStack);
+
+			return true;
+		}
+
+		return false;
+	}
+
+
+
 	// Stores a Stack of Goods in this Inventory.
 	// Returns whether the storage operation was successful.
 	// Storing will fail if not all Goods fit into the Inventory in which case no Goods at all will be stored.

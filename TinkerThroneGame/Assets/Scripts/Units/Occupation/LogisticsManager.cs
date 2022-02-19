@@ -131,18 +131,17 @@ public class LogisticsManager : MonoBehaviour
         int index = availableJobs.Count - 1;
         while(index >= 0)
         {
-            LogisticJob newJob = availableJobs[index].GetJobPart(villager, out bool completedAssignment);
-            if (newJob.stack.amount == 0)
+            if(availableJobs[index].TryGetJobPart(villager, out LogisticJob logisticJob, out bool completedAssignment))
             {
                 index--;
                 continue;
             }
-            villager.StartCoroutine(villager.DoLogisticJob(newJob));
+            villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
             if (completedAssignment)
             {
                 availableJobs.RemoveAt(availableJobs.Count - 1);
             }
-            jobsManager.LogisticVillagerIdleToBusy(villager, newJob);
+            jobsManager.LogisticVillagerIdleToBusy(villager, logisticJob);
             return true;
         }
         return false;
