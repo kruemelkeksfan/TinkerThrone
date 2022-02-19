@@ -64,6 +64,10 @@ public class LogisticJob : IComparable<LogisticJob>
 
         if (logisticJobPart.ReserveStack())
         {
+            if (!completedAssignment)
+            {
+                stack.amount -= carryCapacity;
+            }
             return true;
         }
         else
