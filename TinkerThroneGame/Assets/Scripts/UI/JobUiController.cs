@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class JobUiController : MonoBehaviour
 {
-    static JobUiController instance;
+    private static JobUiController instance;
 
-    [SerializeField] TextMeshProUGUI idleAmountText;
-    [SerializeField] TextMeshProUGUI logisticAmountText;
- 
+    [SerializeField] private TextMeshProUGUI idleAmountText;
+    [SerializeField] private TextMeshProUGUI logisticAmountText;
+
     public static JobUiController GetInstance()
     {
         return instance;

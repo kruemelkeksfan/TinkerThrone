@@ -1,28 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class JobsManager : MonoBehaviour
 {
-    static JobsManager instance;
-    static JobUiController jobUi;
-    static LogisticsManager logisticsManager;
+    private static JobsManager instance;
+    private static JobUiController jobUi;
+    private static LogisticsManager logisticsManager;
 
-    [SerializeField] List<Villager> idleVillagers = new List<Villager>();
-    [SerializeField] Dictionary<Villager, LogisticJob> logisticVillagers = new Dictionary<Villager, LogisticJob>();
-    [SerializeField] List<Villager> idleLogisticVillagers = new List<Villager>();
-    int neededIdleVillagers = 0;
-    int neededLogisticVillager = 0;
-    
+    private readonly List<Villager> idleVillagers = new();
+    private readonly Dictionary<Villager, LogisticJob> logisticVillagers = new();
+    private readonly List<Villager> idleLogisticVillagers = new();
+     //Dictionary<Villager, InventoryUser> productionVillager; //shadows of future greatness || wip
 
-    //Dictionary<Villager, InventoryUser> productionVillager; //shadows of future greatness || wip
+    private int neededIdleVillagers = 0;
+    private int neededLogisticVillager = 0;
 
     public static JobsManager GetInstance()
     {
         return instance;
     }
 
-    public static void  Initialize()
+    public static void Initialize()
     {
         jobUi = JobUiController.GetInstance();
         logisticsManager = LogisticsManager.GetInstance();
@@ -31,6 +29,22 @@ public class JobsManager : MonoBehaviour
     public List<Villager> GetIdleLogisticVillagers()
     {
         return idleLogisticVillagers;
+    }
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    private void Start()
+    {
+        Initialize();
+    }
+
+    public void AddIdleVillager(Villager villager)
+    {
+        idleVillagers.Add(villager);
+        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 
     public void LogisticVillagerIdleToBusy(Villager villager, LogisticJob logisticJob)
@@ -45,7 +59,7 @@ public class JobsManager : MonoBehaviour
         }
     }
 
-    public void LogisticVillagerBusyToIdle(Villager villager, LogisticJob logisticJob, bool completed = true)
+    public void LogisticVillagerBusyToIdle(Villager villager, bool completed = true)
     {
         if (!completed)
         {
@@ -66,27 +80,10 @@ public class JobsManager : MonoBehaviour
         jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
     }
 
-    private void Awake()
-    {
-        instance = this;
-    }
-
-    private void Start()
-    {
-        Initialize();
-    }
-
-
-    public void AddIdleVillager(Villager villager)
-    {
-        idleVillagers.Add(villager);
-        jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);
-    }
-
     public void IdleVillagerToLogistickVillager() // UI called
     {
         neededLogisticVillager++;
-        if(neededIdleVillagers > 0)
+        if (neededIdleVillagers > 0)
         {
             neededIdleVillagers--;
         }
@@ -104,13 +101,13 @@ public class JobsManager : MonoBehaviour
     public void LogisticVillagerToIdleVillager() // UI called
     {
         neededIdleVillagers++;
-        if(neededLogisticVillager > 0)
+        if (neededLogisticVillager > 0)
         {
             neededLogisticVillager--;
         }
         if (idleVillagers.Count < neededIdleVillagers && idleLogisticVillagers.Count + logisticVillagers.Count > neededLogisticVillager && idleLogisticVillagers.Count > 0)
         {
-            idleVillagers.Add(idleLogisticVillagers[idleLogisticVillagers.Count - 1]);
+            idleVillagers.Add(idleLogisticVillagers[^1]);
             idleLogisticVillagers.RemoveAt(idleLogisticVillagers.Count - 1);
         }
         jobUi.UpdateUi(idleVillagers.Count, neededIdleVillagers, logisticVillagers.Count + idleLogisticVillagers.Count, neededLogisticVillager);

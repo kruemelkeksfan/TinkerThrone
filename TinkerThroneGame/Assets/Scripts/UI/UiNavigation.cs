@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UiNavigation : MonoBehaviour
 {
-    [SerializeField] GameObject currentPanel;
-    [SerializeField] GameObject buildingUI;
-    [SerializeField] GameObject buildingMainPanel;
-    [SerializeField] GameObject mainPanel;
-    [SerializeField] GameObject jobPanel;
-    ConstructionPlacementManager placementManager;
+    [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject buildingUI;
+    [SerializeField] private GameObject buildingMainPanel;
+    [SerializeField] private GameObject jobPanel;
+
+    private ConstructionPlacementManager placementManager;
+    private GameObject currentPanel;
 
     private void Start()
     {
         placementManager = ConstructionPlacementManager.GetInstance();
+        currentPanel = mainPanel;
     }
 
     void Update()
@@ -28,7 +28,7 @@ public class UiNavigation : MonoBehaviour
         }
     }
 
-        public void MoveToPanel(GameObject nextPanel)
+    public void MoveToPanel(GameObject nextPanel)
     {
         nextPanel.SetActive(true);
         currentPanel.SetActive(false);

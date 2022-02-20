@@ -1,16 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Unit : InventoryUser
 {
-    [SerializeField] Vector3 goal;
-    [SerializeField] float agentRadius;
-    bool hasGoal;
-    NavMeshAgent navMeshAgent;
-    
+    [SerializeField] private float agentRadius;
+
+    private NavMeshAgent navMeshAgent;
+    private Vector3 goal;
+    private bool hasGoal;
+
     public void UpdateGoal(Vector3 goal)
     {
         this.goal = goal;
@@ -28,10 +26,10 @@ public class Unit : InventoryUser
     {
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }
+
     void Update()
     {
-        //Debug.Log(Vector3.Distance(transform.position, goal));
-        if(hasGoal && Vector3.Distance(transform.position, goal) <=  agentRadius)
+        if (hasGoal && Vector3.Distance(transform.position, goal) <= agentRadius)
         {
             hasGoal = false;
         }

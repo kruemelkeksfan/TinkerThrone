@@ -1,24 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryUser : MonoBehaviour
 {
     [SerializeField] protected Stack[] testStacks;
-
-    [SerializeField]protected bool hasInventory = false;
-    protected Inventory inventory;
+    [SerializeField] protected bool hasInventory = false;
     [SerializeField] protected Capacity inventoryCapacity;
 
-    protected void InitializeInventory()
-    {
-        inventory = new Inventory(inventoryCapacity);
-        foreach (Stack stack in testStacks)
-        {
-            inventory.ReserveDeposit(stack);
-            inventory.Deposit(stack);
-        }
-    }
+    protected Inventory inventory;
 
     public Capacity GetCapacity()
     {
@@ -29,5 +17,15 @@ public class InventoryUser : MonoBehaviour
     public Inventory GetInventory()
     {
         return inventory;
+    }
+
+    protected void InitializeInventory()
+    {
+        inventory = new Inventory(inventoryCapacity);
+        foreach (Stack stack in testStacks)
+        {
+            inventory.ReserveDeposit(stack);
+            inventory.Deposit(stack);
+        }
     }
 }

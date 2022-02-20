@@ -1,20 +1,20 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BuildingInfoDisplayer : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI buildingNameText;
-    [SerializeField] TextMeshProUGUI buildingTypeText;
+    [Header("Linked UI-Elements")]
+    [SerializeField] private TextMeshProUGUI buildingNameText;
+    [SerializeField] private TextMeshProUGUI buildingTypeText;
+    [SerializeField] private FourColorFillTextBar capacityUnitDisplay;
+    [SerializeField] private FourColorFillTextBar capacityMassDisplay;
+    [SerializeField] private FourColorFillTextBar capacityVolumeDisplay;
+    [Header("Prefabs")]
+    [SerializeField] private GoodDisplayer goodDisplayerPrefab;
 
-    [SerializeField] FourColorFillTextBar capacityUnitDisplay;
-    [SerializeField] FourColorFillTextBar capacityMassDisplay;
-    [SerializeField] FourColorFillTextBar capacityVolumeDisplay;
-    [SerializeField] GoodDisplayer goodDisplayerPrefab;
-    List<GoodDisplayer> goodDisplayers = new List<GoodDisplayer>();
+    readonly List<GoodDisplayer> goodDisplayers = new();
 
     public void DisplayInformation(Building building)
     {
@@ -89,7 +89,7 @@ public class BuildingInfoDisplayer : MonoBehaviour
             string unitText;
             if (reserveCapacities.massCapacity > 0)
             {
-                unitText = Math.Round(filledCapacity.massCapacity,1) + " (+" + Math.Round(reserveCapacities.massCapacity, 1) + ") / " + capacity.massCapacity;
+                unitText = Math.Round(filledCapacity.massCapacity, 1) + " (+" + Math.Round(reserveCapacities.massCapacity, 1) + ") / " + capacity.massCapacity;
             }
             else
             {

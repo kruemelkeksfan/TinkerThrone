@@ -4,19 +4,19 @@ public struct LogisticCommission : IComparable<LogisticCommission>
 {
     public readonly LogisticsUser sourceInventory;
     public readonly string goodName;
-    public uint amount { get; private set; }
     public readonly float priority;
+    public uint Amount { get; private set; }
 
     public void ReduceAmount(uint amount)
     {
-        this.amount -= amount;
+        this.Amount -= amount;
     }
 
     public LogisticCommission(LogisticsUser sourceInventory, string goodName, uint amount, float priority)
     {
         this.sourceInventory = sourceInventory;
         this.goodName = goodName;
-        this.amount = amount;
+        this.Amount = amount;
         this.priority = priority;
     }
 
@@ -25,4 +25,3 @@ public struct LogisticCommission : IComparable<LogisticCommission>
         return priority.CompareTo(other.priority);
     }
 }
-

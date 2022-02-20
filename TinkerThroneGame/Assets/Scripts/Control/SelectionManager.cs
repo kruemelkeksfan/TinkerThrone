@@ -1,18 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SelectionManager : MonoBehaviour
 {
-    ConstructionPlacementManager constructionPlacementManager;
-    [SerializeField] Camera mainCamera;
-    [SerializeField] LayerMask hittableLayers;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private BuildingInfoDisplayer buildingInfo;
+    [SerializeField] private LayerMask hittableLayers;
 
-    [SerializeField] BuildingInfoDisplayer buildingInfo;
     private Building selectedBuilding = null;
-
+    private ConstructionPlacementManager constructionPlacementManager;
 
     private void Start()
     {
@@ -20,19 +17,16 @@ public class SelectionManager : MonoBehaviour
         StartCoroutine(UpdateSelectionUI());
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!constructionPlacementManager.isBuilding && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
         {
             var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Plane plane = new Plane(Vector3.down, new Vector3(0, 2.27f, 0));
-            float ent = 100.0f;
-            if (plane.Raycast(ray, out ent))
+            Plane plane = new(Vector3.down, new Vector3(0, 2.27f, 0));
+            if (plane.Raycast(ray, out float ent))
             {
                 //Debug.DrawRay(ray.origin, ray.direction * ent, Color.green);
-                RaycastHit hit;
-                if (Physics.Raycast(mainCamera.transform.position, ray.GetPoint(ent) - mainCamera.transform.position, out hit, ent, hittableLayers.value))
+                if (Physics.Raycast(mainCamera.transform.position, ray.GetPoint(ent) - mainCamera.transform.position, out RaycastHit hit, ent, hittableLayers.value))
                 {
                     if (hit.collider.gameObject.layer == 7)
                     {
@@ -47,7 +41,6 @@ public class SelectionManager : MonoBehaviour
                             buildingInfo.gameObject.SetActive(false);
                         }
                     }
-
                 }
             }
             else
@@ -63,7 +56,7 @@ public class SelectionManager : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateSelectionUI()
+    private IEnumerator UpdateSelectionUI()
     {
         while (true)
         {

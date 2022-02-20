@@ -81,7 +81,6 @@ public class Inventory
 	// Storing will fail if not all Goods fit into the Inventory in which case no Goods at all will be stored.
 	public bool Deposit(Stack goodStack)
 	{
-		Debug.Log("Deposit: " + goodStack.goodName + " " + goodStack.amount);
 		if (reservedCapacities[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedCapacities[goodStack.goodName] -= goodStack.amount;
@@ -104,7 +103,6 @@ public class Inventory
 	// Retrieving will fail if an insufficient amount of Goods is stored in which case no Goods at all will be retrieved.
 	public bool Withdraw(Stack goodStack)
 	{
-		Debug.Log("Withdraw: " + goodStack.goodName + " " + goodStack.amount);
 		if(reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
 			storedGoods[goodStack.goodName] -= goodStack.amount;

@@ -1,23 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class GoodDisplayer : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI goodNameText;
-    [SerializeField] TextMeshProUGUI goodAmountText;
+    [SerializeField] private TextMeshProUGUI goodNameText;
+    [SerializeField] private TextMeshProUGUI goodAmountText;
 
     public void DisplayInformation(StackDisplay stack)
     {
-        goodNameText.text = stack.goodName;
-        if(stack.amountChange > 0)
+        goodNameText.text = stack.GoodName;
+        if (stack.AmountChange > 0)
         {
-            goodAmountText.text = stack.amount + " (+" + stack.amountChange + ")";
+            goodAmountText.text = stack.Amount + " (+" + stack.AmountChange + ")";
         }
         else
         {
-            goodAmountText.text = stack.amount + " (" + stack.amountChange + ")";
+            goodAmountText.text = stack.Amount + " (" + stack.AmountChange + ")";
         }
     }
 }

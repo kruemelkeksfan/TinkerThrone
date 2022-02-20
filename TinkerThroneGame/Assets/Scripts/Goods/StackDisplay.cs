@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
-public struct StackDisplay
+﻿public struct StackDisplay
 {
-    public string goodName { get; private set; }
-    public uint amount { get; private set; }
-    public int amountChange { get; private set; }
+    public string GoodName { get; private set; }
+    public uint Amount { get; private set; }
+    public int AmountChange { get; private set; }
 
     public StackDisplay(string goodName, uint amount, int amountChange)
     {
-        this.goodName = goodName;
-        this.amount = amount;
-        this.amountChange = amountChange;
+        this.GoodName = goodName;
+        this.Amount = amount;
+        this.AmountChange = amountChange;
     }
-
 }
-

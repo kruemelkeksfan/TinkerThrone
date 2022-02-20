@@ -1,19 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
 public class NavMeshManager : MonoBehaviour
 {
-    [SerializeField] NavMeshSurface navMeshSurface;
-
-    private void Awake()
-    {
-        navMeshSurface = gameObject.GetComponent<NavMeshSurface>();
-    }
+    [SerializeField] private NavMeshSurface navMeshSurface;
 
     public void UpdateNavMesh()
     {
         navMeshSurface.BuildNavMesh();
+    }
+
+    private void Awake()
+    {
+        navMeshSurface = gameObject.GetComponent<NavMeshSurface>();
     }
 }
