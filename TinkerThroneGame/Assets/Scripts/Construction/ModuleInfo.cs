@@ -8,16 +8,21 @@ using System.Threading.Tasks;
 public struct ModuleInfo
 {
     public string moduleName;
-    public int materialId;
-    public int amountNeeded;
-    public int buildingSteps;
+    public string materialId;
+    public uint amountNeededPerStep;
+    public uint buildingSteps;
 
-    public ModuleInfo(string moduleName, int materialId, int amountNeeded, int buildingSteps)
+    public ModuleInfo(string moduleName, string materialId, uint amountNeededPerStep, uint buildingSteps)
     {
         this.moduleName = moduleName;
         this.materialId = materialId;
-        this.amountNeeded = amountNeeded;
+        this.amountNeededPerStep = amountNeededPerStep;
         this.buildingSteps = buildingSteps;
+    }
+
+    public uint GetOverallAmount()
+    {
+        return amountNeededPerStep * buildingSteps;
     }
 }
 
