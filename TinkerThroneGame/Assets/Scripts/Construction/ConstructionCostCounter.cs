@@ -27,7 +27,7 @@ public class ConstructionCostCounter : MonoBehaviour
             }
 
             ModuleInfo moduleInfo;
-            Dictionary<int, int> stacks = new Dictionary<int, int>();
+            Dictionary<string, uint> stacks = new Dictionary<string, uint>();
             foreach (Transform transform in this.gameObject.GetComponentsInChildren<Transform>())
             {
                 string[] splitName = transform.name.Split('.');
@@ -35,18 +35,18 @@ public class ConstructionCostCounter : MonoBehaviour
                 moduleInfo = moduleInfos[splitName[1]];
                 if (stacks.ContainsKey(moduleInfo.materialId))
                 {
-                    stacks[moduleInfo.materialId] += moduleInfo.amountNeeded;
+                    stacks[moduleInfo.materialId] += moduleInfo.GetOverallAmount();
                 }
                 else 
                 {
-                    stacks.Add(moduleInfo.materialId, moduleInfo.amountNeeded);
+                    stacks.Add(moduleInfo.materialId, moduleInfo.GetOverallAmount());
                 }
             }
 
             materials = new List<Stack>();
-            foreach (int material in stacks.Keys)
+            foreach (string material in stacks.Keys)
             {
-                materials.Add(new Stack(material.ToString(), (uint)stacks[material]));
+                materials.Add(new Stack(material, stacks[material]));
             }
         }
     }
