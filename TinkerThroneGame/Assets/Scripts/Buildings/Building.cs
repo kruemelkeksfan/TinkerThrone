@@ -67,6 +67,13 @@ public class Building : LogisticsUser
         return relevantStacks;
     }
 
+    public void StartConstruction()
+    {
+        constructionSite = gameObject.AddComponent<ConstructionSite>();
+        constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
+    }
+
+
     public void ActivateBuilding()
     {
         active = true;

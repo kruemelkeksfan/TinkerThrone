@@ -133,9 +133,8 @@ public class ConstructionPlacementManager : MonoBehaviour
         //Add Building to NavMeshHolder and Update NavMesh
         currentBuilding.transform.SetParent(navMeshManager.transform);
         navMeshManager.UpdateNavMesh();
-        //!!TODO start building
-        LogisticsManager.GetInstance().AddInventory(currentBuilding); // move to ConstructionManager
-        currentBuilding.ActivateBuilding();// move to ConstructionManager
+        //start building
+        currentBuilding.StartConstruction();
         //reset current building..
         currentBuilding = null;
         //..and building selection

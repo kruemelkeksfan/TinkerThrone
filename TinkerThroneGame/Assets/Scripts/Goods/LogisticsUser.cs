@@ -5,11 +5,16 @@ public class LogisticsUser : InventoryUser
 {
     protected Dictionary<string, LogisticValue> logisticValues;
 
-    [SerializeField] private LogisticValue[] specialLogisticValues;
+    [SerializeField] protected LogisticValue[] specialLogisticValues;
     [SerializeField] private int defaultPriorityBeeingEmpty;
     [SerializeField] private int defaultPriorityBeeingFull;
     [SerializeField] private uint defaultTargetAmount;
 
+
+    public virtual Vector3 GetLogisticPosition()
+    {
+        return transform.position;
+    }
     public List<LogisticCommission>[] UpdateLogisticCommissions()
     {
         Dictionary<string, uint> storedGoods = inventory.GetStoredGoods();

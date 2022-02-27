@@ -184,11 +184,12 @@ public class JobsManager : MonoBehaviour
     public void RemoveConstructionSite(ConstructionSite constructionSite)
     {
         constructionSites.Remove(constructionSite);
+        AssignConstructionVillagers();
     }
 
     public void AssignConstructionVillagers()
     {
-        int maxVillagerPerSite = Mathf.CeilToInt((unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count - NeededConstructionVillagers) / (float)constructionSites.Count);
+        int maxVillagerPerSite = Mathf.CeilToInt((unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count) / (float)constructionSites.Count);
         foreach (ConstructionSite constructionSite in constructionSites)
         {
             int maxToCurrentDiff = constructionSite.GetAssignedVillagers() - maxVillagerPerSite;
@@ -213,15 +214,17 @@ public class JobsManager : MonoBehaviour
                 }
                 for (int i = 0; i < maxToCurrentDiff; i++)
                 {
-                    constructionSite.AssignVillager(unassignedConstructionVillagers[^1]);
-                    assignedConstructionVillagers.Add(unassignedConstructionVillagers[^1]);
-                    unassignedConstructionVillagers.RemoveAt(unassignedConstructionVillagers.Count - 1);
+                    if (constructionSite.AssignVillager(unassignedConstructionVillagers[^1]))
+                    {
+                        assignedConstructionVillagers.Add(unassignedConstructionVillagers[^1]);
+                        unassignedConstructionVillagers.RemoveAt(unassignedConstructionVillagers.Count - 1);
+                    }
                 }
             }
         }
     }
 
-    public void UnassignVillager(Villager villager)
+    public void UnassignVillager(Villager villager, bool preventReassigning = false)
     {
         if (assignedConstructionVillagers.Contains(villager))
         {
@@ -232,7 +235,10 @@ public class JobsManager : MonoBehaviour
             else
             {
                 unassignedConstructionVillagers.Add(villager);
-                AssignConstructionVillagers();
+                if (!preventReassigning)
+                {
+                    AssignConstructionVillagers();
+                }
             }
             assignedConstructionVillagers.Remove(villager);
         }

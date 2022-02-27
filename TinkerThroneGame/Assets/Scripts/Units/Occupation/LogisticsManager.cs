@@ -6,8 +6,8 @@ public class LogisticsManager : MonoBehaviour
 {
     private static LogisticsManager instance = null;
 
-    private readonly List<LogisticsUser> logisticUsers = new();
-    private List<LogisticJob> availableJobs = new();
+    public List<LogisticsUser> logisticUsers = new();
+    public List<LogisticJob> availableJobs = new();
     private JobsManager jobsManager;
 
     public static LogisticsManager GetInstance()
@@ -56,6 +56,7 @@ public class LogisticsManager : MonoBehaviour
                 index--;
                 continue;
             }
+            Debug.Log("new LogisticJob");
             villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
             if (completedAssignment)
             {
