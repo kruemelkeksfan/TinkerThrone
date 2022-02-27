@@ -129,6 +129,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   otherSpaceCollider: {fileID: 3376200797259380661}
   meshRenderer: {fileID: 5683380558209824666}
+--- !u!1 &3242063718496771409
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 662174241496998938}
+  m_Layer: 7
+  m_Name: LogisticPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &662174241496998938
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3242063718496771409}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.75, y: 0, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 690441199407318919}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4537015792619281570
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,6 +321,7 @@ Transform:
   m_Children:
   - {fileID: 6821885835710414688}
   - {fileID: 6119674015810818457}
+  - {fileID: 662174241496998938}
   - {fileID: 4528063027543453506}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -307,6 +339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testStacks: []
+  hasInventory: 0
   inventoryCapacity:
     unitCapacity: 0
     massCapacity: 0
@@ -317,7 +350,11 @@ MonoBehaviour:
   defaultTargetAmount: 0
   buildingName: Unnamed Building
   recipes: []
-  buildingModel: {fileID: 3863307799916115448}
+  currentModel: {fileID: 3863307799916115448}
+  constructionModelPrefab: {fileID: 919132149155446097, guid: 61c5b43253402384886bd66f53621677,
+    type: 3}
+  finalModelPrefab: {fileID: 919132149155446097, guid: 7a67db1a820fe6c42932ca11eeff869b,
+    type: 3}
   neededMaterials:
   - goodName: 1
     amount: 100
@@ -329,6 +366,24 @@ MonoBehaviour:
     amount: 80
   constructionSpace: {fileID: 0}
   upgradeSpace: {fileID: 0}
+  specialConstructionLogisticValues:
+  - goodName: Square Beam
+    logisticsPriorityBeeingEmpty: 2
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 63
+  - goodName: Board
+    logisticsPriorityBeeingEmpty: 3
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 63
+  - goodName: Round Beam
+    logisticsPriorityBeeingEmpty: 3
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 100
+  - goodName: Thatchbundle
+    logisticsPriorityBeeingEmpty: 3
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 80
+  inventoryLocation: {fileID: 662174241496998938}
   active: 0
 --- !u!65 &2279716557035835614
 BoxCollider:
@@ -353,7 +408,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 61c5b43253402384886bd66f53621677,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 61c5b43253402384886bd66f53621677,
         type: 3}

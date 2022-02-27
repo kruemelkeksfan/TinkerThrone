@@ -11,13 +11,22 @@ public class Building : LogisticsUser
 	[Tooltip("Available Production Recipes for this Building.")]
 	public  Recipe[] recipes = { };									// Actual Production should not be handled by the Building, but by the Worker Pawn
 	[Tooltip("The 3D-Model for this Building.")]
-	public  GameObject buildingModel = null;
-	[SerializeField] Stack[] neededMaterials;
+    public GameObject currentModel = null;
+    public GameObject constructionModelPrefab = null;
+    public GameObject finalModelPrefab = null;
+    [SerializeField] Stack[] neededMaterials;
     [SerializeField] ConstructionSpace constructionSpace;
     [SerializeField] UpgradeSpace upgradeSpace;
+    [SerializeField] private LogisticValue[] specialConstructionLogisticValues;
+    [SerializeField] Transform inventoryLocation;
+    ConstructionSite constructionSite;
 
     [SerializeField] bool active = false;
 
+    public void SetCurrentModdel(GameObject model)
+    {
+        currentModel = model;
+    }
 
     private void Start()
     {
