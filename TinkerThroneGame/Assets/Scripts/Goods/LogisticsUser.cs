@@ -31,7 +31,7 @@ public class LogisticsUser : InventoryUser
             }
             else
             {
-                logisticInCommissions.Add(new LogisticCommission(this, logisticValue.goodName, currentAmount, logisticValue.PriorityForLowerAmount(currentAmount)));
+                logisticInCommissions.Add(new LogisticCommission(this, logisticValue.goodName, logisticValue.targetAmount, logisticValue.PriorityForLowerAmount(currentAmount)));
             }
         }
         return new List<LogisticCommission>[] { logisticInCommissions, logisticOutCommissions };
