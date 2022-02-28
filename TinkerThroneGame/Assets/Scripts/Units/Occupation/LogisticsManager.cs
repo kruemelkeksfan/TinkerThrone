@@ -126,7 +126,12 @@ public class LogisticsManager : MonoBehaviour
             }
             if (foundCommission)
             {
-                availableJobs.Add(new LogisticJob(usedCommission, outCommission));
+                LogisticJob logisticJob = new LogisticJob(usedCommission, outCommission);
+                if(logisticJob.Priority < 0)
+                {
+                    continue;
+                }
+                availableJobs.Add(logisticJob);
                 if (usedCommission.Amount > outCommission.Amount)
                 {
                     int index = inCommissions.IndexOf(usedCommission);

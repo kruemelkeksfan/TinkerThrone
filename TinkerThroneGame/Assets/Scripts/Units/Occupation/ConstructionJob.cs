@@ -16,6 +16,6 @@ public struct ConstructionJob
         Target = target;
         ModuleInfo = moduleInfo;
         ModuleNumber = moduleNumber;
-        this.stack = new Stack(moduleInfo.moduleName, moduleInfo.amountNeededPerStep);
+        this.stack = new Stack(moduleInfo.materialId, moduleInfo.amountNeededPerStep);
     }
 }

@@ -29,7 +29,7 @@ public class LogisticJob : IComparable<LogisticJob>
         {
             this.stack = new Stack(outCommission.goodName, outCommission.Amount);
         }
-        this.Priority = inCommission.priority - outCommission.priority;
+        this.Priority = outCommission.priority - inCommission.priority;
     }
 
     public bool TryGetJobPart(Villager assignedVillager, out LogisticJob logisticJobPart, out bool completedAssignment)
