@@ -28,7 +28,16 @@ public class BuildingInfoDisplayer : MonoBehaviour
         }
         buildingNameText.text = building.buildingName;
         buildingTypeText.text = building.currentModel.name;
-        List<StackDisplay> relevantStacks = building.GetRelevantStacks();
+        List<StackDisplay> relevantStacks;
+        bool underConstruction = building.UnderConstruction(out ConstructionSite constructionSite);
+        if(underConstruction)
+        {
+            relevantStacks = constructionSite.GetRelevantStacks();
+        }
+        else
+        {
+            relevantStacks = building.GetRelevantStacks();
+        }
         if (relevantStacks == null) return;
 
         int count = 0;
@@ -49,8 +58,18 @@ public class BuildingInfoDisplayer : MonoBehaviour
             goodDisplayers.Add(newGoodDisplayer);
         }
 
-        Capacity capacity = building.GetCapacity();
-        Inventory buildingInventory = building.GetInventory();
+        Capacity capacity;
+        Inventory buildingInventory;
+        if (underConstruction)
+        {
+            capacity = constructionSite.GetCapacity();
+            buildingInventory = constructionSite.GetInventory();
+        }
+        else
+        {
+            capacity = building.GetCapacity();
+            buildingInventory = building.GetInventory();
+        }
         Capacity freeCapacity = buildingInventory.GetFreeCapacity();
         Capacity reservedCapacity = buildingInventory.GetReservedCapacity();
         Capacity tempOccupiedCapacity = buildingInventory.GetTemporarilyOccupiedCapacity();

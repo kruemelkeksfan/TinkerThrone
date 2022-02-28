@@ -52,25 +52,16 @@ public class Building : LogisticsUser
         return upgradeSpace;
     }
 
-    public List<StackDisplay> GetRelevantStacks()
-    {
-        if (inventory == null) return null;
-        List<StackDisplay> relevantStacks = new List<StackDisplay>();
-        Dictionary<string,uint> storedGoods = inventory.GetStoredGoods();
-        Dictionary<string, uint> reservedGoods = inventory.GetReservedGoods();
-        Dictionary<string, uint> reservedCapacities = inventory.GetReservedCapacities();
-        foreach (LogisticValue relevantLogisticValue in logisticValues.Values)
-        {
-            string goodName = relevantLogisticValue.goodName;
-            relevantStacks.Add(new StackDisplay(goodName, storedGoods[goodName], (int)reservedCapacities[goodName] - (int)reservedGoods[goodName]));
-        }
-        return relevantStacks;
-    }
-
     public void StartConstruction()
     {
         constructionSite = gameObject.AddComponent<ConstructionSite>();
         constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
+    }
+
+    public bool UnderConstruction(out ConstructionSite constructionSite)
+    {
+        constructionSite = this.constructionSite;
+        return constructionSite != null;
     }
 
 

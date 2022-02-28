@@ -68,4 +68,19 @@ public class LogisticsUser : InventoryUser
         this.logisticValues = logisticsValues;
         return;
     }
+
+    public List<StackDisplay> GetRelevantStacks()
+    {
+        if (inventory == null) return null;
+        List<StackDisplay> relevantStacks = new();
+        Dictionary<string, uint> storedGoods = inventory.GetStoredGoods();
+        Dictionary<string, uint> reservedGoods = inventory.GetReservedGoods();
+        Dictionary<string, uint> reservedCapacities = inventory.GetReservedCapacities();
+        foreach (LogisticValue relevantLogisticValue in logisticValues.Values)
+        {
+            string goodName = relevantLogisticValue.goodName;
+            relevantStacks.Add(new StackDisplay(goodName, storedGoods[goodName], (int)reservedCapacities[goodName] - (int)reservedGoods[goodName], relevantLogisticValue.targetAmount));
+        }
+        return relevantStacks;
+    }
 }
