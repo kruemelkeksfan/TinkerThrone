@@ -23,7 +23,6 @@ public class ConstructionPlacementManager : MonoBehaviour
         }
     }
 
-
     public static ConstructionPlacementManager GetInstance()
     {
         return instance;

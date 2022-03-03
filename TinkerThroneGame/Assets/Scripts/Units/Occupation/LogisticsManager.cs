@@ -56,7 +56,7 @@ public class LogisticsManager : MonoBehaviour
                 index--;
                 continue;
             }
-            Debug.Log("new LogisticJob");
+            Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
             villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
             if (completedAssignment)
             {

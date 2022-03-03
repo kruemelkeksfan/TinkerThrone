@@ -189,18 +189,48 @@ public class JobsManager : MonoBehaviour
 
     public void AssignConstructionVillagers()
     {
-        int maxVillagerPerSite = Mathf.CeilToInt((unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count) / (float)constructionSites.Count);
+        int maxVillagerPerSite;
+        int villagersToDistribute;
+
+        if(unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count > NeededConstructionVillagers)
+        {
+            villagersToDistribute = NeededConstructionVillagers;
+        }
+        else
+        {
+            villagersToDistribute = unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count;
+        }
+
+        int distributedVillagerCount = 0;
+        int coveredSiteCount = 0;
+        List<ConstructionSite> workingConstructionSites = new();
         foreach (ConstructionSite constructionSite in constructionSites)
         {
+            maxVillagerPerSite = Mathf.CeilToInt((villagersToDistribute - distributedVillagerCount) / (float)(constructionSites.Count - coveredSiteCount));
+            distributedVillagerCount += maxVillagerPerSite;
+
             int maxToCurrentDiff = constructionSite.GetAssignedVillagers() - maxVillagerPerSite;
             if (maxToCurrentDiff > 0)
             {
                 constructionSite.RequestVillagers(maxToCurrentDiff);
             }
+            if (!constructionSite.IsFinishedAssigningJobs())
+            {
+                workingConstructionSites.Add(constructionSite);
+            }
         }
 
-        foreach (ConstructionSite constructionSite in constructionSites)
+        if(unassignedConstructionVillagers.Count == 0)
         {
+            return;
+        }
+
+        distributedVillagerCount = 0;
+        coveredSiteCount = 0;
+        foreach (ConstructionSite constructionSite in workingConstructionSites)
+        {
+            maxVillagerPerSite = Mathf.CeilToInt((villagersToDistribute - distributedVillagerCount) / (float)(workingConstructionSites.Count - coveredSiteCount));
+
             int maxToCurrentDiff = maxVillagerPerSite - constructionSite.GetAssignedVillagers();
             if (maxToCurrentDiff > 0)
             {
@@ -216,6 +246,7 @@ public class JobsManager : MonoBehaviour
                 {
                     if (constructionSite.AssignVillager(unassignedConstructionVillagers[^1]))
                     {
+                        distributedVillagerCount++;
                         assignedConstructionVillagers.Add(unassignedConstructionVillagers[^1]);
                         unassignedConstructionVillagers.RemoveAt(unassignedConstructionVillagers.Count - 1);
                     }
@@ -230,7 +261,7 @@ public class JobsManager : MonoBehaviour
         {
             if (NeededConstructionVillagers < assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count)
             {
-                AssignJoblessVillager(unassignedConstructionVillagers[^1]);
+                AssignJoblessVillager(villager);
             }
             else
             {
@@ -273,6 +304,10 @@ public class JobsManager : MonoBehaviour
         {
             AssignJoblessVillager(unassignedConstructionVillagers[^1]);
             unassignedConstructionVillagers.RemoveAt(unassignedConstructionVillagers.Count - 1);
+        }
+        else
+        {
+            AssignConstructionVillagers();
         }
         jobUi.UpdateUi(idleVillagers.Count, 
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,

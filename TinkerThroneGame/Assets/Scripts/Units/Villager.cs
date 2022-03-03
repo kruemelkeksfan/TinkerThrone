@@ -23,7 +23,6 @@ public class Villager : Unit
         yield return new WaitForSeconds(0.5f * logisticJob.Stack.amount);
         inventory.DirectWithdraw(logisticJob.Stack);
         logisticJob.TargetInventory.GetInventory().Deposit(logisticJob.Stack);
-
         jobsManager.LogisticVillagerBusyToIdle(this);
     }
 
@@ -33,6 +32,7 @@ public class Villager : Unit
         yield return new WaitUntil(() => HasGoal() == false);
         yield return new WaitForSeconds(0.5f * constructionJob.Stack.amount);
         constructionJob.ConstructionSite.GetInventory().Withdraw(constructionJob.Stack);
+        constructionJob.ConstructionSite.ReduceTargetAmount(constructionJob.Stack);
         inventory.DirectDeposit(constructionJob.Stack);
 
         UpdateGoal(constructionJob.Target.transform.position);
@@ -41,5 +41,10 @@ public class Villager : Unit
         inventory.DirectWithdraw(constructionJob.Stack);
 
         constructionJob.ConstructionSite.FinishConstructionJob(constructionJob, this);
+    }
+
+    public void Move(Vector3 position)
+    {
+        UpdateGoal(position);
     }
 }

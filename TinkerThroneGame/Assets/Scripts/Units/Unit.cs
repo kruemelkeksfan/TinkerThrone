@@ -6,14 +6,15 @@ public class Unit : InventoryUser
     [SerializeField] private float agentRadius;
 
     private NavMeshAgent navMeshAgent;
-    private Vector3 goal;
+    [SerializeField] private Vector3 goal;
+    [SerializeField] float distance;
     private bool hasGoal;
 
     public void UpdateGoal(Vector3 goal)
     {
         this.goal = goal;
         navMeshAgent.destination = goal;
-        navMeshAgent.stoppingDistance = agentRadius * 0.5f;
+        navMeshAgent.stoppingDistance = agentRadius;
         hasGoal = true;
     }
 
@@ -29,7 +30,8 @@ public class Unit : InventoryUser
 
     void Update()
     {
-        if (hasGoal && Vector3.Distance(transform.position, goal) <= agentRadius)
+        distance = Vector3.Distance(transform.position, goal);
+        if (hasGoal && Vector3.Distance(transform.position, goal) <= agentRadius*2)
         {
             hasGoal = false;
         }

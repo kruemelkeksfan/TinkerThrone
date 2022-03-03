@@ -186,6 +186,16 @@ public class Inventory
 		return reservedCapacities;
 	}
 
+	public Dictionary<string, uint> GetPlanedStoredGoods()
+    {
+		Dictionary<string, uint> planedStoredGoods = new();
+		foreach(string storedGood in storedGoods.Keys)
+        {
+			planedStoredGoods.Add(storedGood, storedGoods[storedGood] + (reservedCapacities[storedGood] - reservedGoods[storedGood]));
+        }
+		return planedStoredGoods;
+    }
+
 	public Capacity GetReservedCapacity()
 	{
 		return reservedCapacity;

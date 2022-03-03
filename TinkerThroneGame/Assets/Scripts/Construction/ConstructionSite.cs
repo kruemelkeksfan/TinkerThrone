@@ -30,6 +30,11 @@ public class ConstructionSite : LogisticsUser
         return assignedIdleConstructionVillagers.Count + assignedConstructionVillagers.Count;
     }
 
+    public bool IsFinishedAssigningJobs()
+    {
+        return finishedAssigning;
+    }
+
     public override Vector3 GetLogisticPosition()
     {
         return inventoryTransform.position;
@@ -61,6 +66,7 @@ public class ConstructionSite : LogisticsUser
         }
         if (!TryAssignConstructionJob(villager))
         {
+            villager.Move(inventoryTransform.position + Vector3.forward * 3); //TODO set to boreder of Inventoryzone
             currentJobAssigned = false;
             assignedIdleConstructionVillagers.Add(villager);
         }
@@ -129,10 +135,11 @@ public class ConstructionSite : LogisticsUser
 
         //move to else
         constructionJob.Target.SetActive(true);
+        Debug.Log("Job finished: " + constructionJob.Target.name);
 
-
-        if (finishedAssigning && constructionJob.Target == parts[^1] &&  assignedConstructionVillagers.Count == 1)
+        if (finishedAssigning && constructionJob.Target == parts[^1].gameObject &&  assignedConstructionVillagers.Count == 1)
         {
+            Debug.Log("construction finished");
             LogisticsManager.GetInstance().RemoveInventory(this);
             Building building = gameObject.GetComponent<Building>();
             GameObject newModel = Instantiate(finalModel, model.transform.position, model.transform.rotation, model.transform.parent);
@@ -174,6 +181,7 @@ public class ConstructionSite : LogisticsUser
     {
         if (currentJobAssigned)
         {
+            currentJobAssigned = false;
             if (currentModuleInfo.buildingSteps >= modulePartCounter)
             {
                 modulePartCounter = 1;
@@ -218,8 +226,10 @@ public class ConstructionSite : LogisticsUser
             if (!assignedConstructionVillagers.Contains(villager))
             {
                 assignedConstructionVillagers.Add(villager);
+                Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter);
             }
             villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
+            currentJobAssigned = true;
             return true;
         }
         return false;
