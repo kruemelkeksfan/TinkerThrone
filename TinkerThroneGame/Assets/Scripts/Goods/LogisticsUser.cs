@@ -17,7 +17,7 @@ public class LogisticsUser : InventoryUser
     }
     public List<LogisticCommission>[] UpdateLogisticCommissions()
     {
-        Dictionary<string, uint> storedGoods = inventory.GetStoredGoods();
+        Dictionary<string, uint> storedGoods = inventory.GetPlanedStoredGoods();
 
         List<LogisticCommission> logisticInCommissions = new();
         List<LogisticCommission> logisticOutCommissions = new();
