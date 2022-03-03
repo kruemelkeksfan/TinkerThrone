@@ -12,6 +12,7 @@ public class ConstructionSite : LogisticsUser
     List<Villager> assignedConstructionVillagers = new();
     Dictionary<string, LogisticValue> logisticValuesDictionary = new();
     JobsManager jobsManager;
+    NavMeshManager navMeshManager;
 
     ModuleInfo currentModuleInfo = new("", "", 0, 0);
 
@@ -38,6 +39,7 @@ public class ConstructionSite : LogisticsUser
     {
         jobsManager = JobsManager.GetInstance();
         constructionCostManager = ConstructionCostManager.GetInstance();
+        navMeshManager = NavMeshManager.GetInstance();
     }
 
     public bool AssignVillager(Villager villager)
@@ -137,11 +139,14 @@ public class ConstructionSite : LogisticsUser
             }
             jobsManager.RemoveConstructionSite(this);
             building.ActivateBuilding();
+            navMeshManager.UpdateNavMesh();
             GameObject.Destroy(this);
             return;
         }
 
-        if(requestedVillagers > 0)
+        navMeshManager.UpdateNavMesh();
+
+        if (requestedVillagers > 0)
         {
             jobsManager.UnassignVillager(villager);
             assignedIdleConstructionVillagers.Remove(villager);

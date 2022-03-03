@@ -9,7 +9,7 @@ public class ConstructionPlacementManager : MonoBehaviour
     static ConstructionPlacementManager instance;
 
     [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
-    [SerializeField] NavMeshManager navMeshManager;
+    NavMeshManager navMeshManager;
     Building prefab;
     public ConstructionSpace constructionSpace;
     [SerializeField] Building currentBuilding;
@@ -33,6 +33,12 @@ public class ConstructionPlacementManager : MonoBehaviour
     {
         instance = this;
     }
+
+    private void Start()
+    {
+        navMeshManager = NavMeshManager.GetInstance();
+    }
+
     void Update()
     {
         if (Input.GetButtonUp("Fire2") && prefab != null && !EventSystem.current.IsPointerOverGameObject())
@@ -132,7 +138,6 @@ public class ConstructionPlacementManager : MonoBehaviour
         raycastTarget.size = new Vector3(constructionSpace.transform.localScale.x, buildingHight, constructionSpace.transform.localScale.z);
         //Add Building to NavMeshHolder and Update NavMesh
         currentBuilding.transform.SetParent(navMeshManager.transform);
-        navMeshManager.UpdateNavMesh();
         //start building
         currentBuilding.StartConstruction();
         //reset current building..
