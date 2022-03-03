@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +11,6 @@ public class ConstructionSite : LogisticsUser
     ConstructionCostManager constructionCostManager;
     List<Villager> assignedIdleConstructionVillagers = new();
     List<Villager> assignedConstructionVillagers = new();
-    Dictionary<string, LogisticValue> logisticValuesDictionary = new();
     JobsManager jobsManager;
     NavMeshManager navMeshManager;
 
@@ -97,10 +97,6 @@ public class ConstructionSite : LogisticsUser
         specialLogisticValues = logisticValues;
         inventoryCapacity = WorldConsts.capacity;
         SetLogisticsValues();
-        foreach(LogisticValue logisticValue in logisticValues)
-        {
-            logisticValuesDictionary.Add(logisticValue.goodName, logisticValue);
-        }
         LogisticsManager.GetInstance().AddInventory(this);
         jobsManager = JobsManager.GetInstance();
         constructionCostManager = ConstructionCostManager.GetInstance();
@@ -179,19 +175,18 @@ public class ConstructionSite : LogisticsUser
                 {
                     if(currentModuleInfo.materialId != newModuleInfo.materialId)
                     {
-                        if (logisticValuesDictionary.ContainsKey(currentModuleInfo.materialId))
+                        if (logisticValues.ContainsKey(currentModuleInfo.materialId))
                         {
-                            LogisticValue changingValue = logisticValuesDictionary[currentModuleInfo.materialId];
+                            LogisticValue changingValue = logisticValues[currentModuleInfo.materialId];
                             changingValue.logisticsPriorityBeeingEmpty = lowPriority;
-                            logisticValuesDictionary[currentModuleInfo.materialId] = changingValue;
+                            logisticValues[currentModuleInfo.materialId] = changingValue;
                         }
-                        if (logisticValuesDictionary.ContainsKey(newModuleInfo.materialId))
+                        if (logisticValues.ContainsKey(newModuleInfo.materialId))
                         {
-                            LogisticValue changingValue = logisticValuesDictionary[newModuleInfo.materialId];
+                            LogisticValue changingValue = logisticValues[newModuleInfo.materialId];
                             changingValue.logisticsPriorityBeeingEmpty = highPriority;
-                            logisticValuesDictionary[newModuleInfo.materialId] = changingValue;
+                            logisticValues[newModuleInfo.materialId] = changingValue;
                         }
-                        SetLogisticsValues();
                     }
                     currentModuleInfo = newModuleInfo;
                 }
@@ -208,10 +203,6 @@ public class ConstructionSite : LogisticsUser
 
         if (inventory.ReserveWithdraw(currentConstructionJob.Stack))
         {
-            LogisticValue changingValue = logisticValuesDictionary[currentModuleInfo.materialId];
-            changingValue.targetAmount -= currentConstructionJob.Stack.amount;
-            logisticValuesDictionary[currentModuleInfo.materialId] = changingValue;
-
             if (!assignedConstructionVillagers.Contains(villager))
             {
                 assignedConstructionVillagers.Add(villager);
@@ -220,5 +211,15 @@ public class ConstructionSite : LogisticsUser
             return true;
         }
         return false;
+    }
+
+    public void ReduceTargetAmount(Stack stack)
+    {
+        if (logisticValues.ContainsKey(stack.goodName))
+        {
+            LogisticValue changingValue = logisticValues[stack.goodName];
+            changingValue.targetAmount -= stack.amount;
+            logisticValues[stack.goodName] = changingValue;
+        }
     }
 }
