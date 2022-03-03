@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingSpaceHolder : MonoBehaviour
 {
-    List<BuildingSpace> buildingSpaceList = new List<BuildingSpace>();
-    bool isActive = false;
+    private readonly List<BuildingSpace> buildingSpaceList = new();
+    private bool isActive = false;
 
     private void Awake()
     {

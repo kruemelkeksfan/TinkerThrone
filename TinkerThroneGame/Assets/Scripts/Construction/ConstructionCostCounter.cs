@@ -1,23 +1,21 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class ConstructionCostCounter : MonoBehaviour
 {
-    [SerializeField] TextAsset constructionCost;
-    [SerializeField] List<Stack> materials;
-    [SerializeField] ModuleInfoArray info;
-    [SerializeField] bool set;
-    bool isSet;
-    // Start is called before the first frame update
+    [SerializeField] private TextAsset constructionCost;
+    [SerializeField] private List<Stack> materials;
+    [SerializeField] private ModuleInfoArray info;
+    [SerializeField] private bool set;
+    private bool isSet = false;
+
     void Update()
     {
         if (set && !isSet)
         {
             isSet = true;
-            Dictionary<string, ModuleInfo> moduleInfos = new Dictionary<string, ModuleInfo>();
+            Dictionary<string, ModuleInfo> moduleInfos = new();
 
             info = JsonUtility.FromJson<ModuleInfoArray>(constructionCost.text);
 
@@ -27,7 +25,7 @@ public class ConstructionCostCounter : MonoBehaviour
             }
 
             ModuleInfo moduleInfo;
-            Dictionary<string, uint> stacks = new Dictionary<string, uint>();
+            Dictionary<string, uint> stacks = new();
             foreach (Transform transform in this.gameObject.GetComponentsInChildren<Transform>())
             {
                 string[] splitName = transform.name.Split('.');
@@ -37,7 +35,7 @@ public class ConstructionCostCounter : MonoBehaviour
                 {
                     stacks[moduleInfo.materialId] += moduleInfo.GetOverallAmount();
                 }
-                else 
+                else
                 {
                     stacks.Add(moduleInfo.materialId, moduleInfo.GetOverallAmount());
                 }

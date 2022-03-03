@@ -1,12 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingSpace : MonoBehaviour
 {
-    [SerializeField] Collider otherSpaceCollider;
+    [SerializeField] private Collider otherSpaceCollider;
     [SerializeField] protected MeshRenderer meshRenderer;
-    protected List<Collider> colliders = new List<Collider>();
+    protected List<Collider> colliders = new();
 
     private void OnTriggerEnter(Collider other)
     {

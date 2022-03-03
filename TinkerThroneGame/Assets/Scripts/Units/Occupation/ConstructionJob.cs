@@ -6,6 +6,7 @@ public struct ConstructionJob
     public GameObject Target { get; private set; }
     public int ModuleNumber { get; private set; }
     public ModuleInfo ModuleInfo { get; private set; }
+
     private Stack stack;
 
     public Stack Stack { get { return stack; } }

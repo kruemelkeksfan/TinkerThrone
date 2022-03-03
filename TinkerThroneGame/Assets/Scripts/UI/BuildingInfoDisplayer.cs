@@ -27,9 +27,9 @@ public class BuildingInfoDisplayer : MonoBehaviour
             }
         }
         buildingNameText.text = building.buildingName;
-        buildingTypeText.text = building.currentModel.name;
+        buildingTypeText.text = building.GetBuildingType();
         List<StackDisplay> relevantStacks;
-        bool underConstruction = building.UnderConstruction(out ConstructionSite constructionSite);
+        bool underConstruction = building.IsUnderConstruction(out ConstructionSite constructionSite);
         if(underConstruction)
         {
             relevantStacks = constructionSite.GetRelevantStacks();

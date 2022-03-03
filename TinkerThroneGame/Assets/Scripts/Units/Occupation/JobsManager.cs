@@ -14,8 +14,6 @@ public class JobsManager : MonoBehaviour
     private readonly List<Villager> unassignedConstructionVillagers = new();
     private readonly List<ConstructionSite> constructionSites = new();
     private readonly List<Villager> assignedConstructionVillagers = new();
-
-
     //Dictionary<Villager, InventoryUser> productionVillager; //shadows of future greatness || wip
 
     private int neededLogisticVillagers = 0;
@@ -59,6 +57,7 @@ public class JobsManager : MonoBehaviour
             }
         }
     }
+
     public static JobsManager GetInstance()
     {
         return instance;
@@ -98,7 +97,7 @@ public class JobsManager : MonoBehaviour
         {
             idleVillagers.Add(villager);
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                        logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                        assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -135,7 +134,7 @@ public class JobsManager : MonoBehaviour
             logisticVillagers.Remove(villager);
             idleLogisticVillagers.Add(villager);
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -151,7 +150,7 @@ public class JobsManager : MonoBehaviour
             }
             idleVillagers.RemoveAt(0);
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -167,7 +166,7 @@ public class JobsManager : MonoBehaviour
             AssignJoblessVillager(idleLogisticVillagers[^1]);
             idleLogisticVillagers.RemoveAt(idleLogisticVillagers.Count - 1);
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -192,7 +191,7 @@ public class JobsManager : MonoBehaviour
         int maxVillagerPerSite;
         int villagersToDistribute;
 
-        if(unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count > NeededConstructionVillagers)
+        if (unassignedConstructionVillagers.Count + assignedConstructionVillagers.Count > NeededConstructionVillagers)
         {
             villagersToDistribute = NeededConstructionVillagers;
         }
@@ -220,7 +219,7 @@ public class JobsManager : MonoBehaviour
             }
         }
 
-        if(unassignedConstructionVillagers.Count == 0)
+        if (unassignedConstructionVillagers.Count == 0)
         {
             return;
         }
@@ -273,7 +272,7 @@ public class JobsManager : MonoBehaviour
             }
             assignedConstructionVillagers.Remove(villager);
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -288,7 +287,7 @@ public class JobsManager : MonoBehaviour
             idleVillagers.RemoveAt(idleVillagers.Count - 1);
             AssignConstructionVillagers();
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }
@@ -309,7 +308,7 @@ public class JobsManager : MonoBehaviour
         {
             AssignConstructionVillagers();
         }
-        jobUi.UpdateUi(idleVillagers.Count, 
+        jobUi.UpdateUi(idleVillagers.Count,
                logisticVillagers.Count + idleLogisticVillagers.Count, NeededLogisticVillagers,
                assignedConstructionVillagers.Count + unassignedConstructionVillagers.Count, NeededConstructionVillagers);
     }

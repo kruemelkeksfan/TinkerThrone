@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -9,36 +7,32 @@ public class Building : LogisticsUser
 	[Tooltip("The Name of this Building.")]
 	public string buildingName = "Unnamed Building";
 	[Tooltip("Available Production Recipes for this Building.")]
-	public  Recipe[] recipes = { };									// Actual Production should not be handled by the Building, but by the Worker Pawn
-	[Tooltip("The 3D-Model for this Building.")]
-    public GameObject currentModel = null;
-    public GameObject constructionModelPrefab = null;
-    public GameObject finalModelPrefab = null;
-    [SerializeField] Stack[] neededMaterials;
-    [SerializeField] ConstructionSpace constructionSpace;
-    [SerializeField] UpgradeSpace upgradeSpace;
+	public  Recipe[] recipes = { };                                 // Actual Production should not be handled by the Building, but by the Worker Pawn
+    [Header("Models")]
+    [SerializeField] private GameObject currentModel = null;
+    [SerializeField] private GameObject constructionModelPrefab = null;
+    [SerializeField] private GameObject finalModelPrefab = null;
+    [Header("Construction Options")]
+    [SerializeField] private ConstructionSpace constructionSpace; //DEBUG serializeField
+    [SerializeField] private UpgradeSpace upgradeSpace; //DEBUG serializeField
+    [SerializeField] private Transform inventoryLocation;
+    [SerializeField] private Stack[] neededMaterials;
     [SerializeField] private LogisticValue[] specialConstructionLogisticValues;
-    [SerializeField] Transform inventoryLocation;
-    ConstructionSite constructionSite;
 
-    [SerializeField] bool active = false;
+    private ConstructionSite constructionSite;
 
-    public void SetCurrentModdel(GameObject model)
+    [SerializeField] private bool active = false; //DEBUG serializeField
+
+    public void SetCurrentModel(GameObject model)
     {
         currentModel = model;
     }
 
-    private void Start()
+    public string GetBuildingType()
     {
-        
-        if (active)
-        {
-            ActivateBuilding();
-            return;
-        }
-        constructionSpace = GetComponentInChildren<ConstructionSpace>();
-        upgradeSpace = GetComponentInChildren<UpgradeSpace>();
+        return currentModel.name;
     }
+
     public ConstructionSpace GetConstructionSpace()
     {
         if (!constructionSpace)
@@ -47,21 +41,33 @@ public class Building : LogisticsUser
         }
         return constructionSpace;
     }
+
     public UpgradeSpace GetUpgradeSpace()
     {
         return upgradeSpace;
+    }
+
+    public bool IsUnderConstruction(out ConstructionSite constructionSite)
+    {
+        constructionSite = this.constructionSite;
+        return constructionSite != null;
+    }
+
+    private void Start()
+    {
+        if (active)
+        {
+            ActivateBuilding();
+            return;
+        }
+        constructionSpace = GetComponentInChildren<ConstructionSpace>();
+        upgradeSpace = GetComponentInChildren<UpgradeSpace>();
     }
 
     public void StartConstruction()
     {
         constructionSite = gameObject.AddComponent<ConstructionSite>();
         constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
-    }
-
-    public bool UnderConstruction(out ConstructionSite constructionSite)
-    {
-        constructionSite = this.constructionSite;
-        return constructionSite != null;
     }
 
 
@@ -74,5 +80,4 @@ public class Building : LogisticsUser
             LogisticsManager.GetInstance().AddInventory(this);
         }
     }
-   
 }

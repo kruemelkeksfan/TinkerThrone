@@ -56,7 +56,7 @@ public class LogisticsManager : MonoBehaviour
                 index--;
                 continue;
             }
-            Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
+            //Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
             villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
             if (completedAssignment)
             {
@@ -127,7 +127,7 @@ public class LogisticsManager : MonoBehaviour
             if (foundCommission)
             {
                 LogisticJob logisticJob = new LogisticJob(usedCommission, outCommission);
-                if(logisticJob.Priority < 0)
+                if (logisticJob.Priority < 0)
                 {
                     continue;
                 }
