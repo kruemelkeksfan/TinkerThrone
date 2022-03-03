@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Inventory
 {
+	public event StorageChangeHandler storageChanged;
+	public delegate void StorageChangeHandler(Inventory inventory, EventArgs e);
+
 	private Capacity maxCapacity = new Capacity(-1, -1.0f, -1.0f);
 	private Dictionary<string, uint> reservedCapacities = null;
 	private Dictionary<string, uint> reservedGoods = null;
@@ -12,6 +15,14 @@ public class Inventory
 	private Capacity reservedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity temporarilyOccupiedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity freeCapacity = new Capacity(-1, -1.0f, -1.0f);
+
+	private void OnStorageChanged()
+	{
+		if (storageChanged != null)
+		{
+			storageChanged(this, EventArgs.Empty);
+		}
+	}
 
 	public Inventory(Capacity maxCapacity)
 	{
@@ -88,6 +99,7 @@ public class Inventory
 
 			reservedCapacity -= new Capacity(goodStack);
 
+			OnStorageChanged();
 			return true;
 		}
 		else
@@ -112,6 +124,7 @@ public class Inventory
 			temporarilyOccupiedCapacity -= requiredCapacity;
 			freeCapacity += requiredCapacity;
 
+			OnStorageChanged();
 			return true;
 		}
 		else

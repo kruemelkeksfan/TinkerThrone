@@ -35,6 +35,17 @@ public class ConstructionSite : LogisticsUser
         return inventoryTransform.position;
     }
 
+    private void InventoryChanged(Inventory inventory, EventArgs e)
+    {
+        foreach(Villager villager in assignedIdleConstructionVillagers)
+        {
+            if (!TryAssignConstructionJob(villager))
+            {
+                break;
+            }
+        }
+    }
+
     private void Start()
     {
         jobsManager = JobsManager.GetInstance();
@@ -97,6 +108,7 @@ public class ConstructionSite : LogisticsUser
         specialLogisticValues = logisticValues;
         inventoryCapacity = WorldConsts.capacity;
         SetLogisticsValues();
+        inventory.storageChanged += new Inventory.StorageChangeHandler(InventoryChanged);
         LogisticsManager.GetInstance().AddInventory(this);
         jobsManager = JobsManager.GetInstance();
         constructionCostManager = ConstructionCostManager.GetInstance();
