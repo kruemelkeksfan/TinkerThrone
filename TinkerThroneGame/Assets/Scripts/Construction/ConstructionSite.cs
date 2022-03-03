@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,16 +15,18 @@ public class ConstructionSite : LogisticsUser
     private NavMeshManager navMeshManager;
     private Transform[] parts;
     private Transform inventoryTransform;
-    private GameObject model;
+    private GameObject constructionModel;
     private GameObject finalModel;
 
+    private LogisticValue[] constructionLogisticValues;
     private ConstructionJob currentConstructionJob;
     private ModuleInfo currentModuleInfo = new("", "", 0, 0);
     private bool currentJobAssigned = true;
     private int moduleCounter = -1;
-    private int modulePartCounter = 0;
+    private uint moduleStepCounter = 0;
     private int requestedVillagers = 0;
     private bool finishedAssigning = false;
+    private bool isConstructing;
 
     public int GetAssignedVillagers()
     {
@@ -35,6 +38,11 @@ public class ConstructionSite : LogisticsUser
         return finishedAssigning;
     }
 
+    public bool IsConstructing()
+    {
+        return isConstructing;
+    }
+
     public override Vector3 GetLogisticPosition()
     {
         return inventoryTransform.position;
@@ -44,7 +52,7 @@ public class ConstructionSite : LogisticsUser
     {
         foreach (Villager villager in assignedIdleConstructionVillagers)
         {
-            if (!TryAssignConstructionJob(villager))
+            if (!TryAssignJob(villager))
             {
                 break;
             }
@@ -64,7 +72,7 @@ public class ConstructionSite : LogisticsUser
         {
             return false;
         }
-        if (!TryAssignConstructionJob(villager))
+        if (!TryAssignJob(villager))
         {
             villager.Move(inventoryTransform.position + Vector3.forward * 3); //TODO set to boreder of Inventoryzone
             currentJobAssigned = false;
@@ -95,31 +103,103 @@ public class ConstructionSite : LogisticsUser
         return false;
     }
 
-    public void StartConstruction(GameObject model, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues)
+    private bool TryAssignJob(Villager villager)
     {
-        //deactivate Parts and set Array
-        this.model = model;
-        List<Transform> modelParts = new(model.GetComponentsInChildren<Transform>());
-        modelParts.RemoveAt(0);
-        foreach (Transform part in modelParts)
+        if (isConstructing)
         {
-            part.gameObject.SetActive(false);
+            return TryAssignConstructionJob(villager);
         }
-        parts = modelParts.ToArray();
-        //set finalModel
-        this.finalModel = finalModel;
-        //set Inventory World position
-        this.inventoryTransform = inventoryTransform;
-        //set logisticValues and fill Dictionary
+        else
+        {
+            return TryAssignDeconstructionJob(villager);
+        }
+    }
+
+    private void InitConstructionSite(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing)
+    {
+
+        currentJobAssigned = true;
+        finishedAssigning = false;
+        StopAllCoroutines();
+        
+        if (!alreadyConstructing)
+        {
+            //set part Array
+            this.constructionModel = constructionModel;
+            List<Transform> modelParts = new(constructionModel.GetComponentsInChildren<Transform>());
+            modelParts.RemoveAt(0);
+            parts = modelParts.ToArray();
+            //set finalModel
+            this.finalModel = finalModel;
+            //set Inventory World position
+            this.inventoryTransform = inventoryTransform;
+        }
+        //set logisticValues
         specialLogisticValues = logisticValues;
         inventoryCapacity = WorldConsts.capacity;
         SetLogisticsValues();
-        inventory.storageChanged += new Inventory.StorageChangeHandler(InventoryChanged);
-        LogisticsManager.GetInstance().AddInventory(this);
-        jobsManager = JobsManager.GetInstance();
-        constructionCostManager = ConstructionCostManager.GetInstance();
-        //Add Site to JobManager to recive construction villager
-        jobsManager.AddConstructionSite(this);
+        if (!alreadyConstructing)
+        {
+            //Add inventory listener
+            inventory.storageChanged += new Inventory.StorageChangeHandler(InventoryChanged);
+            //add to logisticSystem
+            LogisticsManager.GetInstance().AddInventory(this);
+            //get Singletons
+            jobsManager = JobsManager.GetInstance();
+            constructionCostManager = ConstructionCostManager.GetInstance();
+            //Add Site to JobManager to recive construction villager
+            jobsManager.AddConstructionSite(this);
+        }
+        else
+        {
+            LogisticsManager.GetInstance().UpdateLogisticsJobs();
+            jobsManager.AssignConstructionVillagers();
+        }
+    }
+
+    private void FinishAnyConstructionJob(Villager villager)
+    {
+        if (requestedVillagers > 0)
+        {
+            jobsManager.UnassignVillager(villager);
+            assignedIdleConstructionVillagers.Remove(villager);
+            requestedVillagers--;
+            return;
+        }
+
+        if (!TryAssignJob(villager))
+        {
+            currentJobAssigned = false;
+            assignedConstructionVillagers.Remove(villager);
+            assignedIdleConstructionVillagers.Add(villager);
+        }
+    }
+
+
+    #region construction
+
+    public void StartConstruction(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing = false)
+    {
+        isConstructing = true;
+        constructionLogisticValues = logisticValues;
+
+        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing);
+
+        if (!alreadyConstructing)
+        {
+            foreach (Transform part in parts)
+            {
+                part.gameObject.SetActive(false);
+            }
+        }
+
+        foreach (Villager villager in assignedIdleConstructionVillagers)
+        {
+            if (!TryAssignConstructionJob(villager))
+            {
+                break;
+            }
+        }
     }
 
     public void FinishConstructionJob(ConstructionJob constructionJob, Villager villager)
@@ -142,8 +222,8 @@ public class ConstructionSite : LogisticsUser
             //Debug.Log("construction finished");
             LogisticsManager.GetInstance().RemoveInventory(this);
             Building building = gameObject.GetComponent<Building>();
-            GameObject newModel = Instantiate(finalModel, model.transform.position, model.transform.rotation, model.transform.parent);
-            GameObject.Destroy(model);
+            GameObject newModel = Instantiate(finalModel, constructionModel.transform.position, constructionModel.transform.rotation, constructionModel.transform.parent);
+            GameObject.Destroy(constructionModel);
             building.SetCurrentModel(newModel);
             assignedConstructionVillagers.Remove(villager);
             jobsManager.UnassignVillager(villager, true);
@@ -161,20 +241,7 @@ public class ConstructionSite : LogisticsUser
 
         navMeshManager.UpdateNavMesh();
 
-        if (requestedVillagers > 0)
-        {
-            jobsManager.UnassignVillager(villager);
-            assignedIdleConstructionVillagers.Remove(villager);
-            requestedVillagers--;
-            return;
-        }
-
-        if (!TryAssignConstructionJob(villager))
-        {
-            currentJobAssigned = false;
-            assignedConstructionVillagers.Remove(villager);
-            assignedIdleConstructionVillagers.Add(villager);
-        }
+        FinishAnyConstructionJob(villager);
     }
 
     public bool TryAssignConstructionJob(Villager villager)
@@ -182,9 +249,9 @@ public class ConstructionSite : LogisticsUser
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
-            if (currentModuleInfo.buildingSteps >= modulePartCounter)
+            if (currentModuleInfo.buildingSteps >= moduleStepCounter)
             {
-                modulePartCounter = 1;
+                moduleStepCounter = 1;
                 moduleCounter++;
                 if (moduleCounter >= parts.Length)
                 {
@@ -216,9 +283,9 @@ public class ConstructionSite : LogisticsUser
                     return false;
                 }
 
-                currentConstructionJob = new ConstructionJob(this, parts[moduleCounter].gameObject, moduleCounter, currentModuleInfo);
+                currentConstructionJob = new ConstructionJob(this, parts[moduleCounter].gameObject, moduleStepCounter, currentModuleInfo);
             }
-            else { modulePartCounter++; }
+            else { moduleStepCounter++; }
         }
 
         if (inventory.ReserveWithdraw(currentConstructionJob.Stack))
@@ -244,4 +311,122 @@ public class ConstructionSite : LogisticsUser
             logisticValues[stack.goodName] = changingValue;
         }
     }
+
+    #endregion
+
+    #region deconstruction 
+
+    public void StartDeconstruction(GameObject constructionModel, GameObject currentModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing = false)
+    {
+        isConstructing = false;
+
+        constructionLogisticValues = logisticValues;
+        List<LogisticValue> deconstructionLogisticValues = new();
+        foreach (LogisticValue logisticValue in logisticValues)
+        {
+            deconstructionLogisticValues.Add(new LogisticValue(logisticValue.goodName, 10, 10, 0));
+        }
+        logisticValues = deconstructionLogisticValues.ToArray();
+
+        if (!alreadyConstructing)
+        {
+            Building building = gameObject.GetComponent<Building>();
+            constructionModel = Instantiate(constructionModel, currentModel.transform.position, currentModel.transform.rotation, currentModel.transform.parent);
+            GameObject.Destroy(currentModel);
+            building.SetCurrentModel(constructionModel);
+        }
+
+        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing);
+
+        foreach (Villager villager in assignedIdleConstructionVillagers)
+        {
+            if (!TryAssignDeconstructionJob(villager))
+            {
+                break;
+            }
+        }
+    }
+
+    public bool TryAssignDeconstructionJob(Villager villager)
+    {
+        if (finishedAssigning) return false;
+
+        if (currentJobAssigned)
+        {
+            currentJobAssigned = false;
+            if (currentModuleInfo.buildingSteps == 1)
+            {
+                moduleCounter--;
+                if (moduleCounter <= -1)
+                {
+                    finishedAssigning = true;
+                    StartCoroutine(FinishDeconstruction());
+                    return false;
+                }
+                if (constructionCostManager.TryGetModuleCost(parts[moduleCounter].name, out ModuleInfo newModuleInfo))
+                {
+                    currentModuleInfo = newModuleInfo;
+                    moduleStepCounter = currentModuleInfo.buildingSteps;
+                }
+                else
+                {
+                    Debug.LogWarning("could not finde a corresponding module for " + parts[moduleCounter].name);
+                    return false;
+                }
+
+                currentConstructionJob = new ConstructionJob(this, parts[moduleCounter].gameObject, moduleStepCounter, currentModuleInfo);
+            }
+            else { moduleStepCounter--; }
+        }
+
+        if (inventory.ReserveDeposit(currentConstructionJob.Stack))
+        {
+            if (!assignedConstructionVillagers.Contains(villager))
+            {
+                assignedConstructionVillagers.Add(villager);
+                //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter);
+            }
+            villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
+            currentJobAssigned = true;
+            return true;
+        }
+        return false;
+    }
+
+    public void DeconstructModule(ConstructionJob constructionJob)
+    {
+        if(constructionJob.ModuleStep == 1)
+        {
+            constructionJob.Target.SetActive(false);
+            navMeshManager.UpdateNavMesh();
+        }
+        else
+        {
+            //TODO: partly disassemble
+        }
+    }
+
+    public void FinishDeconstructionJob(Villager villager)
+    {
+        if (!finishedAssigning)
+        {
+            FinishAnyConstructionJob(villager);
+        }
+    }
+
+    private IEnumerator FinishDeconstruction()
+    {
+        yield return new WaitUntil(() => assignedConstructionVillagers.Count == 0);
+        for (int i = assignedIdleConstructionVillagers.Count - 1; i >= 0; i--)
+        {
+            jobsManager.UnassignVillager(assignedIdleConstructionVillagers[i], true);
+            assignedIdleConstructionVillagers.RemoveAt(i);
+        }
+        yield return new WaitUntil(() => inventory.IsEmpty() == true);
+        //Debug.Log("construction finished");
+        LogisticsManager.GetInstance().RemoveInventory(this);
+        jobsManager.RemoveConstructionSite(this);
+        GameObject.Destroy(this.gameObject);
+    }
+    #endregion
 }

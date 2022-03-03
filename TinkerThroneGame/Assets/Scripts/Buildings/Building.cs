@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -20,6 +22,7 @@ public class Building : LogisticsUser
     [SerializeField] private LogisticValue[] specialConstructionLogisticValues;
 
     private ConstructionSite constructionSite;
+    private LogisticValue[] preDeconstructionLogisticValues;
 
     [SerializeField] private bool active = false; //DEBUG serializeField
 
@@ -70,6 +73,24 @@ public class Building : LogisticsUser
         constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
     }
 
+    public void StartDeconstruction()
+    {
+        StartCoroutine(PrepareDeconstruction());
+    }
+
+    public void CancleDeconstruction()
+    {
+        if (constructionSite == null)
+        {
+            StopCoroutine(PrepareDeconstruction());
+            specialLogisticValues = preDeconstructionLogisticValues;
+            ActivateBuilding();
+        }
+        else
+        {
+            constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
+        }
+    }
 
     public void ActivateBuilding()
     {
@@ -78,6 +99,31 @@ public class Building : LogisticsUser
         {
             SetLogisticsValues();
             LogisticsManager.GetInstance().AddInventory(this);
+        }
+    }
+
+    private IEnumerator PrepareDeconstruction()
+    {
+        if (hasInventory)
+        {
+            preDeconstructionLogisticValues = new List<LogisticValue>(logisticValues.Values).ToArray(); //TODO maybe rework this
+            foreach(string good in logisticValues.Keys)
+            {
+                logisticValues[good] = new LogisticValue(good, 10, 10, 0);
+            }
+            LogisticsManager.GetInstance().UpdateLogisticsJobs();
+            yield return new WaitUntil(() => inventory.IsEmpty() == true);
+            LogisticsManager.GetInstance().RemoveInventory(this);
+            active = false;
+        }
+        if (constructionSite == null)
+        {
+            constructionSite = gameObject.AddComponent<ConstructionSite>();
+            constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
+        }
+        else
+        {
+            constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
         }
     }
 }

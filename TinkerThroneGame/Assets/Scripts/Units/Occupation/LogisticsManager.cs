@@ -31,6 +31,7 @@ public class LogisticsManager : MonoBehaviour
         if (!logisticUsers.Contains(inventory))
         {
             logisticUsers.Add(inventory);
+            UpdateLogisticsJobs();
         }
     }
 
@@ -78,7 +79,7 @@ public class LogisticsManager : MonoBehaviour
         }
     }
 
-    private void UpdateLogisticsJobs()
+    public void UpdateLogisticsJobs()
     {
         List<LogisticCommission> inCommissions = new();
         List<LogisticCommission> outCommissions = new();

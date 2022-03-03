@@ -43,6 +43,23 @@ public class Villager : Unit
         constructionJob.ConstructionSite.FinishConstructionJob(constructionJob, this);
     }
 
+    public IEnumerator DoDeconstructionJob(ConstructionJob constructionJob)
+    {
+        UpdateGoal(constructionJob.Target.transform.position);
+        yield return new WaitUntil(() => HasGoal() == false);
+        yield return new WaitForSeconds(0.5f * constructionJob.Stack.amount); // TODO add constructionTime
+        constructionJob.ConstructionSite.DeconstructModule(constructionJob);
+        inventory.DirectDeposit(constructionJob.Stack);
+
+        UpdateGoal(constructionJob.ConstructionSite.GetLogisticPosition());
+        yield return new WaitUntil(() => HasGoal() == false);
+        yield return new WaitForSeconds(0.5f * constructionJob.Stack.amount);
+        constructionJob.ConstructionSite.GetInventory().Deposit(constructionJob.Stack);
+        inventory.DirectWithdraw(constructionJob.Stack);
+
+        constructionJob.ConstructionSite.FinishDeconstructionJob(this);
+    }
+
     public void Move(Vector3 position)
     {
         UpdateGoal(position);

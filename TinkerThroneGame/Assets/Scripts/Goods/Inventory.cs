@@ -24,6 +24,11 @@ public class Inventory
 		}
 	}
 
+	public bool IsEmpty()
+    {
+		return maxCapacity == freeCapacity;
+    }
+
 	public Inventory(Capacity maxCapacity)
 	{
 		this.maxCapacity = maxCapacity;

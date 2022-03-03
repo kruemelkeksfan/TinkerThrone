@@ -55,6 +55,20 @@ public struct Capacity
 		&& (lhs.volumeCapacity < 0.0f || lhs.volumeCapacity >= rhs.volumeCapacity);
 	}
 
+	public static bool operator ==(Capacity lhs, Capacity rhs)
+	{
+		return lhs.unitCapacity == rhs.unitCapacity
+			&& lhs.massCapacity == rhs.massCapacity
+			&& lhs.volumeCapacity == rhs.volumeCapacity;
+	}
+
+	public static bool operator !=(Capacity lhs, Capacity rhs)
+	{
+		return lhs.unitCapacity != rhs.unitCapacity
+			|| lhs.massCapacity != rhs.massCapacity
+			|| lhs.volumeCapacity != rhs.volumeCapacity;
+	}
+
 	public uint ToAmount(string goodName)
 	{
 		Good goodType = GoodManager.GetInstance().GetGood(goodName);

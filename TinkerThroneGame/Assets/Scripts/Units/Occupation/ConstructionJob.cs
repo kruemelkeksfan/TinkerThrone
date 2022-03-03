@@ -4,19 +4,19 @@ public struct ConstructionJob
 {
     public ConstructionSite ConstructionSite { get; private set; }
     public GameObject Target { get; private set; }
-    public int ModuleNumber { get; private set; }
+    public uint ModuleStep { get; private set; }
     public ModuleInfo ModuleInfo { get; private set; }
 
     private Stack stack;
 
     public Stack Stack { get { return stack; } }
 
-    public ConstructionJob(ConstructionSite constructionSite, GameObject target, int moduleNumber, ModuleInfo moduleInfo)
+    public ConstructionJob(ConstructionSite constructionSite, GameObject target, uint moduleStep, ModuleInfo moduleInfo)
     {
         ConstructionSite = constructionSite;
         Target = target;
         ModuleInfo = moduleInfo;
-        ModuleNumber = moduleNumber;
+        ModuleStep = moduleStep;
         this.stack = new Stack(moduleInfo.materialId, moduleInfo.amountNeededPerStep);
     }
 }
