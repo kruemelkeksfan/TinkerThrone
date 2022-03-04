@@ -25,6 +25,12 @@ public class Building : LogisticsUser
     private LogisticValue[] preDeconstructionLogisticValues;
 
     [SerializeField] private bool active = false; //DEBUG serializeField
+    bool beeingDeconstructed = false;
+
+    public bool IsDeconstructing()
+    {
+        return beeingDeconstructed;
+    }
 
     public void SetCurrentModel(GameObject model)
     {
@@ -95,6 +101,7 @@ public class Building : LogisticsUser
         {
             constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
         }
+        beeingDeconstructed = false;
     }
 
     public void ActivateBuilding()
@@ -109,25 +116,29 @@ public class Building : LogisticsUser
 
     private IEnumerator PrepareDeconstruction()
     {
+        active = false;
         if (hasInventory)
         {
             preDeconstructionLogisticValues = new List<LogisticValue>(logisticValues.Values).ToArray(); //TODO maybe rework this
+            Dictionary<string, LogisticValue> newLogisticValues = new();
             foreach(string good in logisticValues.Keys)
             {
-                logisticValues[good] = new LogisticValue(good, 10, 10, 0);
+                newLogisticValues.Add(good, new LogisticValue(good, 10, 10, 0));
             }
+            logisticValues = newLogisticValues;
             LogisticsManager.GetInstance().UpdateLogisticsJobs();
             yield return new WaitUntil(() => inventory.IsEmpty() == true);
             LogisticsManager.GetInstance().RemoveInventory(this);
-            active = false;
         }
         if (constructionSite == null)
         {
             constructionSite = gameObject.AddComponent<ConstructionSite>();
+            beeingDeconstructed = true;
             constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
         }
         else
         {
+            beeingDeconstructed = true;
             constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
         }
     }

@@ -32,7 +32,7 @@ public class BuildingInfoDisplayer : MonoBehaviour
         buildingNameText.text = building.buildingName;
         buildingTypeText.text = building.GetBuildingType();
         bool underConstruction = building.IsUnderConstruction(out ConstructionSite constructionSite);
-        if (underConstruction && !constructionSite.IsConstructing())
+        if (building.IsDeconstructing() || (underConstruction && !constructionSite.IsConstructing()))
         {
             stopDeconstructButtonOverlay.SetActive(true);
             deconstructButton.onClick.RemoveAllListeners();
