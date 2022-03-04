@@ -24,7 +24,7 @@ public class ConstructionSite : LogisticsUser
     private ModuleInfo currentModuleInfo = new("", "", 0, 0);
     private bool currentJobAssigned = true;
     private int moduleCounter = -1;
-    private uint moduleStepCounter = 0;
+    private uint moduleStepCounter = 100;
     private int requestedVillagers = 0;
     private bool finishedAssigning = false;
     private bool isConstructing;
@@ -191,6 +191,7 @@ public class ConstructionSite : LogisticsUser
 
         if (!TryAssignJob(villager))
         {
+            villager.Move(inventoryTransform.position + Vector3.forward * 3); //TODO set to boreder of Inventoryzone
             currentJobAssigned = false;
             assignedConstructionVillagers.Remove(villager);
             assignedIdleConstructionVillagers.Add(villager);
@@ -274,7 +275,7 @@ public class ConstructionSite : LogisticsUser
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
-            if (currentModuleInfo.buildingSteps >= moduleStepCounter)
+            if (currentModuleInfo.buildingSteps <= moduleStepCounter)
             {
                 moduleStepCounter = 1;
                 moduleCounter++;
@@ -323,6 +324,10 @@ public class ConstructionSite : LogisticsUser
             villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
             currentJobAssigned = true;
             return true;
+        }
+        else
+        {
+            Debug.Log("missing " + currentConstructionJob.Stack.goodName + " " + currentConstructionJob.Stack.amount);
         }
         return false;
     }
@@ -382,7 +387,7 @@ public class ConstructionSite : LogisticsUser
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
-            if (currentModuleInfo.buildingSteps <= 1)
+            if (moduleStepCounter <= 1)
             {
                 moduleCounter--;
                 if (moduleCounter <= -1)
