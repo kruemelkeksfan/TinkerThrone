@@ -67,6 +67,11 @@ public class Building : LogisticsUser
         upgradeSpace = GetComponentInChildren<UpgradeSpace>();
     }
 
+    private void OnDestroy()
+    {
+        BuildingSpaceHolder.GetInstance().RemoveBuildingSpaces(new BuildingSpace[] { constructionSpace, upgradeSpace });
+    }
+
     public void StartConstruction()
     {
         constructionSite = gameObject.AddComponent<ConstructionSite>();
