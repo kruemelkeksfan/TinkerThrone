@@ -124,7 +124,7 @@ public class ConstructionSite : LogisticsUser
         }
     }
 
-    private void InitConstructionSite(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing)
+    private void InitConstructionSite(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing, bool isDeconstructing = false)
     {
 
         currentJobAssigned = true;
@@ -147,6 +147,10 @@ public class ConstructionSite : LogisticsUser
             List<Transform> modelParts = new(constructionModel.GetComponentsInChildren<Transform>());
             modelParts.RemoveAt(0);
             parts = modelParts.ToArray();
+            if (!alreadyConstructing && isDeconstructing)
+            {
+                moduleCounter = parts.Length;
+            }
             //set finalModel
             this.finalModel = finalModel;
             //set Inventory World position
@@ -209,6 +213,8 @@ public class ConstructionSite : LogisticsUser
             {
                 part.gameObject.SetActive(false);
             }
+
+            moduleCounter = -1;
         }
 
         foreach (Villager villager in assignedIdleConstructionVillagers)
@@ -354,7 +360,9 @@ public class ConstructionSite : LogisticsUser
             building.SetCurrentModel(constructionModel);
         }
 
-        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing);
+        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing, true);
+
+
 
         foreach (Villager villager in assignedIdleConstructionVillagers)
         {
@@ -372,7 +380,7 @@ public class ConstructionSite : LogisticsUser
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
-            if (currentModuleInfo.buildingSteps == 1)
+            if (currentModuleInfo.buildingSteps <= 1)
             {
                 moduleCounter--;
                 if (moduleCounter <= -1)
@@ -404,7 +412,7 @@ public class ConstructionSite : LogisticsUser
                 assignedConstructionVillagers.Add(villager);
                 //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter);
             }
-            villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
+            villager.StartCoroutine(villager.DoDeconstructionJob(currentConstructionJob));
             currentJobAssigned = true;
             return true;
         }

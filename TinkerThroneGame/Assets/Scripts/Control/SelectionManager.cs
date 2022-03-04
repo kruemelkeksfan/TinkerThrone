@@ -49,7 +49,7 @@ public class SelectionManager : MonoBehaviour
                 return;
             }
         }
-        else if (selectedBuilding && !constructionPlacementManager.IsBuilding && Input.GetButtonDown("Fire2") && !EventSystem.current.IsPointerOverGameObject())
+        else if (!selectedBuilding || (selectedBuilding && !constructionPlacementManager.IsBuilding && Input.GetButtonDown("Fire2") && !EventSystem.current.IsPointerOverGameObject()))
         {
             selectedBuilding = null;
             buildingInfo.gameObject.SetActive(false);

@@ -30,7 +30,7 @@ public class Unit : InventoryUser
 
     void Update()
     {
-        distance = Vector3.Distance(transform.position, goal);
+        distance = Vector3.Distance(transform.position, new Vector3(goal.x, transform.position.y, goal.z));
         if (hasGoal && Vector3.Distance(transform.position, goal) <= agentRadius*2)
         {
             hasGoal = false;

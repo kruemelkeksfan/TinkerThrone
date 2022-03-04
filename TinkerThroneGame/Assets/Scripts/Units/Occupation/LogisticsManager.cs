@@ -110,7 +110,7 @@ public class LogisticsManager : MonoBehaviour
                         foundCommission = true;
                         usedCommission = inCommission;
                     }
-                    else if (inCommission.Amount > usedCommission.Amount)
+                    else if (inCommission.priority < usedCommission.priority || (inCommission.priority == usedCommission.priority && inCommission.Amount > usedCommission.Amount))
                     {
                         usedCommission = inCommission;
                     }
