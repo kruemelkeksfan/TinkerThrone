@@ -47,6 +47,7 @@ public class LogisticsManager : MonoBehaviour
     public bool TryAssignJob(Villager villager)
     {
         if (availableJobs.Count == 0) return false;
+        if (villager.HasJob) return false;
         //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
 
         int index = availableJobs.Count - 1;

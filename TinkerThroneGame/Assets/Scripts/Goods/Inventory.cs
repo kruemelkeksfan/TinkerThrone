@@ -62,6 +62,22 @@ public class Inventory
 		return false;
 	}
 
+	public bool CancleReserveDeposit(Stack goodStack)
+	{
+		Capacity requiredCapacity = new Capacity(goodStack);
+		if (reservedCapacities[goodStack.goodName] >= goodStack.amount)
+		{
+			reservedCapacities[goodStack.goodName] -= goodStack.amount;
+
+			reservedCapacity -= requiredCapacity;
+			freeCapacity += requiredCapacity;
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public bool ReserveWithdraw(Stack goodStack)
 	{
 		if (storedGoods[goodStack.goodName] - reservedGoods[goodStack.goodName] >= goodStack.amount)

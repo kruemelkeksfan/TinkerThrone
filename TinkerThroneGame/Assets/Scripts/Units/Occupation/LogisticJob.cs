@@ -79,6 +79,12 @@ public class LogisticJob : IComparable<LogisticJob>
         return false;
     }
 
+    public void RevertReserveStack()
+    {
+        SourceInventory.GetInventory().CancleReserveWithdraw(Stack);
+        TargetInventory.GetInventory().CancleReserveDeposit(Stack);
+    }
+
     public int CompareTo(LogisticJob other)
     {
         return Priority.CompareTo(other.Priority);

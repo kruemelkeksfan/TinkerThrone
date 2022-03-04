@@ -228,7 +228,7 @@ public class ConstructionSite : LogisticsUser
 
     public void FinishConstructionJob(ConstructionJob constructionJob, Villager villager)
     {
-        if (constructionJob.ModuleInfo.GetBuildingProgress() < 1)
+        if (constructionJob.ModuleStep < constructionJob.ModuleInfo.buildingSteps)
         {
             //TODO
         }
@@ -270,6 +270,7 @@ public class ConstructionSite : LogisticsUser
 
     public bool TryAssignConstructionJob(Villager villager)
     {
+        if (villager.HasJob) return false;
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
@@ -317,8 +318,8 @@ public class ConstructionSite : LogisticsUser
             if (!assignedConstructionVillagers.Contains(villager))
             {
                 assignedConstructionVillagers.Add(villager);
-                //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter);
             }
+            //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter + " ModpartNr:" + moduleStepCounter);
             villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
             currentJobAssigned = true;
             return true;
@@ -376,6 +377,7 @@ public class ConstructionSite : LogisticsUser
     public bool TryAssignDeconstructionJob(Villager villager)
     {
         if (finishedAssigning) return false;
+        if (villager.HasJob) return false;
 
         if (currentJobAssigned)
         {

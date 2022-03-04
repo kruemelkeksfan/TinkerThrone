@@ -20,11 +20,6 @@ public struct ModuleInfo
     {
         return amountNeededPerStep * buildingSteps;
     }
-
-    public float GetBuildingProgress()
-    {
-        return 1 / buildingSteps;
-    }
 }
 
 [Serializable]
