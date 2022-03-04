@@ -6,6 +6,7 @@ public class ConstructionPlacementManager : MonoBehaviour
     private static ConstructionPlacementManager instance;
 
     [SerializeField] private BuildingSpaceHolder buildingSpaceHolder;
+    [SerializeField] private GameObject constructionCornerPrefab;
 
     private NavMeshManager navMeshManager;
     private Building prefab;
@@ -16,6 +17,11 @@ public class ConstructionPlacementManager : MonoBehaviour
     public static ConstructionPlacementManager GetInstance()
     {
         return instance;
+    }
+
+    public GameObject GetConstructioCornerPrefab()
+    {
+        return constructionCornerPrefab;
     }
 
     public bool IsBuilding

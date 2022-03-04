@@ -17,6 +17,7 @@ public class ConstructionSite : LogisticsUser
     private Transform inventoryTransform;
     private GameObject constructionModel;
     private GameObject finalModel;
+    private GameObject[] constructionCorners;
 
     private LogisticValue[] constructionLogisticValues;
     private ConstructionJob currentConstructionJob;
@@ -64,6 +65,14 @@ public class ConstructionSite : LogisticsUser
         jobsManager = JobsManager.GetInstance();
         constructionCostManager = ConstructionCostManager.GetInstance();
         navMeshManager = NavMeshManager.GetInstance();
+    }
+
+    private void OnDestroy()
+    {
+        foreach(GameObject corner in constructionCorners)
+        {
+            GameObject.Destroy(corner);
+        }
     }
 
     public bool AssignVillager(Villager villager)
@@ -124,6 +133,15 @@ public class ConstructionSite : LogisticsUser
         
         if (!alreadyConstructing)
         {
+            //spawn constructionCorners
+            GameObject prefab = ConstructionPlacementManager.GetInstance().GetConstructioCornerPrefab();
+            BoxCollider selectionColider = gameObject.GetComponent<BoxCollider>();
+            constructionCorners = new GameObject[] {
+                Instantiate(prefab, transform.position + new Vector3(selectionColider.size.x * 0.5f, 0, selectionColider.size.z * 0.5f), Quaternion.identity, transform),
+                Instantiate(prefab, transform.position + new Vector3(selectionColider.size.x * 0.5f, 0, -selectionColider.size.z * 0.5f), Quaternion.identity, transform),
+                Instantiate(prefab, transform.position + new Vector3(-selectionColider.size.x * 0.5f, 0, -selectionColider.size.z * 0.5f), Quaternion.identity, transform),
+                Instantiate(prefab, transform.position + new Vector3(-selectionColider.size.x * 0.5f, 0, selectionColider.size.z * 0.5f), Quaternion.identity, transform)
+            };
             //set part Array
             this.constructionModel = constructionModel;
             List<Transform> modelParts = new(constructionModel.GetComponentsInChildren<Transform>());
