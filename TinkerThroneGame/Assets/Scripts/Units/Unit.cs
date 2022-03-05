@@ -12,10 +12,30 @@ public class Unit : InventoryUser
 
     public void UpdateGoal(Vector3 goal)
     {
-        this.goal = goal;
-        navMeshAgent.destination = goal;
-        navMeshAgent.stoppingDistance = agentRadius;
-        hasGoal = true;
+        NavMeshHit hit;
+        Vector3 result;
+        hasGoal = false;
+        int hight = 10;
+        while (!hasGoal)
+        {
+            if (NavMesh.SamplePosition(goal, out hit, hight, NavMesh.AllAreas))
+            {
+                result = hit.position;
+                this.goal = result;
+                navMeshAgent.destination = result;
+                navMeshAgent.stoppingDistance = agentRadius;
+                hasGoal = true;
+            }
+            else
+            {
+                hight += hight;
+                if(hight >= 10000)
+                {
+                    break;
+                }
+            }
+        }
+        
     }
 
     public bool HasGoal()

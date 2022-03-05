@@ -355,6 +355,9 @@ MonoBehaviour:
     type: 3}
   finalModelPrefab: {fileID: 919132149155446097, guid: 7a67db1a820fe6c42932ca11eeff869b,
     type: 3}
+  constructionSpace: {fileID: 0}
+  upgradeSpace: {fileID: 0}
+  inventoryLocation: {fileID: 662174241496998938}
   neededMaterials:
   - goodName: 1
     amount: 100
@@ -364,8 +367,6 @@ MonoBehaviour:
     amount: 63
   - goodName: 4
     amount: 80
-  constructionSpace: {fileID: 0}
-  upgradeSpace: {fileID: 0}
   specialConstructionLogisticValues:
   - goodName: Square Beam
     logisticsPriorityBeeingEmpty: 2
@@ -383,7 +384,6 @@ MonoBehaviour:
     logisticsPriorityBeeingEmpty: 3
     logisticsPriorityBeeingFull: 3
     targetAmount: 80
-  inventoryLocation: {fileID: 662174241496998938}
   active: 0
 --- !u!65 &2279716557035835614
 BoxCollider:
