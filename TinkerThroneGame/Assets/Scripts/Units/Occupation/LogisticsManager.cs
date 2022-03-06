@@ -150,7 +150,7 @@ public class LogisticsManager : MonoBehaviour
 
     private void AssignJobs()
     {
-        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers())
+        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers()) //TODO remove idle villagers
         {
             if (!TryAssignJob(villager)) break;
         }
