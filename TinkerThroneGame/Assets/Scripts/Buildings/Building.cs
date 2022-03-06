@@ -116,8 +116,7 @@ public class Building : LogisticsUser
 
     private IEnumerator PrepareDeconstruction()
     {
-        active = false;
-        if (hasInventory)
+        if (hasInventory && active)
         {
             preDeconstructionLogisticValues = new List<LogisticValue>(logisticValues.Values).ToArray(); //TODO maybe rework this
             Dictionary<string, LogisticValue> newLogisticValues = new();
@@ -127,9 +126,11 @@ public class Building : LogisticsUser
             }
             logisticValues = newLogisticValues;
             LogisticsManager.GetInstance().UpdateLogisticsJobs();
+            active = false;
             yield return new WaitUntil(() => inventory.IsEmpty() == true);
             LogisticsManager.GetInstance().RemoveInventory(this);
         }
+        active = false;
         if (constructionSite == null)
         {
             constructionSite = gameObject.AddComponent<ConstructionSite>();
