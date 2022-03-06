@@ -214,7 +214,14 @@ public class ConstructionSite : LogisticsUser
         {
             if (originalJobSetState)
             {
-                moduleCounter--;
+                if (currentModuleInfo.buildingSteps > 1)
+                {
+                    moduleStepCounter -= (uint)assignedConstructionVillagers.Count;
+                }
+                else
+                {
+                    moduleCounter -= assignedConstructionVillagers.Count;
+                } 
             }
             List<Transform> partsToConstruct = new(parts);
             if(moduleCounter > 0)
@@ -381,7 +388,14 @@ public class ConstructionSite : LogisticsUser
         }
         else if (currentJobAssigned)
         {
-            moduleCounter++;
+            if (currentModuleInfo.buildingSteps > 1)
+            {
+                moduleStepCounter += (uint)assignedConstructionVillagers.Count;
+            }
+            else
+            {
+                moduleCounter += assignedConstructionVillagers.Count;
+            }
         }
         constructionCostManager = ConstructionCostManager.GetInstance();
         Stack[] stacks = constructionCostManager.GetCostForModel(constructionModel.GetComponentsInChildren<Transform>());
