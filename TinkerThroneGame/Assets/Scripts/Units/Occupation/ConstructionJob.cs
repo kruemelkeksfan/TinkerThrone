@@ -4,7 +4,7 @@ public struct ConstructionJob
 {
     public ConstructionSite ConstructionSite { get; private set; }
     public GameObject Target { get; private set; }
-    public uint ModuleStep { get; private set; }
+    public uint ModuleStep { get; set; }
     public ModuleInfo ModuleInfo { get; private set; }
 
     private Stack stack;

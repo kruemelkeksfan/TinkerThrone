@@ -336,7 +336,11 @@ public class ConstructionSite : LogisticsUser
 
                 currentConstructionJob = new ConstructionJob(this, parts[moduleCounter].gameObject, moduleStepCounter, currentModuleInfo);
             }
-            else { moduleStepCounter++; }
+            else
+            {
+                moduleStepCounter++;
+                currentConstructionJob.ModuleStep = moduleStepCounter;
+            }
         }
 
         if (inventory.ReserveWithdraw(currentConstructionJob.Stack))
@@ -442,7 +446,11 @@ public class ConstructionSite : LogisticsUser
 
                 currentConstructionJob = new ConstructionJob(this, parts[moduleCounter].gameObject, moduleStepCounter, currentModuleInfo);
             }
-            else { moduleStepCounter--; }
+            else 
+            { 
+                moduleStepCounter--;
+                currentConstructionJob.ModuleStep = moduleStepCounter;
+            }
         }
 
         if (inventory.ReserveDeposit(currentConstructionJob.Stack))
