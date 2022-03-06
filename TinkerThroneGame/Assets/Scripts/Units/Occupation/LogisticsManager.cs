@@ -6,8 +6,8 @@ public class LogisticsManager : MonoBehaviour
 {
     private static LogisticsManager instance = null;
 
-    private readonly List<LogisticsUser> logisticUsers = new();
-    private List<LogisticJob> availableJobs = new();
+    public List<LogisticsUser> logisticUsers = new();
+    public List<LogisticJob> availableJobs = new();
     private JobsManager jobsManager;
 
     public static LogisticsManager GetInstance()
@@ -31,6 +31,7 @@ public class LogisticsManager : MonoBehaviour
         if (!logisticUsers.Contains(inventory))
         {
             logisticUsers.Add(inventory);
+            UpdateLogisticsJobs();
         }
     }
 
@@ -46,6 +47,7 @@ public class LogisticsManager : MonoBehaviour
     public bool TryAssignJob(Villager villager)
     {
         if (availableJobs.Count == 0) return false;
+        if (villager.HasJob) return false;
         //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
 
         int index = availableJobs.Count - 1;
@@ -56,6 +58,7 @@ public class LogisticsManager : MonoBehaviour
                 index--;
                 continue;
             }
+            //Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
             villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
             if (completedAssignment)
             {
@@ -77,7 +80,7 @@ public class LogisticsManager : MonoBehaviour
         }
     }
 
-    private void UpdateLogisticsJobs()
+    public void UpdateLogisticsJobs()
     {
         List<LogisticCommission> inCommissions = new();
         List<LogisticCommission> outCommissions = new();
@@ -108,7 +111,7 @@ public class LogisticsManager : MonoBehaviour
                         foundCommission = true;
                         usedCommission = inCommission;
                     }
-                    else if (inCommission.Amount > usedCommission.Amount)
+                    else if (inCommission.priority < usedCommission.priority || (inCommission.priority == usedCommission.priority && inCommission.Amount > usedCommission.Amount))
                     {
                         usedCommission = inCommission;
                     }
@@ -125,7 +128,12 @@ public class LogisticsManager : MonoBehaviour
             }
             if (foundCommission)
             {
-                availableJobs.Add(new LogisticJob(usedCommission, outCommission));
+                LogisticJob logisticJob = new LogisticJob(usedCommission, outCommission);
+                if (logisticJob.Priority < 0)
+                {
+                    continue;
+                }
+                availableJobs.Add(logisticJob);
                 if (usedCommission.Amount > outCommission.Amount)
                 {
                     int index = inCommissions.IndexOf(usedCommission);
@@ -142,7 +150,7 @@ public class LogisticsManager : MonoBehaviour
 
     private void AssignJobs()
     {
-        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers())
+        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers()) //TODO remove idle villagers
         {
             if (!TryAssignJob(villager)) break;
         }

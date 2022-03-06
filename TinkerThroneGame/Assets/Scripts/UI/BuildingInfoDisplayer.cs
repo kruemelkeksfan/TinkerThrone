@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuildingInfoDisplayer : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class BuildingInfoDisplayer : MonoBehaviour
     [SerializeField] private FourColorFillTextBar capacityUnitDisplay;
     [SerializeField] private FourColorFillTextBar capacityMassDisplay;
     [SerializeField] private FourColorFillTextBar capacityVolumeDisplay;
+    [SerializeField] private Button deconstructButton;
+    [SerializeField] private GameObject stopDeconstructButtonOverlay;
     [Header("Prefabs")]
     [SerializeField] private GoodDisplayer goodDisplayerPrefab;
 
@@ -27,8 +30,30 @@ public class BuildingInfoDisplayer : MonoBehaviour
             }
         }
         buildingNameText.text = building.buildingName;
-        buildingTypeText.text = building.buildingModel.name;
-        List<StackDisplay> relevantStacks = building.GetRelevantStacks();
+        buildingTypeText.text = building.GetBuildingType();
+        bool underConstruction = building.IsUnderConstruction(out ConstructionSite constructionSite);
+        if (building.IsDeconstructing() || (underConstruction && !constructionSite.IsConstructing()))
+        {
+            stopDeconstructButtonOverlay.SetActive(true);
+            deconstructButton.onClick.RemoveAllListeners();
+            deconstructButton.onClick.AddListener(() => StopDeconstruction(building));
+        }
+        else
+        {
+            stopDeconstructButtonOverlay.SetActive(false);
+            deconstructButton.onClick.RemoveAllListeners();
+            deconstructButton.onClick.AddListener(() => StartDeconstruction(building));
+        }
+
+        List<StackDisplay> relevantStacks;
+        if(underConstruction)
+        {
+            relevantStacks = constructionSite.GetRelevantStacks();
+        }
+        else
+        {
+            relevantStacks = building.GetRelevantStacks();
+        }
         if (relevantStacks == null) return;
 
         int count = 0;
@@ -49,8 +74,18 @@ public class BuildingInfoDisplayer : MonoBehaviour
             goodDisplayers.Add(newGoodDisplayer);
         }
 
-        Capacity capacity = building.GetCapacity();
-        Inventory buildingInventory = building.GetInventory();
+        Capacity capacity;
+        Inventory buildingInventory;
+        if (underConstruction)
+        {
+            capacity = constructionSite.GetCapacity();
+            buildingInventory = constructionSite.GetInventory();
+        }
+        else
+        {
+            capacity = building.GetCapacity();
+            buildingInventory = building.GetInventory();
+        }
         Capacity freeCapacity = buildingInventory.GetFreeCapacity();
         Capacity reservedCapacity = buildingInventory.GetReservedCapacity();
         Capacity tempOccupiedCapacity = buildingInventory.GetTemporarilyOccupiedCapacity();
@@ -140,5 +175,21 @@ public class BuildingInfoDisplayer : MonoBehaviour
                 goodDisplayers.RemoveAt(i);
             }
         }
+    }
+
+    public void StartDeconstruction(Building building)
+    {
+        building.StartDeconstruction();
+        stopDeconstructButtonOverlay.SetActive(true);
+        deconstructButton.onClick.RemoveAllListeners();
+        deconstructButton.onClick.AddListener(() => StopDeconstruction(building));
+    }
+
+    public void StopDeconstruction(Building building)
+    {
+        building.CancleDeconstruction();
+        stopDeconstructButtonOverlay.SetActive(false);
+        deconstructButton.onClick.RemoveAllListeners();
+        deconstructButton.onClick.AddListener(() => StartDeconstruction(building));
     }
 }

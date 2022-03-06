@@ -129,6 +129,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   otherSpaceCollider: {fileID: 4074001230486928127}
   meshRenderer: {fileID: 7609985711430342882}
+--- !u!1 &4070232285317122579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3689680500477699622}
+  m_Layer: 7
+  m_Name: LogisticPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3689680500477699622
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4070232285317122579}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.5, y: 0, z: 1.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2256792950126256875}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7917760231416912023
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,6 +192,7 @@ Transform:
   m_Children:
   - {fileID: 3931921264636617814}
   - {fileID: 4387606147055186174}
+  - {fileID: 3689680500477699622}
   - {fileID: 1212855901799378761}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -181,22 +213,36 @@ MonoBehaviour:
   hasInventory: 1
   inventoryCapacity:
     unitCapacity: -1
-    massCapacity: 1000
-    volumeCapacity: 5
+    massCapacity: -1
+    volumeCapacity: 30
   specialLogisticValues: []
   defaultPriorityBeeingEmpty: 5
   defaultPriorityBeeingFull: 6
   defaultTargetAmount: 50
   buildingName: Unnamed Building
   recipes: []
-  buildingModel: {fileID: 1990378455300879859}
+  currentModel: {fileID: 1990378455300879859}
+  constructionModelPrefab: {fileID: 919132149155446097, guid: 455b96381877e4645ae3fcdbe2c7abf4,
+    type: 3}
+  finalModelPrefab: {fileID: 919132149155446097, guid: d7a8de98f7d1e6b4ea71bf95ca34e41f,
+    type: 3}
+  constructionSpace: {fileID: 0}
+  upgradeSpace: {fileID: 0}
+  inventoryLocation: {fileID: 3689680500477699622}
   neededMaterials:
   - goodName: 2
     amount: 22
   - goodName: 3
     amount: 108
-  constructionSpace: {fileID: 0}
-  upgradeSpace: {fileID: 0}
+  specialConstructionLogisticValues:
+  - goodName: Square Beam
+    logisticsPriorityBeeingEmpty: 2
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 22
+  - goodName: Board
+    logisticsPriorityBeeingEmpty: 3
+    logisticsPriorityBeeingFull: 3
+    targetAmount: 108
   active: 0
 --- !u!65 &3201354548287207068
 BoxCollider:
@@ -350,7 +396,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 455b96381877e4645ae3fcdbe2c7abf4,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 455b96381877e4645ae3fcdbe2c7abf4,
         type: 3}

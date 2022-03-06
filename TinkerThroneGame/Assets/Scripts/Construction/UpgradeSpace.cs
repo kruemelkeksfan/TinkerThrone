@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class UpgradeSpace : BuildingSpace
 {
     private void Update()
@@ -9,7 +5,7 @@ public class UpgradeSpace : BuildingSpace
         int colorEscelation = 0;
         for (int i = colliders.Count - 1; i >= 0; i--)
         {
-            if(colliders[i] == null)
+            if (colliders[i] == null)
             {
                 colliders.Remove(colliders[i]);
                 continue;

@@ -29,7 +29,7 @@ public class LogisticJob : IComparable<LogisticJob>
         {
             this.stack = new Stack(outCommission.goodName, outCommission.Amount);
         }
-        this.Priority = inCommission.priority - outCommission.priority;
+        this.Priority = outCommission.priority - inCommission.priority;
     }
 
     public bool TryGetJobPart(Villager assignedVillager, out LogisticJob logisticJobPart, out bool completedAssignment)
@@ -77,6 +77,12 @@ public class LogisticJob : IComparable<LogisticJob>
             }
         }
         return false;
+    }
+
+    public void RevertReserveStack()
+    {
+        SourceInventory.GetInventory().CancleReserveWithdraw(Stack);
+        TargetInventory.GetInventory().CancleReserveDeposit(Stack);
     }
 
     public int CompareTo(LogisticJob other)

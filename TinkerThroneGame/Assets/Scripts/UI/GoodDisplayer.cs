@@ -11,11 +11,11 @@ public class GoodDisplayer : MonoBehaviour
         goodNameText.text = stack.GoodName;
         if (stack.AmountChange > 0)
         {
-            goodAmountText.text = stack.Amount + " (+" + stack.AmountChange + ")";
+            goodAmountText.text = stack.Amount + " / " + stack.TargetAmount + " (+" + stack.AmountChange + ")";
         }
         else
         {
-            goodAmountText.text = stack.Amount + " (" + stack.AmountChange + ")";
+            goodAmountText.text = stack.Amount + " / " + stack.TargetAmount + " (" + stack.AmountChange + ")";
         }
     }
 }

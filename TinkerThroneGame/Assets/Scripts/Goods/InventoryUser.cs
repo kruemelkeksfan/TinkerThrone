@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class InventoryUser : MonoBehaviour
 {
-    [SerializeField] protected Stack[] testStacks;
+    [SerializeField] protected Stack[] testStacks = new Stack[0];
     [SerializeField] protected bool hasInventory = false;
     [SerializeField] protected Capacity inventoryCapacity;
 

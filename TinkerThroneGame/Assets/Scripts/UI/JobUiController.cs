@@ -7,6 +7,7 @@ public class JobUiController : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI idleAmountText;
     [SerializeField] private TextMeshProUGUI logisticAmountText;
+    [SerializeField] private TextMeshProUGUI constructionAmountText;
 
     public static JobUiController GetInstance()
     {
@@ -18,9 +19,10 @@ public class JobUiController : MonoBehaviour
         instance = this;
     }
 
-    public void UpdateUi(int idleCount, int neededIdleCount, int logisticCount, int neededLogisticCount)
+    public void UpdateUi(int idleCount, int logisticCount, int neededLogisticCount, int constructionCount, int neededConstructionCount)
     {
-        idleAmountText.text = idleCount + " / " + neededIdleCount;
+        idleAmountText.text = idleCount.ToString();
         logisticAmountText.text = logisticCount + " / " + neededLogisticCount;
+        constructionAmountText.text = constructionCount + " / " + neededConstructionCount;
     }
 }

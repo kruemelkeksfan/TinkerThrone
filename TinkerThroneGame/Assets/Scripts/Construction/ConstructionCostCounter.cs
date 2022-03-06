@@ -1,23 +1,21 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
 public class ConstructionCostCounter : MonoBehaviour
 {
-    [SerializeField] TextAsset constructionCost;
-    [SerializeField] List<Stack> materials;
-    [SerializeField] ModuleInfoArray info;
-    [SerializeField] bool set;
-    bool isSet;
-    // Start is called before the first frame update
+    [SerializeField] private TextAsset constructionCost;
+    [SerializeField] private List<Stack> materials;
+    [SerializeField] private ModuleInfoArray info;
+    [SerializeField] private bool set;
+    private bool isSet = false;
+
     void Update()
     {
         if (set && !isSet)
         {
             isSet = true;
-            Dictionary<string, ModuleInfo> moduleInfos = new Dictionary<string, ModuleInfo>();
+            Dictionary<string, ModuleInfo> moduleInfos = new();
 
             info = JsonUtility.FromJson<ModuleInfoArray>(constructionCost.text);
 
@@ -27,7 +25,7 @@ public class ConstructionCostCounter : MonoBehaviour
             }
 
             ModuleInfo moduleInfo;
-            Dictionary<int, int> stacks = new Dictionary<int, int>();
+            Dictionary<string, uint> stacks = new();
             foreach (Transform transform in this.gameObject.GetComponentsInChildren<Transform>())
             {
                 string[] splitName = transform.name.Split('.');
@@ -35,18 +33,18 @@ public class ConstructionCostCounter : MonoBehaviour
                 moduleInfo = moduleInfos[splitName[1]];
                 if (stacks.ContainsKey(moduleInfo.materialId))
                 {
-                    stacks[moduleInfo.materialId] += moduleInfo.amountNeeded;
+                    stacks[moduleInfo.materialId] += moduleInfo.GetOverallAmount();
                 }
-                else 
+                else
                 {
-                    stacks.Add(moduleInfo.materialId, moduleInfo.amountNeeded);
+                    stacks.Add(moduleInfo.materialId, moduleInfo.GetOverallAmount());
                 }
             }
 
             materials = new List<Stack>();
-            foreach (int material in stacks.Keys)
+            foreach (string material in stacks.Keys)
             {
-                materials.Add(new Stack(material.ToString(), (uint)stacks[material]));
+                materials.Add(new Stack(material, stacks[material]));
             }
         }
     }

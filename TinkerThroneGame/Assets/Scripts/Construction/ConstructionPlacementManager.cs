@@ -1,21 +1,30 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class ConstructionPlacementManager : MonoBehaviour
 {
-    static ConstructionPlacementManager instance;
+    private static ConstructionPlacementManager instance;
 
-    [SerializeField] BuildingSpaceHolder buildingSpaceHolder;
-    [SerializeField] NavMeshManager navMeshManager;
-    Building prefab;
-    public ConstructionSpace constructionSpace;
-    [SerializeField] Building currentBuilding;
-    Vector3 modulePos = Vector3.zero;
+    [SerializeField] private BuildingSpaceHolder buildingSpaceHolder;
+    [SerializeField] private GameObject constructionCornerPrefab;
 
-    public bool isBuilding
+    private NavMeshManager navMeshManager;
+    private Building prefab;
+    private Building currentBuilding;
+    private ConstructionSpace constructionSpace;
+    private Vector3 modulePos = Vector3.zero;
+
+    public static ConstructionPlacementManager GetInstance()
+    {
+        return instance;
+    }
+
+    public GameObject GetConstructioCornerPrefab()
+    {
+        return constructionCornerPrefab;
+    }
+
+    public bool IsBuilding
     {
         get
         {
@@ -23,16 +32,16 @@ public class ConstructionPlacementManager : MonoBehaviour
         }
     }
 
-
-    public static ConstructionPlacementManager GetInstance()
-    {
-        return instance;
-    }
-
     private void Awake()
     {
         instance = this;
     }
+
+    private void Start()
+    {
+        navMeshManager = NavMeshManager.GetInstance();
+    }
+
     void Update()
     {
         if (Input.GetButtonUp("Fire2") && prefab != null && !EventSystem.current.IsPointerOverGameObject())
@@ -49,53 +58,48 @@ public class ConstructionPlacementManager : MonoBehaviour
         }
         if (prefab != null)
         {
-
-            Vector3 hitPoint = Vector3.zero;
+            Vector3 hitPoint;
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Plane plane = new Plane(Vector3.down, new Vector3(0, 2.27f, 0));
-            float ent = 100.0f;
-            if (plane.Raycast(ray, out ent))
+            Plane plane = new(Vector3.down, new Vector3(0, 2.27f, 0));
+            if (plane.Raycast(ray, out float ent))
             {
                 hitPoint = ray.GetPoint(ent);
-
-                Debug.DrawRay(ray.origin, ray.direction * ent, Color.green);
+                //Debug.DrawRay(ray.origin, ray.direction * ent, Color.green);
             }
             else
             {
-                Debug.DrawRay(ray.origin, ray.direction * ent, Color.red);
+                //Debug.DrawRay(ray.origin, ray.direction * ent, Color.red);
                 return;
             }
 
-            Vector3 gridPos = new Vector3(Mathf.RoundToInt(hitPoint.x * WorldConsts.GRID_SIZE_RECIPROCAL) * WorldConsts.GRID_SIZE, WorldConsts.BUILDING_HIGHT, Mathf.RoundToInt(hitPoint.z * WorldConsts.GRID_SIZE_RECIPROCAL) * WorldConsts.GRID_SIZE);
+            Vector3 gridPos = new(Mathf.RoundToInt(hitPoint.x * WorldConsts.GRID_SIZE_RECIPROCAL) * WorldConsts.GRID_SIZE, 
+                                  WorldConsts.BUILDING_HIGHT,
+                                  Mathf.RoundToInt(hitPoint.z * WorldConsts.GRID_SIZE_RECIPROCAL) * WorldConsts.GRID_SIZE);
 
-            Vector3 newModulePos = gridPos;
-
-            if (newModulePos == modulePos)
+            if (gridPos == modulePos)
             {
-                if (!constructionSpace.isBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+                if (!constructionSpace.IsBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
                 {
                     PlaceBuilding();
                 }
                 return;
             }
 
-            modulePos = newModulePos;
-
+            modulePos = gridPos;
             currentBuilding.transform.position = gridPos;
 
-            if (!constructionSpace.isBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+            if (!constructionSpace.IsBlocked && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
             {
                 PlaceBuilding();
             }
         }
-
     }
 
-    public void ToggleBuildingMode(bool destroy = true)
+    public void ToggleBuildingMode()
     {
         buildingSpaceHolder.ToggleBuildingSpaces();
 
-        if (!isBuilding)
+        if (!IsBuilding)
         {
             SelectBuildingType(null);
         }
@@ -132,10 +136,8 @@ public class ConstructionPlacementManager : MonoBehaviour
         raycastTarget.size = new Vector3(constructionSpace.transform.localScale.x, buildingHight, constructionSpace.transform.localScale.z);
         //Add Building to NavMeshHolder and Update NavMesh
         currentBuilding.transform.SetParent(navMeshManager.transform);
-        navMeshManager.UpdateNavMesh();
-        //!!TODO start building
-        LogisticsManager.GetInstance().AddInventory(currentBuilding); // move to ConstructionManager
-        currentBuilding.ActivateBuilding();// move to ConstructionManager
+        //start building
+        currentBuilding.StartConstruction();
         //reset current building..
         currentBuilding = null;
         //..and building selection

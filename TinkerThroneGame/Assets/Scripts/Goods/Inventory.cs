@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Inventory
 {
+	public event StorageChangeHandler storageChanged;
+	public delegate void StorageChangeHandler(Inventory inventory, EventArgs e);
+
 	private Capacity maxCapacity = new Capacity(-1, -1.0f, -1.0f);
 	private Dictionary<string, uint> reservedCapacities = null;
 	private Dictionary<string, uint> reservedGoods = null;
@@ -12,6 +15,19 @@ public class Inventory
 	private Capacity reservedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity temporarilyOccupiedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity freeCapacity = new Capacity(-1, -1.0f, -1.0f);
+
+	private void OnStorageChanged()
+	{
+		if (storageChanged != null)
+		{
+			storageChanged(this, EventArgs.Empty);
+		}
+	}
+
+	public bool IsEmpty()
+    {
+		return maxCapacity == freeCapacity;
+    }
 
 	public Inventory(Capacity maxCapacity)
 	{
@@ -39,6 +55,22 @@ public class Inventory
 		
 			reservedCapacity += requiredCapacity;
 			freeCapacity -= requiredCapacity;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool CancleReserveDeposit(Stack goodStack)
+	{
+		Capacity requiredCapacity = new Capacity(goodStack);
+		if (reservedCapacities[goodStack.goodName] >= goodStack.amount)
+		{
+			reservedCapacities[goodStack.goodName] -= goodStack.amount;
+
+			reservedCapacity -= requiredCapacity;
+			freeCapacity += requiredCapacity;
 
 			return true;
 		}
@@ -88,6 +120,7 @@ public class Inventory
 
 			reservedCapacity -= new Capacity(goodStack);
 
+			OnStorageChanged();
 			return true;
 		}
 		else
@@ -112,6 +145,7 @@ public class Inventory
 			temporarilyOccupiedCapacity -= requiredCapacity;
 			freeCapacity += requiredCapacity;
 
+			OnStorageChanged();
 			return true;
 		}
 		else
@@ -172,6 +206,16 @@ public class Inventory
 	{
 		return reservedCapacities;
 	}
+
+	public Dictionary<string, uint> GetPlanedStoredGoods()
+    {
+		Dictionary<string, uint> planedStoredGoods = new();
+		foreach(string storedGood in storedGoods.Keys)
+        {
+			planedStoredGoods.Add(storedGood, storedGoods[storedGood] + (reservedCapacities[storedGood] - reservedGoods[storedGood]));
+        }
+		return planedStoredGoods;
+    }
 
 	public Capacity GetReservedCapacity()
 	{

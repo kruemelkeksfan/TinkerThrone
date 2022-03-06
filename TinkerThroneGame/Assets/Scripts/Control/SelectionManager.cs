@@ -19,7 +19,7 @@ public class SelectionManager : MonoBehaviour
 
     void Update()
     {
-        if (!constructionPlacementManager.isBuilding && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
+        if (!constructionPlacementManager.IsBuilding && Input.GetButtonDown("Fire1") && !EventSystem.current.IsPointerOverGameObject())
         {
             var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             Plane plane = new(Vector3.down, new Vector3(0, 2.27f, 0));
@@ -49,7 +49,7 @@ public class SelectionManager : MonoBehaviour
                 return;
             }
         }
-        else if (selectedBuilding && !constructionPlacementManager.isBuilding && Input.GetButtonDown("Fire2") && !EventSystem.current.IsPointerOverGameObject())
+        else if (!selectedBuilding || (selectedBuilding && !constructionPlacementManager.IsBuilding && Input.GetButtonDown("Fire2") && !EventSystem.current.IsPointerOverGameObject()))
         {
             selectedBuilding = null;
             buildingInfo.gameObject.SetActive(false);
