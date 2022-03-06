@@ -23,7 +23,7 @@ public class ConstructionSite : LogisticsUser
     private ModuleInfo currentModuleInfo = new("", "", 0, 0);
     private bool currentJobAssigned = true;
     private int moduleCounter = -1;
-    private uint moduleStepCounter = 100;
+    private uint moduleStepCounter = 0;
     private int requestedVillagers = 0;
     private bool finishedAssigning = false;
     private bool isConstructing;
@@ -202,7 +202,8 @@ public class ConstructionSite : LogisticsUser
     public void StartConstruction(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, bool alreadyConstructing = false)
     {
         isConstructing = true;
-        constructionLogisticValues = logisticValues;
+        bool originalJobSetState = currentJobAssigned;
+        //create logisticValues
         constructionCostManager = ConstructionCostManager.GetInstance();
         Stack[] stacks;
         if (!alreadyConstructing)
@@ -211,6 +212,10 @@ public class ConstructionSite : LogisticsUser
         }
         else
         {
+            if (originalJobSetState)
+            {
+                moduleCounter--;
+            }
             List<Transform> partsToConstruct = new(parts);
             if(moduleCounter > 0)
             {
@@ -232,9 +237,8 @@ public class ConstructionSite : LogisticsUser
             {
                 part.gameObject.SetActive(false);
             }
-
-            moduleCounter = -1;
         }
+        else 
 
         foreach (Villager villager in assignedIdleConstructionVillagers)
         {
@@ -290,6 +294,7 @@ public class ConstructionSite : LogisticsUser
     public bool TryAssignConstructionJob(Villager villager)
     {
         if (villager.HasJob) return false;
+        if (finishedAssigning) return false;
         if (currentJobAssigned)
         {
             currentJobAssigned = false;
@@ -297,11 +302,6 @@ public class ConstructionSite : LogisticsUser
             {
                 moduleStepCounter = 1;
                 moduleCounter++;
-                if (moduleCounter >= parts.Length)
-                {
-                    finishedAssigning = true;
-                    return false;
-                }
                 if (constructionCostManager.TryGetModuleCost(parts[moduleCounter].name, out ModuleInfo newModuleInfo))
                 {
                     if (currentModuleInfo.materialId != newModuleInfo.materialId)
@@ -340,6 +340,10 @@ public class ConstructionSite : LogisticsUser
             }
             //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter + " ModpartNr:" + moduleStepCounter);
             villager.StartCoroutine(villager.DoConstructionJob(currentConstructionJob));
+            if (moduleCounter >= parts.Length - 1 && currentModuleInfo.buildingSteps <= moduleStepCounter)
+            {
+                finishedAssigning = true;
+            }
             currentJobAssigned = true;
             return true;
         }
@@ -375,6 +379,10 @@ public class ConstructionSite : LogisticsUser
             GameObject.Destroy(currentModel);
             building.SetCurrentModel(constructionModel);
         }
+        else if (currentJobAssigned)
+        {
+            moduleCounter++;
+        }
         constructionCostManager = ConstructionCostManager.GetInstance();
         Stack[] stacks = constructionCostManager.GetCostForModel(constructionModel.GetComponentsInChildren<Transform>());
 
@@ -406,12 +414,7 @@ public class ConstructionSite : LogisticsUser
             if (moduleStepCounter <= 1)
             {
                 moduleCounter--;
-                if (moduleCounter <= -1)
-                {
-                    finishedAssigning = true;
-                    StartCoroutine(FinishDeconstruction());
-                    return false;
-                }
+
                 if (constructionCostManager.TryGetModuleCost(parts[moduleCounter].name, out ModuleInfo newModuleInfo))
                 {
                     currentModuleInfo = newModuleInfo;
@@ -436,6 +439,11 @@ public class ConstructionSite : LogisticsUser
                 //Debug.Log("assigned: " + villager + " Job: " + currentConstructionJob.Target.gameObject.name + " ModNr:" + moduleCounter);
             }
             villager.StartCoroutine(villager.DoDeconstructionJob(currentConstructionJob));
+            if (moduleCounter <= 0 && moduleStepCounter <= 1)
+            {
+                finishedAssigning = true;
+                StartCoroutine(FinishDeconstruction());
+            }
             currentJobAssigned = true;
             return true;
         }
