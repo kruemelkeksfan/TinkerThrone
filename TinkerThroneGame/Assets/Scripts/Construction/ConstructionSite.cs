@@ -457,10 +457,7 @@ public class ConstructionSite : LogisticsUser
 
     public void FinishDeconstructionJob(Villager villager)
     {
-        if (!finishedAssigning)
-        {
-            FinishAnyConstructionJob(villager);
-        }
+        FinishAnyConstructionJob(villager);
     }
 
     private IEnumerator FinishDeconstruction()
