@@ -81,7 +81,7 @@ public class Building : LogisticsUser
     public void StartConstruction()
     {
         constructionSite = gameObject.AddComponent<ConstructionSite>();
-        constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
+        constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation);
     }
 
     public void StartDeconstruction()
@@ -99,7 +99,7 @@ public class Building : LogisticsUser
         }
         else
         {
-            constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
+            constructionSite.StartConstruction(currentModel, finalModelPrefab, inventoryLocation, true);
         }
         beeingDeconstructed = false;
     }
@@ -134,12 +134,12 @@ public class Building : LogisticsUser
         {
             constructionSite = gameObject.AddComponent<ConstructionSite>();
             beeingDeconstructed = true;
-            constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues);
+            constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation);
         }
         else
         {
             beeingDeconstructed = true;
-            constructionSite.StartDeconstruction(constructionModelPrefab, currentModel, finalModelPrefab, inventoryLocation, specialConstructionLogisticValues, true);
+            constructionSite.StartDeconstruction(currentModel, currentModel, finalModelPrefab, inventoryLocation, true);
         }
     }
 }

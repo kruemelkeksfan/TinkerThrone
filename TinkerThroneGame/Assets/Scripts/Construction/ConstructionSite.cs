@@ -19,7 +19,6 @@ public class ConstructionSite : LogisticsUser
     private GameObject finalModel;
     private GameObject[] constructionCorners;
 
-    private LogisticValue[] constructionLogisticValues;
     private ConstructionJob currentConstructionJob;
     private ModuleInfo currentModuleInfo = new("", "", 0, 0);
     private bool currentJobAssigned = true;
@@ -168,7 +167,6 @@ public class ConstructionSite : LogisticsUser
             LogisticsManager.GetInstance().AddInventory(this);
             //get Singletons
             jobsManager = JobsManager.GetInstance();
-            constructionCostManager = ConstructionCostManager.GetInstance();
             //Add Site to JobManager to recive construction villager
             jobsManager.AddConstructionSite(this);
         }
@@ -201,12 +199,32 @@ public class ConstructionSite : LogisticsUser
 
     #region construction
 
-    public void StartConstruction(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing = false)
+    public void StartConstruction(GameObject constructionModel, GameObject finalModel, Transform inventoryTransform, bool alreadyConstructing = false)
     {
         isConstructing = true;
         constructionLogisticValues = logisticValues;
+        constructionCostManager = ConstructionCostManager.GetInstance();
+        Stack[] stacks;
+        if (!alreadyConstructing)
+        {
+            stacks = constructionCostManager.GetCostForModel(constructionModel.GetComponentsInChildren<Transform>());
+        }
+        else
+        {
+            List<Transform> partsToConstruct = new(parts);
+            if(moduleCounter > 0)
+            {
+                partsToConstruct.RemoveRange(0, moduleCounter);
+            }
+            stacks = constructionCostManager.GetCostForModel(partsToConstruct.ToArray());
+        }
+        List<LogisticValue> logisticValues = new() { new LogisticValue(stacks[0].goodName, highPriority, lowPriority, stacks[0].amount) };
+        for(int i = 1; i < stacks.Length; i++)
+        {
+            logisticValues.Add(new LogisticValue(stacks[i].goodName, lowPriority, lowPriority, stacks[i].amount));
+        }
 
-        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing);
+        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues.ToArray(), alreadyConstructing);
 
         if (!alreadyConstructing)
         {
@@ -346,17 +364,9 @@ public class ConstructionSite : LogisticsUser
 
     #region deconstruction 
 
-    public void StartDeconstruction(GameObject constructionModel, GameObject currentModel, GameObject finalModel, Transform inventoryTransform, LogisticValue[] logisticValues, bool alreadyConstructing = false)
+    public void StartDeconstruction(GameObject constructionModel, GameObject currentModel, GameObject finalModel, Transform inventoryTransform, bool alreadyConstructing = false)
     {
         isConstructing = false;
-
-        constructionLogisticValues = logisticValues;
-        List<LogisticValue> deconstructionLogisticValues = new();
-        foreach (LogisticValue logisticValue in logisticValues)
-        {
-            deconstructionLogisticValues.Add(new LogisticValue(logisticValue.goodName, 10, 10, 0));
-        }
-        logisticValues = deconstructionLogisticValues.ToArray();
 
         if (!alreadyConstructing)
         {
@@ -365,10 +375,16 @@ public class ConstructionSite : LogisticsUser
             GameObject.Destroy(currentModel);
             building.SetCurrentModel(constructionModel);
         }
+        constructionCostManager = ConstructionCostManager.GetInstance();
+        Stack[] stacks = constructionCostManager.GetCostForModel(constructionModel.GetComponentsInChildren<Transform>());
 
-        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues, alreadyConstructing, true);
+        List<LogisticValue> logisticValues = new();
+        foreach (Stack stack in stacks)
+        {
+            logisticValues.Add(new LogisticValue(stack.goodName, 10, 10, 0));
+        }
 
-
+        InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues.ToArray(), alreadyConstructing, true);
 
         foreach (Villager villager in assignedIdleConstructionVillagers)
         {

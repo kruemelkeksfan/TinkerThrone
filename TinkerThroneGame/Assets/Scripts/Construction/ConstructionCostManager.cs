@@ -32,4 +32,32 @@ public class ConstructionCostManager : MonoBehaviour
             moduleInfos.Add(info.moduleName, info);
         }
     }
+
+    public Stack[] GetCostForModel(Transform[] modules)
+    {
+        ModuleInfo moduleInfo;
+        Dictionary<string, uint> stacks = new();
+        foreach (Transform transform in modules)
+        {
+            string[] splitName = transform.name.Split('.');
+            if (splitName.Length < 2) continue;
+            moduleInfo = moduleInfos[splitName[1]];
+            if (stacks.ContainsKey(moduleInfo.materialId))
+            {
+                stacks[moduleInfo.materialId] += moduleInfo.GetOverallAmount();
+            }
+            else
+            {
+                stacks.Add(moduleInfo.materialId, moduleInfo.GetOverallAmount());
+            }
+        }
+
+        List<Stack> materials = new();
+        foreach (string material in stacks.Keys)
+        {
+            materials.Add(new Stack(material, stacks[material]));
+        }
+
+        return materials.ToArray();
+    }
 }
