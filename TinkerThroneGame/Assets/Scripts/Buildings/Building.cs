@@ -122,7 +122,7 @@ public class Building : LogisticsUser
             Dictionary<string, LogisticValue> newLogisticValues = new();
             foreach(string good in logisticValues.Keys)
             {
-                newLogisticValues.Add(good, new LogisticValue(good, 10, 10, 0));
+                newLogisticValues.Add(good, new LogisticValue(good, 10, 0, 0, true));
             }
             logisticValues = newLogisticValues;
             LogisticsManager.GetInstance().UpdateLogisticsJobs();

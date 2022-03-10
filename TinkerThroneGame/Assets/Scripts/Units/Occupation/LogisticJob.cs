@@ -17,18 +17,11 @@ public class LogisticJob : IComparable<LogisticJob>
         this.Priority = priority;
     }
 
-    public LogisticJob(LogisticCommission inCommission, LogisticCommission outCommission)
+    public LogisticJob(LogisticCommission inCommission, LogisticCommission outCommission, uint amount)
     {
         this.SourceInventory = outCommission.sourceInventory;
         this.TargetInventory = inCommission.sourceInventory;
-        if (inCommission.Amount > outCommission.Amount)
-        {
-            this.stack = new Stack(outCommission.goodName, inCommission.Amount);
-        }
-        else
-        {
-            this.stack = new Stack(outCommission.goodName, outCommission.Amount);
-        }
+        this.stack = new Stack(outCommission.goodName, amount);
         this.Priority = outCommission.priority - inCommission.priority;
     }
 

@@ -6,40 +6,46 @@ public class LogisticsUser : InventoryUser
     protected Dictionary<string, LogisticValue> logisticValues;
 
     [SerializeField] protected LogisticValue[] specialLogisticValues;
-    [SerializeField] private int defaultPriorityBeeingEmpty;
-    [SerializeField] private int defaultPriorityBeeingFull;
+    [SerializeField] private int defaultPriorityAtTargetAmount;
+    [SerializeField] private int defaultPriorityFillAlteration;
     [SerializeField] private uint defaultTargetAmount;
+    [SerializeField] private bool defaultIsTargetAmountMax;
 
 
     public virtual Vector3 GetLogisticPosition()
     {
         return transform.position;
     }
-    public List<LogisticCommission>[] UpdateLogisticCommissions()
+    public List<LogisticCommission> UpdateLogisticCommissions()
     {
         Dictionary<string, uint> storedGoods = inventory.GetPlanedStoredGoods();
 
-        List<LogisticCommission> logisticInCommissions = new();
-        List<LogisticCommission> logisticOutCommissions = new();
+        List<LogisticCommission> logisticCommissions = new();
+        Capacity freeCapacity = inventory.GetFreeCapacity();
 
         foreach (LogisticValue logisticValue in logisticValues.Values)
         {
             uint currentAmount = storedGoods[logisticValue.goodName];
 
-            if (currentAmount == logisticValue.targetAmount) continue;
-            else if (currentAmount > logisticValue.targetAmount)
+            uint freeAmount = freeCapacity.ToAmount(logisticValue.goodName);
+
+            if (!logisticValue.targetAmountIsMax)
             {
-                logisticOutCommissions.Add(new LogisticCommission(this,
-                                                                  logisticValue.goodName,
-                                                                  currentAmount - logisticValue.targetAmount,
-                                                                  logisticValue.PriorityForHigherAmount(currentAmount, inventoryCapacity)));
+                 logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, freeAmount, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
             }
             else
             {
-                logisticInCommissions.Add(new LogisticCommission(this, logisticValue.goodName, logisticValue.targetAmount, logisticValue.PriorityForLowerAmount(currentAmount)));
+                if (currentAmount > logisticValue.targetAmount)
+                {
+                    logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, 0, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
+                }
+                else
+                {
+                    logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, logisticValue.targetAmount - currentAmount, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
+                }
             }
         }
-        return new List<LogisticCommission>[] { logisticInCommissions, logisticOutCommissions };
+        return logisticCommissions;
     }
 
     protected void SetLogisticsValues()
@@ -55,7 +61,7 @@ public class LogisticsUser : InventoryUser
         {
             foreach (Good good in GoodManager.GetInstance().GetGoodDictionary().Values)
             {
-                logisticsValues.Add(good.goodName, new LogisticValue(good.goodName, defaultPriorityBeeingEmpty, defaultPriorityBeeingFull, defaultTargetAmount));
+                logisticsValues.Add(good.goodName, new LogisticValue(good.goodName, defaultPriorityAtTargetAmount, defaultPriorityFillAlteration, defaultTargetAmount, defaultIsTargetAmountMax));
             }
         }
         else

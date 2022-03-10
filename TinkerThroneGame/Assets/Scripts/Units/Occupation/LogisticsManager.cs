@@ -82,36 +82,36 @@ public class LogisticsManager : MonoBehaviour
 
     public void UpdateLogisticsJobs()
     {
-        List<LogisticCommission> inCommissions = new();
-        List<LogisticCommission> outCommissions = new();
+        List<LogisticCommission> commissions = new();
         availableJobs = new List<LogisticJob>();
 
         foreach (LogisticsUser logisticUser in logisticUsers)
         {
-            List<LogisticCommission>[] inventoryLogisticCommissions = logisticUser.UpdateLogisticCommissions();
-            inCommissions.AddRange(inventoryLogisticCommissions[0]);
-            outCommissions.AddRange(inventoryLogisticCommissions[1]);
+            commissions.AddRange(logisticUser.UpdateLogisticCommissions());
         }
 
-        if (inCommissions.Count == 0 || outCommissions.Count == 0) return;
-        inCommissions.Sort();
-        outCommissions.Sort();
-        outCommissions.Reverse();
+        if (commissions.Count <= 1) return;
+        commissions.Sort();
 
         LogisticCommission usedCommission = new();
-        foreach (LogisticCommission outCommission in outCommissions)
+        for(int i = commissions.Count - 1; i >= 0; i--)
         {
+            if (commissions[i].TakeableAmount == 0) continue;
             bool foundCommission = false;
-            foreach (LogisticCommission inCommission in inCommissions)
+            foreach(LogisticCommission inCommission in commissions)
             {
-                if (inCommission.goodName == outCommission.goodName)
+                if (inCommission.priority >= commissions[i].priority || (foundCommission && inCommission.priority > usedCommission.priority))
+                {
+                    break;
+                }
+                if (inCommission.goodName == commissions[i].goodName && inCommission.StoreableAmount > 0)
                 {
                     if (!foundCommission)
                     {
                         foundCommission = true;
                         usedCommission = inCommission;
                     }
-                    else if (inCommission.priority < usedCommission.priority || (inCommission.priority == usedCommission.priority && inCommission.Amount > usedCommission.Amount))
+                    else if ((inCommission.priority <= usedCommission.priority && inCommission.StoreableAmount > usedCommission.StoreableAmount))
                     {
                         usedCommission = inCommission;
                     }
@@ -120,29 +120,28 @@ public class LogisticsManager : MonoBehaviour
                         continue;
                     }
 
-                    if (usedCommission.Amount >= outCommission.Amount)
+                    if (usedCommission.StoreableAmount >= commissions[i].TakeableAmount)
                     {
                         break;
                     }
                 }
             }
-            if (foundCommission)
-            {
-                LogisticJob logisticJob = new LogisticJob(usedCommission, outCommission);
-                if (logisticJob.Priority < 0)
+            if (foundCommission) 
+            { 
+                int index = commissions.IndexOf(usedCommission);
+                uint amount;
+                if (usedCommission.StoreableAmount >= commissions[i].TakeableAmount)
                 {
-                    continue;
-                }
-                availableJobs.Add(logisticJob);
-                if (usedCommission.Amount > outCommission.Amount)
-                {
-                    int index = inCommissions.IndexOf(usedCommission);
-                    inCommissions[index].ReduceAmount(outCommission.Amount);
+                    amount = commissions[i].TakeableAmount;
                 }
                 else
                 {
-                    inCommissions.Remove(usedCommission);
+                    amount = commissions[index].StoreableAmount;
                 }
+                commissions[index].ReduceStoreableAmount(commissions[i].TakeableAmount);
+                commissions[i].ReduceTakeableAmount(commissions[i].TakeableAmount);
+                LogisticJob logisticJob = new(usedCommission, commissions[i], amount);
+                availableJobs.Add(logisticJob);
             }
         }
         availableJobs.Sort();

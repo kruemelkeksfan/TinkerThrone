@@ -7,6 +7,7 @@ public class ConstructionSite : LogisticsUser
 {
     private readonly List<Villager> assignedIdleConstructionVillagers = new();
     private readonly List<Villager> assignedConstructionVillagers = new();
+    private readonly int priorityFillAlteration = 0;
     private readonly int lowPriority = 3;
     private readonly int highPriority = 2;
 
@@ -230,10 +231,10 @@ public class ConstructionSite : LogisticsUser
             }
             stacks = constructionCostManager.GetCostForModel(partsToConstruct.ToArray());
         }
-        List<LogisticValue> logisticValues = new() { new LogisticValue(stacks[0].goodName, highPriority, lowPriority, stacks[0].amount) };
+        List<LogisticValue> logisticValues = new() { new LogisticValue(stacks[0].goodName, highPriority, priorityFillAlteration, stacks[0].amount, true) };
         for(int i = 1; i < stacks.Length; i++)
         {
-            logisticValues.Add(new LogisticValue(stacks[i].goodName, lowPriority, lowPriority, stacks[i].amount));
+            logisticValues.Add(new LogisticValue(stacks[i].goodName, lowPriority, priorityFillAlteration, stacks[i].amount, true));
         }
 
         InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues.ToArray(), alreadyConstructing);
@@ -316,13 +317,13 @@ public class ConstructionSite : LogisticsUser
                         if (logisticValues.ContainsKey(currentModuleInfo.materialId))
                         {
                             LogisticValue changingValue = logisticValues[currentModuleInfo.materialId];
-                            changingValue.logisticsPriorityBeeingEmpty = lowPriority;
+                            changingValue.logisticsPriorityAtTargetAmount = priorityFillAlteration;
                             logisticValues[currentModuleInfo.materialId] = changingValue;
                         }
                         if (logisticValues.ContainsKey(newModuleInfo.materialId))
                         {
                             LogisticValue changingValue = logisticValues[newModuleInfo.materialId];
-                            changingValue.logisticsPriorityBeeingEmpty = highPriority;
+                            changingValue.logisticsPriorityAtTargetAmount = highPriority;
                             logisticValues[newModuleInfo.materialId] = changingValue;
                         }
                     }
@@ -407,7 +408,7 @@ public class ConstructionSite : LogisticsUser
         List<LogisticValue> logisticValues = new();
         foreach (Stack stack in stacks)
         {
-            logisticValues.Add(new LogisticValue(stack.goodName, 10, 10, 0));
+            logisticValues.Add(new LogisticValue(stack.goodName, 10, priorityFillAlteration, 0, true));
         }
 
         InitConstructionSite(constructionModel, finalModel, inventoryTransform, logisticValues.ToArray(), alreadyConstructing, true);
