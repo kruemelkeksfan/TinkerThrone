@@ -4,30 +4,39 @@ public struct LogisticCommission : IComparable<LogisticCommission>
 {
     public readonly LogisticsUser sourceInventory;
     public readonly string goodName;
-    public readonly float priority;
+    public float Priority { get; private set; }
     public uint StoreableAmount { get; private set; }
     public uint TakeableAmount { get; private set; }
 
-    public void ReduceStoreableAmount(uint amount)
-    {
-        this.StoreableAmount -= amount;
-    }
-    public void ReduceTakeableAmount(uint amount)
-    {
-        this.TakeableAmount -= amount;
-    }
+    private readonly Capacity maxCapacity;
+    private readonly LogisticValue logisticValue;
 
-    public LogisticCommission(LogisticsUser sourceInventory, string goodName, uint storeableAmount, uint takeableAmount, float priority)
+    public LogisticCommission(LogisticsUser sourceInventory, uint storeableAmount, uint takeableAmount, LogisticValue logisticValue, Capacity maxCapacity)
     {
         this.sourceInventory = sourceInventory;
-        this.goodName = goodName;
+        this.goodName = logisticValue.goodName;
         this.StoreableAmount = storeableAmount;
         this.TakeableAmount = takeableAmount;
-        this.priority = priority;
+        this.logisticValue = logisticValue;
+        this.maxCapacity = maxCapacity;
+        Priority = logisticValue.GetPriority(takeableAmount, maxCapacity);
+    }
+
+    public void TakeAmount(uint amount)
+    {
+        TakeableAmount -= amount;
+        Priority = logisticValue.GetPriority(TakeableAmount, maxCapacity);
+    }
+
+    public void StoreAmount(uint amount)
+    {
+        StoreableAmount -= amount;
+        TakeableAmount += amount;
+        Priority = logisticValue.GetPriority(TakeableAmount, maxCapacity);
     }
 
     public int CompareTo(LogisticCommission other)
     {
-        return priority.CompareTo(other.priority);
+        return Priority.CompareTo(other.Priority);
     }
 }

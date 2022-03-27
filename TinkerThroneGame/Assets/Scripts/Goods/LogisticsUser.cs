@@ -31,17 +31,17 @@ public class LogisticsUser : InventoryUser
 
             if (!logisticValue.targetAmountIsMax)
             {
-                 logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, freeAmount, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
+                 logisticCommissions.Add(new LogisticCommission(this, freeAmount, currentAmount, logisticValue, inventoryCapacity));
             }
             else
             {
                 if (currentAmount > logisticValue.targetAmount)
                 {
-                    logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, 0, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
+                    logisticCommissions.Add(new LogisticCommission(this, 0, currentAmount, logisticValue, inventoryCapacity));
                 }
                 else
                 {
-                    logisticCommissions.Add(new LogisticCommission(this, logisticValue.goodName, logisticValue.targetAmount - currentAmount, currentAmount, logisticValue.GetPriority(currentAmount, inventoryCapacity)));
+                    logisticCommissions.Add(new LogisticCommission(this, logisticValue.targetAmount - currentAmount, currentAmount, logisticValue, inventoryCapacity));
                 }
             }
         }

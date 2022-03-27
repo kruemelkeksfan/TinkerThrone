@@ -22,7 +22,7 @@ public class LogisticJob : IComparable<LogisticJob>
         this.SourceInventory = outCommission.sourceInventory;
         this.TargetInventory = inCommission.sourceInventory;
         this.stack = new Stack(outCommission.goodName, amount);
-        this.Priority = outCommission.priority - inCommission.priority;
+        this.Priority = outCommission.Priority - inCommission.Priority;
     }
 
     public bool TryGetJobPart(Villager assignedVillager, out LogisticJob logisticJobPart, out bool completedAssignment)

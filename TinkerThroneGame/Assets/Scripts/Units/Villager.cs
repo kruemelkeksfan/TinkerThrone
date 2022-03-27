@@ -7,6 +7,7 @@ public class Villager : Unit
 
     private void Start()
     {
+        inventoryCapacity = WorldConsts.STANDART_UNIT_CAPACITY;
         InitializeInventory();
     }
 

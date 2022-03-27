@@ -6,6 +6,7 @@ public class LogisticsManager : MonoBehaviour
 {
     private static LogisticsManager instance = null;
 
+    [SerializeField] private int villagerToPoolMulti = 3;
     public List<LogisticsUser> logisticUsers = new();
     public List<LogisticJob> availableJobs = new();
     private JobsManager jobsManager;
@@ -94,35 +95,42 @@ public class LogisticsManager : MonoBehaviour
         commissions.Sort();
 
         LogisticCommission usedCommission = new();
-        for(int i = commissions.Count - 1; i >= 0; i--)
+        for(int i = commissions.Count - 1; i >= 0 && availableJobs.Count < jobsManager.NeededLogisticVillagers * villagerToPoolMulti; i--)
         {
             if (commissions[i].TakeableAmount == 0) continue;
+            uint targetMoveAmount = WorldConsts.STANDART_UNIT_CAPACITY.ToAmount(commissions[i].goodName);
+            if(targetMoveAmount > commissions[i].TakeableAmount)
+            {
+                targetMoveAmount = commissions[i].TakeableAmount;
+            }
             bool foundCommission = false;
             foreach(LogisticCommission inCommission in commissions)
             {
-                if (inCommission.priority >= commissions[i].priority || (foundCommission && inCommission.priority > usedCommission.priority))
+                if (inCommission.StoreableAmount == 0 || (!foundCommission && inCommission.Priority >= commissions[i].Priority) || (foundCommission && inCommission.Priority > usedCommission.Priority))
                 {
-                    break;
+                    continue;
                 }
-                if (inCommission.goodName == commissions[i].goodName && inCommission.StoreableAmount > 0)
+                if (inCommission.goodName == commissions[i].goodName)
                 {
                     if (!foundCommission)
                     {
                         foundCommission = true;
                         usedCommission = inCommission;
                     }
-                    else if ((inCommission.priority <= usedCommission.priority && inCommission.StoreableAmount > usedCommission.StoreableAmount))
+                    else if (inCommission.Priority == usedCommission.Priority)
                     {
-                        usedCommission = inCommission;
-                    }
-                    else
-                    {
-                        continue;
-                    }
+                        if (inCommission.StoreableAmount < targetMoveAmount && inCommission.StoreableAmount < usedCommission.StoreableAmount) return;
 
-                    if (usedCommission.StoreableAmount >= commissions[i].TakeableAmount)
-                    {
-                        break;
+
+                        if (usedCommission.StoreableAmount < targetMoveAmount && inCommission.StoreableAmount > targetMoveAmount)
+                        {
+                            usedCommission = inCommission;
+                        }
+                        else if (Vector3.Distance(inCommission.sourceInventory.GetLogisticPosition(), commissions[i].sourceInventory.GetLogisticPosition())
+                                    < Vector3.Distance(usedCommission.sourceInventory.GetLogisticPosition(), commissions[i].sourceInventory.GetLogisticPosition()))
+                        {
+                            usedCommission = inCommission;
+                        }
                     }
                 }
             }
@@ -130,16 +138,30 @@ public class LogisticsManager : MonoBehaviour
             { 
                 int index = commissions.IndexOf(usedCommission);
                 uint amount;
-                if (usedCommission.StoreableAmount >= commissions[i].TakeableAmount)
+                if (usedCommission.StoreableAmount > commissions[i].TakeableAmount)
                 {
-                    amount = commissions[i].TakeableAmount;
+                    if(commissions[i].TakeableAmount > targetMoveAmount)
+                    {
+                        amount = targetMoveAmount;
+                    }
+                    else
+                    {
+                        amount = commissions[i].TakeableAmount;
+                    }
                 }
                 else
                 {
-                    amount = commissions[index].StoreableAmount;
+                    if (usedCommission.StoreableAmount > targetMoveAmount)
+                    {
+                        amount = targetMoveAmount;
+                    }
+                    else
+                    {
+                        amount = usedCommission.StoreableAmount;
+                    }
                 }
-                commissions[index].ReduceStoreableAmount(commissions[i].TakeableAmount);
-                commissions[i].ReduceTakeableAmount(commissions[i].TakeableAmount);
+                commissions[index].StoreAmount(commissions[i].TakeableAmount);
+                commissions[i].TakeAmount(commissions[i].TakeableAmount);
                 LogisticJob logisticJob = new(usedCommission, commissions[i], amount);
                 availableJobs.Add(logisticJob);
             }

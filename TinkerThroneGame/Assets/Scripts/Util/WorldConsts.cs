@@ -14,6 +14,7 @@ public class WorldConsts : MonoBehaviour
     public static Vector3 SPACECRAFT_MODULE_ALLIGN_DIFF = new Vector3(0, 0, 0);
     public static Color[] BUILDING_SPACE_COLORS = new Color[4] {Color.green, Color.yellow, new Color(1,0.6f,0), Color.red };
     public static Capacity capacity = new Capacity(150, -1, 8);
+    public static readonly Capacity STANDART_UNIT_CAPACITY = new Capacity(50, 80, 0.25f);
 
     public static Vector2Int screenResolution =  new Vector2Int(1920, 1080);
 }
