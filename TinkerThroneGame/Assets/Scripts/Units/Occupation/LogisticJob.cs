@@ -1,75 +1,92 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-[Serializable]
 public class LogisticJob : IComparable<LogisticJob>
 {
-    public LogisticsUser sourceInventory;
-    public LogisticsUser targetInventory;
-    public Stack stack;
-    public float priority;
-    public Villager villager { get; set; }
+    public LogisticsUser SourceInventory { get; private set; }
+    public LogisticsUser TargetInventory { get; private set; }
+    public float Priority { get; private set; }
+    private Stack stack;
+
+    public Stack Stack { get { return stack; } }
 
     public LogisticJob(LogisticsUser sourceInventory, LogisticsUser tragetInventory, string goodName, uint amount, float priority)
     {
-        this.sourceInventory = sourceInventory;
-        this.targetInventory = tragetInventory;
+        this.SourceInventory = sourceInventory;
+        this.TargetInventory = tragetInventory;
         this.stack = new Stack(goodName, amount);
-        this.priority = priority;
-    }
-    public LogisticJob(LogisticsUser sourceInventory, LogisticsUser tragetInventory, string goodName, uint amount, float priority, Villager villager)
-    {
-        this.sourceInventory = sourceInventory;
-        this.targetInventory = tragetInventory;
-        this.stack = new Stack(goodName, amount);
-        this.priority = priority;
-        this.villager = villager;
+        this.Priority = priority;
     }
 
     public LogisticJob(LogisticCommission inCommission, LogisticCommission outCommission)
     {
-        this.sourceInventory = outCommission.sourceInventory;
-        this.targetInventory = inCommission.sourceInventory;
-        if (inCommission.amount > outCommission.amount)
+        this.SourceInventory = outCommission.sourceInventory;
+        this.TargetInventory = inCommission.sourceInventory;
+        if (inCommission.Amount > outCommission.Amount)
         {
-            this.stack = new Stack(outCommission.goodName, inCommission.amount);
+            this.stack = new Stack(outCommission.goodName, inCommission.Amount);
         }
         else
         {
-            this.stack = new Stack(outCommission.goodName, outCommission.amount);
+            this.stack = new Stack(outCommission.goodName, outCommission.Amount);
         }
-        this.priority = inCommission.priority - outCommission.priority;
+        this.Priority = outCommission.priority - inCommission.priority;
     }
 
-    public LogisticJob GetJobPart(Villager assignedVillager, out bool completedAssignment)
+    public bool TryGetJobPart(Villager assignedVillager, out LogisticJob logisticJobPart, out bool completedAssignment)
     {
+        logisticJobPart = null;
+        completedAssignment = false;
         uint carryCapacity = assignedVillager.GetInventory().GetFreeCapacity().ToAmount(stack.goodName);
-        if(carryCapacity < stack.amount)
+        if (carryCapacity == 0) return false;
+        if (carryCapacity < stack.amount)
         {
             completedAssignment = false;
-            return new LogisticJob(sourceInventory, targetInventory, stack.goodName, carryCapacity, priority, assignedVillager);
+            logisticJobPart = new LogisticJob(SourceInventory, TargetInventory, stack.goodName, carryCapacity, Priority);
         }
         else
         {
-            villager = assignedVillager;
             completedAssignment = true;
-            return this;
+            logisticJobPart = this;
+        }
+
+        if (logisticJobPart.ReserveStack())
+        {
+            if (!completedAssignment)
+            {
+                stack.amount -= carryCapacity;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
-    public void ReserveStack()
+    public bool ReserveStack()
     {
-        sourceInventory.GetInventory().ReserveWithdraw(stack);
-        targetInventory.GetInventory().ReserveDeposit(stack);
+        if (SourceInventory.GetInventory().ReserveWithdraw(Stack))
+        {
+            if (TargetInventory.GetInventory().ReserveDeposit(Stack))
+            {
+                return true;
+            }
+            else
+            {
+                SourceInventory.GetInventory().CancleReserveWithdraw(Stack);
+            }
+        }
+        return false;
     }
 
+    public void RevertReserveStack()
+    {
+        SourceInventory.GetInventory().CancleReserveWithdraw(Stack);
+        TargetInventory.GetInventory().CancleReserveDeposit(Stack);
+    }
 
     public int CompareTo(LogisticJob other)
     {
-        return priority.CompareTo(other.priority);
+        return Priority.CompareTo(other.Priority);
     }
 }
-

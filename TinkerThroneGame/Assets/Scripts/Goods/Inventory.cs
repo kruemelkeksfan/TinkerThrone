@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Inventory
 {
+	public event StorageChangeHandler storageChanged;
+	public delegate void StorageChangeHandler(Inventory inventory, EventArgs e);
+
 	private Capacity maxCapacity = new Capacity(-1, -1.0f, -1.0f);
 	private Dictionary<string, uint> reservedCapacities = null;
 	private Dictionary<string, uint> reservedGoods = null;
@@ -12,6 +15,19 @@ public class Inventory
 	private Capacity reservedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity temporarilyOccupiedCapacity = new Capacity(0, 0.0f, 0.0f);
 	private Capacity freeCapacity = new Capacity(-1, -1.0f, -1.0f);
+
+	private void OnStorageChanged()
+	{
+		if (storageChanged != null)
+		{
+			storageChanged(this, EventArgs.Empty);
+		}
+	}
+
+	public bool IsEmpty()
+    {
+		return maxCapacity == freeCapacity;
+    }
 
 	public Inventory(Capacity maxCapacity)
 	{
@@ -46,12 +62,27 @@ public class Inventory
 		return false;
 	}
 
+	public bool CancleReserveDeposit(Stack goodStack)
+	{
+		Capacity requiredCapacity = new Capacity(goodStack);
+		if (reservedCapacities[goodStack.goodName] >= goodStack.amount)
+		{
+			reservedCapacities[goodStack.goodName] -= goodStack.amount;
+
+			reservedCapacity -= requiredCapacity;
+			freeCapacity += requiredCapacity;
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public bool ReserveWithdraw(Stack goodStack)
 	{
-		if(storedGoods[goodStack.goodName] >= goodStack.amount)
+		if (storedGoods[goodStack.goodName] - reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedGoods[goodStack.goodName] += goodStack.amount;
-			storedGoods[goodStack.goodName] -= goodStack.amount;
 
 			temporarilyOccupiedCapacity += new Capacity(goodStack);
 
@@ -61,18 +92,35 @@ public class Inventory
 		return false;
 	}
 
+	public bool CancleReserveWithdraw(Stack goodStack)
+	{
+		if (reservedGoods[goodStack.goodName] >= goodStack.amount)
+		{
+			reservedGoods[goodStack.goodName] -= goodStack.amount;
+
+			temporarilyOccupiedCapacity -= new Capacity(goodStack);
+
+			return true;
+		}
+
+		return false;
+	}
+
+
+
 	// Stores a Stack of Goods in this Inventory.
 	// Returns whether the storage operation was successful.
 	// Storing will fail if not all Goods fit into the Inventory in which case no Goods at all will be stored.
 	public bool Deposit(Stack goodStack)
 	{
-		if(reservedCapacities[goodStack.goodName] >= goodStack.amount)
+		if (reservedCapacities[goodStack.goodName] >= goodStack.amount)
 		{
 			reservedCapacities[goodStack.goodName] -= goodStack.amount;
 			storedGoods[goodStack.goodName] += goodStack.amount;
 
 			reservedCapacity -= new Capacity(goodStack);
 
+			OnStorageChanged();
 			return true;
 		}
 		else
@@ -90,12 +138,14 @@ public class Inventory
 	{
 		if(reservedGoods[goodStack.goodName] >= goodStack.amount)
 		{
+			storedGoods[goodStack.goodName] -= goodStack.amount;
 			reservedGoods[goodStack.goodName] -= goodStack.amount;
 
 			Capacity requiredCapacity = new Capacity(goodStack);
 			temporarilyOccupiedCapacity -= requiredCapacity;
 			freeCapacity += requiredCapacity;
 
+			OnStorageChanged();
 			return true;
 		}
 		else
@@ -146,6 +196,26 @@ public class Inventory
 	{
 		return storedGoods;
 	}
+
+	public Dictionary<string, uint> GetReservedGoods()
+	{
+		return reservedGoods;
+	}
+
+	public Dictionary<string, uint> GetReservedCapacities()
+	{
+		return reservedCapacities;
+	}
+
+	public Dictionary<string, uint> GetPlanedStoredGoods()
+    {
+		Dictionary<string, uint> planedStoredGoods = new();
+		foreach(string storedGood in storedGoods.Keys)
+        {
+			planedStoredGoods.Add(storedGood, storedGoods[storedGood] + (reservedCapacities[storedGood] - reservedGoods[storedGood]));
+        }
+		return planedStoredGoods;
+    }
 
 	public Capacity GetReservedCapacity()
 	{

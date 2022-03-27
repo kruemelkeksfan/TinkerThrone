@@ -1,22 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Unit : InventoryUser
 {
-    [SerializeField] Vector3 goal;
-    [SerializeField] float agentRadius;
-    bool hasGoal;
-    NavMeshAgent navMeshAgent;
-    
+    [SerializeField] private float agentRadius;
+
+    private NavMeshAgent navMeshAgent;
+    [SerializeField] private Vector3 goal;
+    [SerializeField] float distance;
+    private bool hasGoal;
+
     public void UpdateGoal(Vector3 goal)
     {
-        this.goal = goal;
-        navMeshAgent.destination = goal;
-        navMeshAgent.stoppingDistance = agentRadius * 0.5f;
-        hasGoal = true;
+        NavMeshHit hit;
+        Vector3 result;
+        hasGoal = false;
+        int hight = 10;
+        while (!hasGoal)
+        {
+            if (NavMesh.SamplePosition(goal, out hit, hight, NavMesh.AllAreas))
+            {
+                result = hit.position;
+                this.goal = result;
+                navMeshAgent.destination = result;
+                navMeshAgent.stoppingDistance = agentRadius;
+                hasGoal = true;
+            }
+            else
+            {
+                hight += hight;
+                if(hight >= 10000)
+                {
+                    break;
+                }
+            }
+        }
+        
     }
 
     public bool HasGoal()
@@ -28,10 +47,11 @@ public class Unit : InventoryUser
     {
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }
+
     void Update()
     {
-        //Debug.Log(Vector3.Distance(transform.position, goal));
-        if(hasGoal && Vector3.Distance(transform.position, goal) <=  agentRadius)
+        distance = Vector3.Distance(transform.position, new Vector3(goal.x, transform.position.y, goal.z));
+        if (hasGoal && distance <= agentRadius*2)
         {
             hasGoal = false;
         }

@@ -2,56 +2,56 @@
   "moduleInfos": [
     {
       "moduleName": "Beam",
-      "materialId": 2,
-      "amountNeeded": 1,
+      "materialId": "Square Beam",
+      "amountNeededPerStep": 1,
       "buildingSteps": 1
     },
     {
       "moduleName": "Wall",
-      "materialId": 1,
-      "amountNeeded": 10,
+      "materialId": "Round Beam",
+      "amountNeededPerStep": 1,
       "buildingSteps": 10
     },
     {
       "moduleName": "Plank",
-      "materialId": 3,
-      "amountNeeded": 1,
+      "materialId": "Board",
+      "amountNeededPerStep": 1,
       "buildingSteps": 1
     },
     {
       "moduleName": "PlankFloor",
-      "materialId": 3,
-      "amountNeeded": 8,
+      "materialId": "Board",
+      "amountNeededPerStep": 1,
       "buildingSteps": 8
     },
     {
       "moduleName": "GablePlank",
-      "materialId": 3,
-      "amountNeeded": 3,
-      "buildingSteps": 5
+      "materialId": "Board",
+      "amountNeededPerStep": 1,
+      "buildingSteps": 4
     },
     {
       "moduleName": "PlankWall",
-      "materialId": 3,
-      "amountNeeded": 7,
+      "materialId": "Board",
+      "amountNeededPerStep": 1,
       "buildingSteps": 7
     },
     {
       "moduleName": "PlankRoof",
-      "materialId": 3,
-      "amountNeeded": 10,
+      "materialId": "Board",
+      "amountNeededPerStep": 1,
       "buildingSteps": 10
     },
     {
       "moduleName": "ThatchRoof",
-      "materialId": 4,
-      "amountNeeded": 20,
-      "buildingSteps": 3
+      "materialId": "Thatchbundle",
+      "amountNeededPerStep": 5,
+      "buildingSteps": 4
     },
     {
       "moduleName": "Log",
-      "materialId": 0,
-      "amountNeeded": 1,
+      "materialId": "Log",
+      "amountNeededPerStep": 1,
       "buildingSteps": 1
     }
   ]

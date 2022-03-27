@@ -11,7 +11,7 @@ public struct Good
 	[Tooltip("Mass in Tons per Unit, 1 Unit is 1 Piece.")]
 	public float mass;
 	[Tooltip("The Volume in m^3 1 Unit of this Item takes up in Storage.")]
-	public int volume;
+	public float volume;
 	[Tooltip("Factor by which this Cargo contributes to Fires.")]
 	public float flammability;
 	[Tooltip("Base Price of this Good.")]

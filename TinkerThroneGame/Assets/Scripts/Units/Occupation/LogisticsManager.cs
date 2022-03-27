@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class LogisticsManager : MonoBehaviour
 {
-    static LogisticsManager instance = null;
+    private static LogisticsManager instance = null;
 
-    public List<LogisticsUser> logisticUsers = new List<LogisticsUser>();
-    public List<LogisticJob> availableJobs = new List<LogisticJob>();
-
-    JobsManager jobsManager;
+    public List<LogisticsUser> logisticUsers = new();
+    public List<LogisticJob> availableJobs = new();
+    private JobsManager jobsManager;
 
     public static LogisticsManager GetInstance()
     {
@@ -20,10 +19,11 @@ public class LogisticsManager : MonoBehaviour
     {
         instance = this;
     }
+
     private void Start()
     {
         jobsManager = JobsManager.GetInstance();
-        StartCoroutine(UpdateCycle()); 
+        StartCoroutine(UpdateCycle());
     }
 
     public void AddInventory(LogisticsUser inventory)
@@ -31,6 +31,7 @@ public class LogisticsManager : MonoBehaviour
         if (!logisticUsers.Contains(inventory))
         {
             logisticUsers.Add(inventory);
+            UpdateLogisticsJobs();
         }
     }
 
@@ -43,7 +44,33 @@ public class LogisticsManager : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateCycle()
+    public bool TryAssignJob(Villager villager)
+    {
+        if (availableJobs.Count == 0) return false;
+        if (villager.HasJob) return false;
+        //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
+
+        int index = availableJobs.Count - 1;
+        while (index >= 0)
+        {
+            if (!availableJobs[index].TryGetJobPart(villager, out LogisticJob logisticJob, out bool completedAssignment))
+            {
+                index--;
+                continue;
+            }
+            //Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
+            villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
+            if (completedAssignment)
+            {
+                availableJobs.RemoveAt(availableJobs.Count - 1);
+            }
+            jobsManager.LogisticVillagerIdleToBusy(villager, logisticJob);
+            return true;
+        }
+        return false;
+    }
+
+    private IEnumerator UpdateCycle()
     {
         while (true)
         {
@@ -53,10 +80,10 @@ public class LogisticsManager : MonoBehaviour
         }
     }
 
-    private void UpdateLogisticsJobs()
+    public void UpdateLogisticsJobs()
     {
-        List<LogisticCommission> inCommissions = new List<LogisticCommission>();
-        List<LogisticCommission> outCommissions = new List<LogisticCommission>();
+        List<LogisticCommission> inCommissions = new();
+        List<LogisticCommission> outCommissions = new();
         availableJobs = new List<LogisticJob>();
 
         foreach (LogisticsUser logisticUser in logisticUsers)
@@ -65,16 +92,17 @@ public class LogisticsManager : MonoBehaviour
             inCommissions.AddRange(inventoryLogisticCommissions[0]);
             outCommissions.AddRange(inventoryLogisticCommissions[1]);
         }
+
         if (inCommissions.Count == 0 || outCommissions.Count == 0) return;
         inCommissions.Sort();
         outCommissions.Sort();
         outCommissions.Reverse();
-        LogisticCommission usedCommission = new LogisticCommission();
-        bool foundCommission = false;
+
+        LogisticCommission usedCommission = new();
         foreach (LogisticCommission outCommission in outCommissions)
         {
-            foundCommission = false;
-            foreach(LogisticCommission inCommission in inCommissions)
+            bool foundCommission = false;
+            foreach (LogisticCommission inCommission in inCommissions)
             {
                 if (inCommission.goodName == outCommission.goodName)
                 {
@@ -83,7 +111,7 @@ public class LogisticsManager : MonoBehaviour
                         foundCommission = true;
                         usedCommission = inCommission;
                     }
-                    else if(inCommission.amount > usedCommission.amount)
+                    else if (inCommission.priority < usedCommission.priority || (inCommission.priority == usedCommission.priority && inCommission.Amount > usedCommission.Amount))
                     {
                         usedCommission = inCommission;
                     }
@@ -92,7 +120,7 @@ public class LogisticsManager : MonoBehaviour
                         continue;
                     }
 
-                    if (usedCommission.amount >= outCommission.amount)
+                    if (usedCommission.Amount >= outCommission.Amount)
                     {
                         break;
                     }
@@ -100,11 +128,16 @@ public class LogisticsManager : MonoBehaviour
             }
             if (foundCommission)
             {
-                availableJobs.Add(new LogisticJob(usedCommission, outCommission));
-                if (usedCommission.amount > outCommission.amount)
+                LogisticJob logisticJob = new LogisticJob(usedCommission, outCommission);
+                if (logisticJob.Priority < 0)
+                {
+                    continue;
+                }
+                availableJobs.Add(logisticJob);
+                if (usedCommission.Amount > outCommission.Amount)
                 {
                     int index = inCommissions.IndexOf(usedCommission);
-                    inCommissions[index].ReduceAmount(outCommission.amount);
+                    inCommissions[index].ReduceAmount(outCommission.Amount);
                 }
                 else
                 {
@@ -115,25 +148,11 @@ public class LogisticsManager : MonoBehaviour
         availableJobs.Sort();
     }
 
-    void AssignJobs()
+    private void AssignJobs()
     {
-        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers())
+        foreach (Villager villager in jobsManager.GetIdleLogisticVillagers()) //TODO remove idle villagers
         {
             if (!TryAssignJob(villager)) break;
         }
-    }
-
-    public bool TryAssignJob(Villager villager)
-    {
-        if (availableJobs.Count == 0) return false;
-        //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
-        LogisticJob newJob = availableJobs[availableJobs.Count - 1].GetJobPart(villager, out bool completedAssignment);
-        villager.StartCoroutine(villager.DoLogisticJob(newJob));
-        if (completedAssignment)
-        {
-            availableJobs.RemoveAt(availableJobs.Count - 1);
-        }
-        jobsManager.LogisticVillagerIdleToBusy(villager, newJob);
-        return true;
     }
 }

@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class JobUiController : MonoBehaviour
 {
-    static JobUiController instance;
+    private static JobUiController instance;
 
-    [SerializeField] TextMeshProUGUI idleAmountText;
-    [SerializeField] TextMeshProUGUI logisticAmountText;
- 
+    [SerializeField] private TextMeshProUGUI idleAmountText;
+    [SerializeField] private TextMeshProUGUI logisticAmountText;
+    [SerializeField] private TextMeshProUGUI constructionAmountText;
+
     public static JobUiController GetInstance()
     {
         return instance;
@@ -18,9 +19,10 @@ public class JobUiController : MonoBehaviour
         instance = this;
     }
 
-    public void UpdateUi(int idleCount, int neededIdleCount, int logisticCount, int neededLogisticCount)
+    public void UpdateUi(int idleCount, int logisticCount, int neededLogisticCount, int constructionCount, int neededConstructionCount)
     {
-        idleAmountText.text = idleCount + " / " + neededIdleCount;
+        idleAmountText.text = idleCount.ToString();
         logisticAmountText.text = logisticCount + " / " + neededLogisticCount;
+        constructionAmountText.text = constructionCount + " / " + neededConstructionCount;
     }
 }
