@@ -29,6 +29,8 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	
 	- 0-3: Error Messages
 
+---
+
 - Command: Login
 - Description: Checks Username and Password against the Database and logs the User in if successful.
 - Requires Login: false
@@ -42,6 +44,8 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	
 	- 0-2: Error Messages
 
+---
+
 - Command: Logout
 - Description: Terminates the current Session if there is any.
 - Requires Login: false
@@ -49,6 +53,8 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- none
 - Returns:
 	- 0: "Successful"
+
+---
 
 - Command: Save
 - Description: Uploads a Savegame to the Database.
@@ -58,6 +64,8 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- Save: The Savegame to be uploaded as JSON String.
 - Returns:
 	- 0: "Successful"
+
+---
 
 - Command: Load
 - Description: Download the newest Savegame from the Database.
@@ -77,12 +85,20 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	new KeyValuePair<string, string>("Password", password),
 	new KeyValuePair<string, string>("RepeatPassword", password));`
 
+---
+
 `SendRequest(Login, new KeyValuePair<string, string>("Username", username),
 	new KeyValuePair<string, string>("Password", password));`
 
+---
+
 `SendRequest(Logout);`
+
+---
 
 `SendRequest(Save, new KeyValuePair<string, string>("Timestamp", DateTime.UtcNow.ToString("yyyy/MM/dd/HH/mm/ss", CultureInfo.InvariantCulture)),
 	new KeyValuePair<string, string>("Save", "Definitely a JSON"));`
+
+---
 
 `SendRequest(Load);`
