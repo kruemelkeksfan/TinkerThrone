@@ -23,11 +23,11 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- Password: Password for the new User.
 	- RepeatPassword: Repeated Password from another TextField to make sure, that the User typed in his desired Password correctly.
 - Returns:
-	- [0]: "Successful"
+	- 0: "Successful"
 	
 	OR
 	
-	- [0-3]: Error Messages
+	- 0-3: Error Messages
 
 - Command: Login
 - Description: Checks Username and Password against the Database and logs the User in if successful.
@@ -36,11 +36,11 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- Username: Name of the current User.
 	- Password: Password of the current User.
 - Returns:
-	- [0]: "Successful"
+	- 0: "Successful"
 	 
 	OR
 	
-	- [0-2]: Error Messages
+	- 0-2: Error Messages
 
 - Command: Logout
 - Description: Terminates the current Session if there is any.
@@ -48,7 +48,7 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 - Parameters:
 	- none
 - Returns:
-	- [0]: "Successful"
+	- 0: "Successful"
 
 - Command: Save
 - Description: Uploads a Savegame to the Database.
@@ -57,7 +57,7 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- Timestamp: Current Time in a Format which should be independent of Timezones and Restarts, and should return the newest Timestamp first when ordered descending.
 	- Save: The Savegame to be uploaded as JSON String.
 - Returns:
-	- [0]: "Successful"
+	- 0: "Successful"
 
 - Command: Load
 - Description: Download the newest Savegame from the Database.
@@ -65,11 +65,11 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 - Parameters:
 	- none
 - Returns:
-	- [0]: "Successful"
+	- 0: "Successful"
 	
 	OR
 	
-	- [0-1]: Error Messages
+	- 0-1: Error Messages
 
 # Example Calls
 
