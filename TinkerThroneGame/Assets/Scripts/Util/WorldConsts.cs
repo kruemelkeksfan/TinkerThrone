@@ -10,6 +10,7 @@ public class WorldConsts : MonoBehaviour
     public const float GRID_SIZE_RECIPROCAL = 2f;
     public const float PRIORITY_SETP_SIZE = 0.25f;
     public const float PRIORITY_SETP_SIZE_RECIPROCAL = 4f;
+    public const int PRIORITY_CAP = 10;
     public static Vector3 STANDARD_ROTATION = new Vector3(0, 45, 0);
     public static Vector3 SPACECRAFT_MODULE_ALLIGN_DIFF = new Vector3(0, 0, 0);
     public static Color[] BUILDING_SPACE_COLORS = new Color[4] {Color.green, Color.yellow, new Color(1,0.6f,0), Color.red };

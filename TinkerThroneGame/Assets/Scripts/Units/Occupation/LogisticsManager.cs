@@ -8,7 +8,7 @@ public class LogisticsManager : MonoBehaviour
 
     [SerializeField] private int villagerToPoolMulti = 3;
     public List<LogisticsUser> logisticUsers = new();
-    public List<LogisticJob> availableJobs = new();
+    public Dictionary<float, List<LogisticJob>> availableJobs = new();
     private JobsManager jobsManager;
 
     public static LogisticsManager GetInstance()
@@ -49,24 +49,42 @@ public class LogisticsManager : MonoBehaviour
     {
         if (availableJobs.Count == 0) return false;
         if (villager.HasJob) return false;
-        //TODO avoid problem where the first job has to be compoletly assigned bevor the next can be assigned
 
-        int index = availableJobs.Count - 1;
-        while (index >= 0)
+        float currentPriority = WorldConsts.PRIORITY_CAP;
+
+        while (availableJobs.Count != 0)
         {
-            if (!availableJobs[index].TryGetJobPart(villager, out LogisticJob logisticJob, out bool completedAssignment))
+            while (!availableJobs.ContainsKey(currentPriority) && currentPriority > 0)
             {
-                index--;
-                continue;
+                currentPriority -= WorldConsts.PRIORITY_SETP_SIZE;
             }
-            //Debug.Log("new LogisticJob: " + logisticJob.SourceInventory.gameObject.name + " " + logisticJob.TargetInventory.gameObject + " " + logisticJob.Stack.goodName );
-            villager.StartCoroutine(villager.DoLogisticJob(logisticJob));
-            if (completedAssignment)
+
+            if (!availableJobs.ContainsKey(currentPriority)) return false;
+
+            LogisticJob selectedJob;
+            if (availableJobs[currentPriority].Count > 1)
             {
-                availableJobs.RemoveAt(availableJobs.Count - 1);
+                selectedJob = availableJobs[currentPriority][Random.Range(0, availableJobs[currentPriority].Count - 1)];
             }
-            jobsManager.LogisticVillagerIdleToBusy(villager, logisticJob);
-            return true;
+            else
+            {
+                selectedJob  = availableJobs[currentPriority][0];
+            }
+
+            if (selectedJob.ReserveStack())
+            {
+                if (availableJobs[currentPriority].Count > 1)
+                {
+                    availableJobs[currentPriority].Remove(selectedJob);
+                }
+                else
+                {
+                    availableJobs.Remove(currentPriority);
+                }
+                villager.StartCoroutine(villager.DoLogisticJob(selectedJob));
+                jobsManager.LogisticVillagerIdleToBusy(villager, selectedJob);
+                return true;
+            }
         }
         return false;
     }
@@ -84,7 +102,7 @@ public class LogisticsManager : MonoBehaviour
     public void UpdateLogisticsJobs()
     {
         List<LogisticCommission> commissions = new();
-        availableJobs = new List<LogisticJob>();
+        availableJobs = new();
 
         foreach (LogisticsUser logisticUser in logisticUsers)
         {
@@ -163,10 +181,25 @@ public class LogisticsManager : MonoBehaviour
                 commissions[index].StoreAmount(commissions[i].TakeableAmount);
                 commissions[i].TakeAmount(commissions[i].TakeableAmount);
                 LogisticJob logisticJob = new(usedCommission, commissions[i], amount);
-                availableJobs.Add(logisticJob);
+                if (availableJobs.ContainsKey(logisticJob.Priority))
+                {
+                    availableJobs[logisticJob.Priority].Add(logisticJob);
+                }
+                else
+                {
+                    availableJobs.Add(logisticJob.Priority, new List<LogisticJob>() { logisticJob });
+                }
             }
         }
-        availableJobs.Sort();
+        Debug.Log("JobList");
+        foreach(float prio in availableJobs.Keys)
+        {
+            Debug.Log("Prio: " + prio);
+            foreach(LogisticJob job in availableJobs[prio])
+            {
+                Debug.Log("LogisticJob: " + job.Stack.amount + " " + job.Stack.goodName + " from: " + job.SourceInventory.name + " to " + job.TargetInventory.name);
+            }
+        }
     }
 
     private void AssignJobs()

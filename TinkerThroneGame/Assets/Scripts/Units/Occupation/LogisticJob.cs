@@ -25,37 +25,6 @@ public class LogisticJob : IComparable<LogisticJob>
         this.Priority = outCommission.Priority - inCommission.Priority;
     }
 
-    public bool TryGetJobPart(Villager assignedVillager, out LogisticJob logisticJobPart, out bool completedAssignment)
-    {
-        logisticJobPart = null;
-        completedAssignment = false;
-        uint carryCapacity = assignedVillager.GetInventory().GetFreeCapacity().ToAmount(stack.goodName);
-        if (carryCapacity == 0) return false;
-        if (carryCapacity < stack.amount)
-        {
-            completedAssignment = false;
-            logisticJobPart = new LogisticJob(SourceInventory, TargetInventory, stack.goodName, carryCapacity, Priority);
-        }
-        else
-        {
-            completedAssignment = true;
-            logisticJobPart = this;
-        }
-
-        if (logisticJobPart.ReserveStack())
-        {
-            if (!completedAssignment)
-            {
-                stack.amount -= carryCapacity;
-            }
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public bool ReserveStack()
     {
         if (SourceInventory.GetInventory().ReserveWithdraw(Stack))
