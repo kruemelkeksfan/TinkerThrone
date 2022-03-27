@@ -1,17 +1,17 @@
 # Network Controller
 
-NetworkController is a Singleton, use NetworkController.GetInstance() to obtain a Reference.
+`NetworkController` is a Singleton, use `NetworkController.GetInstance()` to obtain a Reference.
 
 To make a Server Request:
 
-1. Define a Callback Method with the Name of a Server Command and one Parameter of Type string[]
-1. Register your Callback with NetworkController.RegisterListener(NetworkMethod networkMethod)
-1. Call NetworkController.SendRequest(NetworkMethod callback, params KeyValuePair<string, string>[] parameters)
+1. Define a Callback Method with the Name of a Server Command and one Parameter of Type `string[]`
+1. Register your Callback with `NetworkController.RegisterListener(NetworkMethod networkMethod)`
+1. Call `NetworkController.SendRequest(NetworkMethod callback, params KeyValuePair<string, string>[] parameters)`
 1. Your Callback Method will then be called as soon as the Server Reply arrives
-1. Your Callback Method should parse the string[] provided by the Server
+1. Your Callback Method should parse the `string[]` Parameter provided by the Server
 
-Some Server Commands require the User to be logged in. Login is performed automatically by NetworkController.
-You can check if the User is already logged in by calling NetworkController.IsLoggedIn().
+Some Server Commands require the User to be logged in. Login is performed automatically by `NetworkController`.
+You can check if the User is already logged in by calling `NetworkController.IsLoggedIn()`.
 
 # Server Commands
 
@@ -80,25 +80,24 @@ You can check if the User is already logged in by calling NetworkController.IsLo
 	- 0-1: Error Messages
 
 # Example Calls
-
-`SendRequest(Register, new KeyValuePair<string, string>("Username", username),
-	new KeyValuePair<string, string>("Password", password),
-	new KeyValuePair<string, string>("RepeatPassword", password));`
-
----
-
-`SendRequest(Login, new KeyValuePair<string, string>("Username", username),
-	new KeyValuePair<string, string>("Password", password));`
+	SendRequest(Register, new KeyValuePair<string, string>("Username", username),
+		new KeyValuePair<string, string>("Password", password),
+		new KeyValuePair<string, string>("RepeatPassword", password));
 
 ---
 
-`SendRequest(Logout);`
+	SendRequest(Login, new KeyValuePair<string, string>("Username", username),
+		new KeyValuePair<string, string>("Password", password));
 
 ---
 
-`SendRequest(Save, new KeyValuePair<string, string>("Timestamp", DateTime.UtcNow.ToString("yyyy/MM/dd/HH/mm/ss", CultureInfo.InvariantCulture)),
-	new KeyValuePair<string, string>("Save", "Definitely a JSON"));`
+	SendRequest(Logout);
 
 ---
 
-`SendRequest(Load);`
+	SendRequest(Save, new KeyValuePair<string, string>("Timestamp", DateTime.UtcNow.ToString("yyyy/MM/dd/HH/mm/ss", CultureInfo.InvariantCulture)),
+		new KeyValuePair<string, string>("Save", "Definitely a JSON"));
+
+---
+
+	SendRequest(Load);
