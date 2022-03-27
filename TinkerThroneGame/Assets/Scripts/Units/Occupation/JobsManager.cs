@@ -113,6 +113,10 @@ public class JobsManager : MonoBehaviour
         else
         {
             logisticVillagers.Add(villager, logisticJob);
+            if (idleLogisticVillagers.Contains(villager))
+            {
+                idleLogisticVillagers.Remove(villager);
+            }
         }
     }
 
