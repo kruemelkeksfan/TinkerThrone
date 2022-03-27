@@ -102,9 +102,39 @@ else if($_POST['MethodName'] === 'Logout')
 
 	$response .= 'Successful|';
 }
+else if(!empty($_SESSION['username']))
+{
+	if($_POST['MethodName'] === 'Save')
+	{
+		$save_record = array($_SESSION['username'], InputHelper::get_post_string('Timestamp', 0),
+			InputHelper::get_post_string('Save', ''));
+		$database->query('INSERT INTO Saves (username, timestamp, save) VALUES (:0, :1, :2);', $save_record);
+
+		$response .= 'Successful|';
+	}
+	else if($_POST['MethodName'] === 'Load')
+	{
+		$save_record = $database->query('SELECT timestamp, save FROM Saves WHERE username=:0 ORDER BY timestamp DESC;',
+			array($_SESSION['username']));
+
+		if(count($save_record) > 0)
+		{
+			$response .= 'Successful|' . $save_record[0]['timestamp'] . '|' . $save_record[0]['save'];
+		}
+		else
+		{
+			$response .= 'No Save for User|';
+			$response .= 'Username=' . $_SESSION['username'] . '|';
+		}
+	}
+	else
+	{
+		$response .= 'Unknown Method Name "' . $_POST['MethodName'] . '" on Server|';
+	}
+}
 else
 {
-	$response .= 'Unknown Method Name on Server ' . $_POST['MethodName'] . '|';
+	$response .= 'User is not logged in or unknown Method Name "' . $_POST['MethodName'] . '" on Server|';
 }
 
 echo($_POST['MethodName'] . ':' . $response);

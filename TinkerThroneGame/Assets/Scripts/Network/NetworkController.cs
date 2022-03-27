@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class NetworkController : MonoBehaviour
 {
 	public delegate void NetworkMethod(string[] parameters);
+
+	public static NetworkController instance = null;
 
 	[SerializeField] private string hostAddress = "127.0.0.1";
 	[SerializeField] private string username = "Dummy";
@@ -15,6 +19,12 @@ public class NetworkController : MonoBehaviour
 	private HashSet<UnityWebRequest> runningRequests = null;
 	private List<UnityWebRequest> deleteRequests = null;
 	private Dictionary<string, NetworkMethod> listeners = null;
+	private bool loggedIn = false;
+
+	public static NetworkController GetInstance()
+	{
+		return instance;
+	}
 
 	private void Awake()
 	{
@@ -22,6 +32,8 @@ public class NetworkController : MonoBehaviour
 		runningRequests = new HashSet<UnityWebRequest>();
 		deleteRequests = new List<UnityWebRequest>();
 		listeners = new Dictionary<string, NetworkMethod>();
+
+		instance = this;
 	}
 
 	private void Start()
@@ -29,6 +41,8 @@ public class NetworkController : MonoBehaviour
 		RegisterListener(Register);
 		RegisterListener(Login);
 		RegisterListener(Logout);
+		// RegisterListener(Save);
+		// RegisterListener(Load);
 
 		if(registerUser)
 		{
@@ -41,6 +55,25 @@ public class NetworkController : MonoBehaviour
 			SendRequest(Login, new KeyValuePair<string, string>("Username", username),
 				new KeyValuePair<string, string>("Password", password));
 		}
+
+		// DEBUG
+		// StartCoroutine(Test());
+	}
+
+	public IEnumerator Test()
+	{
+		// yield return new WaitForSeconds(1.0f);
+		// SendRequest(Logout);
+
+		yield return new WaitForSeconds(1.0f);
+		SendRequest(Save, new KeyValuePair<string, string>("Timestamp", DateTime.UtcNow.ToString("yyyy/MM/dd/HH/mm/ss", CultureInfo.InvariantCulture)),
+				new KeyValuePair<string, string>("Save", "Definitely a JSON"));
+
+		yield return new WaitForSeconds(1.0f);
+		SendRequest(Load);
+
+		yield return new WaitForSeconds(1.0f);
+		SendRequest(Logout);
 	}
 
 	private void Update()
@@ -51,9 +84,6 @@ public class NetworkController : MonoBehaviour
 			if(request.isDone)
 			{
 				deleteRequests.Add(request);
-
-				// DEBUG
-				// Debug.Log(request.downloadHandler.text);
 
 				string[] reply = request.downloadHandler.text.Split(':', System.StringSplitOptions.RemoveEmptyEntries);
 				if(reply.Length != 2)
@@ -68,7 +98,7 @@ public class NetworkController : MonoBehaviour
 				}
 				else
 				{
-					Debug.LogError("Invalid Method Name '" + reply[0] + "' in NetworkController!");
+					Debug.LogError("Invalid Method Name '" + reply[0] + "' in NetworkController, did you forget to register a Callback?");
 					continue;
 				}
 			}
@@ -100,6 +130,11 @@ public class NetworkController : MonoBehaviour
 
 	public void Register(string[] parameters)
 	{
+		if(parameters[0] == "Successful")
+		{
+			loggedIn = true;
+		}
+
 		/*if(parameters[0] == "Successful")
 		{
 			Debug.Log("Registration successful");
@@ -116,6 +151,11 @@ public class NetworkController : MonoBehaviour
 
 	public void Login(string[] parameters)
 	{
+		if(parameters[0] == "Successful")
+		{
+			loggedIn = true;
+		}
+
 		/*if(parameters[0] == "Successful")
 		{
 			Debug.Log("Login successful");
@@ -132,6 +172,8 @@ public class NetworkController : MonoBehaviour
 
 	public void Logout(string[] parameters)
 	{
+		loggedIn = false;
+
 		/*if(parameters[0] == "Successful")
 		{
 			Debug.Log("Logout successful");
@@ -146,8 +188,47 @@ public class NetworkController : MonoBehaviour
 		}*/
 	}
 
+	public void Save(string[] parameters)
+	{
+		/*if(parameters[0] == "Successful")
+		{
+			Debug.Log("Save successful");
+		}
+		else
+		{
+			Debug.Log("Save failed:");
+			foreach(string parameter in parameters)
+			{
+				Debug.Log(parameter);
+			}
+		}*/
+	}
+
+	public void Load(string[] parameters)
+	{
+		/*if(parameters[0] == "Successful")
+		{
+			Debug.Log("Load successful");
+			Debug.Log("Timestamp: " + parameters[1]);
+			Debug.Log("Save: " + parameters[2]);
+		}
+		else
+		{
+			Debug.Log("Load failed:");
+			foreach(string parameter in parameters)
+			{
+				Debug.Log(parameter);
+			}
+		}*/
+	}
+
 	public void RegisterListener(NetworkMethod networkMethod)
 	{
 		listeners.Add(networkMethod.Method.Name, networkMethod);
+	}
+
+	public bool IsLoggedIn()
+	{
+		return loggedIn;
 	}
 }
