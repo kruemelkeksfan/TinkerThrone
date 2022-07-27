@@ -81,6 +81,7 @@ public class LogisticsManager : MonoBehaviour
                 {
                     availableJobs.Remove(currentPriority);
                 }
+                Debug.LogWarning("Priority: " + selectedJob.Priority + " LogisticJob taken: " + selectedJob.Stack.amount + " " + selectedJob.Stack.goodName + " from: " + selectedJob.SourceInventory.name + " to " + selectedJob.TargetInventory.name);
                 villager.StartCoroutine(villager.DoLogisticJob(selectedJob));
                 jobsManager.LogisticVillagerIdleToBusy(villager, selectedJob);
                 return true;
@@ -112,23 +113,48 @@ public class LogisticsManager : MonoBehaviour
         if (commissions.Count <= 1) return;
         commissions.Sort();
 
-        LogisticCommission usedCommission = new();
-        for(int i = commissions.Count - 1; i >= 0 && availableJobs.Count < jobsManager.NeededLogisticVillagers * villagerToPoolMulti; i--)
+        int selectedCommissions = 0;
+
+        while (availableJobs.Count < jobsManager.NeededLogisticVillagers * villagerToPoolMulti)
         {
-            if (commissions[i].TakeableAmount == 0) continue;
-            uint targetMoveAmount = WorldConsts.STANDART_UNIT_CAPACITY.ToAmount(commissions[i].goodName);
-            if(targetMoveAmount > commissions[i].TakeableAmount)
+            //get highest priority outCommission
+            LogisticCommission selectedOutCommission = new();
+            int index = -1;
+            for (int i = commissions.Count - 1; i >= 0; i--)
             {
-                targetMoveAmount = commissions[i].TakeableAmount;
+                if (commissions[i].TakeableAmount == 0) continue;
+                selectedOutCommission = commissions[i];
+                index = i;
+                break;
+            }
+            if (index == -1) return;
+            if (index != 0)
+            {
+                for (int i = index - 1; i >= 0 && i >= index - 1 - selectedCommissions; i--)
+                {
+                    if (commissions[i].TakeableAmount == 0) continue;
+                    if (selectedOutCommission.Priority > commissions[i].Priority)
+                    {
+                        selectedOutCommission = commissions[i];
+                        selectedCommissions++;
+                    }
+                }
+            }
+
+            LogisticCommission usedCommission = new();
+            uint targetMoveAmount = WorldConsts.STANDART_UNIT_CAPACITY.ToAmount(selectedOutCommission.goodName);
+            if (targetMoveAmount > selectedOutCommission.TakeableAmount)
+            {
+                targetMoveAmount = selectedOutCommission.TakeableAmount;
             }
             bool foundCommission = false;
-            foreach(LogisticCommission inCommission in commissions)
+            foreach (LogisticCommission inCommission in commissions)
             {
-                if (inCommission.StoreableAmount == 0 || (!foundCommission && inCommission.Priority >= commissions[i].Priority) || (foundCommission && inCommission.Priority > usedCommission.Priority))
+                if (inCommission.StoreableAmount == 0 || (!foundCommission && inCommission.Priority >= selectedOutCommission.Priority) || (foundCommission && inCommission.Priority > usedCommission.Priority))
                 {
                     continue;
                 }
-                if (inCommission.goodName == commissions[i].goodName)
+                if (inCommission.goodName == selectedOutCommission.goodName)
                 {
                     if (!foundCommission)
                     {
@@ -144,27 +170,27 @@ public class LogisticsManager : MonoBehaviour
                         {
                             usedCommission = inCommission;
                         }
-                        else if (Vector3.Distance(inCommission.sourceInventory.GetLogisticPosition(), commissions[i].sourceInventory.GetLogisticPosition())
-                                    < Vector3.Distance(usedCommission.sourceInventory.GetLogisticPosition(), commissions[i].sourceInventory.GetLogisticPosition()))
+                        else if (Vector3.Distance(inCommission.sourceInventory.GetLogisticPosition(), selectedOutCommission.sourceInventory.GetLogisticPosition())
+                                    < Vector3.Distance(usedCommission.sourceInventory.GetLogisticPosition(), selectedOutCommission.sourceInventory.GetLogisticPosition()))
                         {
                             usedCommission = inCommission;
                         }
                     }
                 }
             }
-            if (foundCommission) 
-            { 
-                int index = commissions.IndexOf(usedCommission);
+            if (foundCommission)
+            {
+                int inIndex = commissions.IndexOf(usedCommission);
                 uint amount;
-                if (usedCommission.StoreableAmount > commissions[i].TakeableAmount)
+                if (usedCommission.StoreableAmount > selectedOutCommission.TakeableAmount)
                 {
-                    if(commissions[i].TakeableAmount > targetMoveAmount)
+                    if (selectedOutCommission.TakeableAmount > targetMoveAmount)
                     {
                         amount = targetMoveAmount;
                     }
                     else
                     {
-                        amount = commissions[i].TakeableAmount;
+                        amount = selectedOutCommission.TakeableAmount;
                     }
                 }
                 else
@@ -178,9 +204,9 @@ public class LogisticsManager : MonoBehaviour
                         amount = usedCommission.StoreableAmount;
                     }
                 }
-                commissions[index].StoreAmount(commissions[i].TakeableAmount);
-                commissions[i].TakeAmount(commissions[i].TakeableAmount);
-                LogisticJob logisticJob = new(usedCommission, commissions[i], amount);
+                commissions[inIndex].StoreAmount(selectedOutCommission.TakeableAmount);
+                selectedOutCommission.TakeAmount(selectedOutCommission.TakeableAmount);
+                LogisticJob logisticJob = new(usedCommission, selectedOutCommission, amount);
                 if (availableJobs.ContainsKey(logisticJob.Priority))
                 {
                     availableJobs[logisticJob.Priority].Add(logisticJob);
@@ -189,6 +215,7 @@ public class LogisticsManager : MonoBehaviour
                 {
                     availableJobs.Add(logisticJob.Priority, new List<LogisticJob>() { logisticJob });
                 }
+
             }
         }
         Debug.Log("JobList");
